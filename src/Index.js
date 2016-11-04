@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router';
 import { Provider } from 'react-redux';
-import App from './components/App';
-import PoweredBy from './components/Powered-by';
-import About from './components/About';
+import App from './components/App.jsx';
+import Transcribe from './components/Transcribe/Index.jsx';
+import Paint from './components/Paint/Index.jsx';
 
 import oauth from 'panoptes-client/lib/oauth';
 import { config } from './constants/config';
@@ -24,8 +24,8 @@ oauth.init(config.panoptesAppId)
       <Provider store={store}>
         <Router>
           <Route path="/" component={App}>
-            <Route path="/about" component={About}/>
-            <Route path="/poweredby" component={PoweredBy}/>
+            <Route path="/transcribe" component={Transcribe}/>
+            <Route path="/paint" component={Paint}/>
           </Route>
         </Router>
       </Provider>

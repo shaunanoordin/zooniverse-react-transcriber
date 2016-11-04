@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router';
-import packageJSON from '../../package.json';
 
 import HeaderAuth from './HeaderAuth';
 
@@ -10,14 +9,12 @@ export default class App extends React.Component {
     return something;
   }
   render() {
-    const version = packageJSON.version;
-
     return (
       <div>
         <header className="site-header">
-          <h1 className="title">React Starterify {version}</h1>
-          <Link to="/about" className="link">About</Link>
-          <Link to="/poweredby" className="link">Powered by</Link>
+          <Link to="/" className="link"><h1 className="title">Zooniverse React Transcribe</h1></Link>
+          <Link to="/transcribe" className="link">Transcribe</Link>
+          <Link to="/paint" className="link">Paint</Link>
           <HeaderAuth />
         </header>
         <section className="content-section">
