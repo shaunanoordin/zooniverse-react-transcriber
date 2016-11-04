@@ -1,11 +1,19 @@
 import React from 'react';
 
+const INPUT_IDLE = 0;
+const INPUT_ACTIVE = 1;
+const INPUT_ENDED = 2;
+
 export default class Index extends React.Component {
   constructor(props) {
     super(props);
+    
+    this.classifierContext = null;
     this.boundingBox = null;
     this.sizeRatioX = 1;
     this.sizeRatioY = 1;
+    
+    this.pointerState = INPUT_IDLE;
   }
   
   render() {
@@ -21,6 +29,7 @@ export default class Index extends React.Component {
   }
   
   componentDidMount() {
+    this.classifierContext = this.refs.classifier.getContext('2d');
     this.loadSubject();
   }
   
@@ -41,20 +50,44 @@ export default class Index extends React.Component {
     this.refs.classifier.height = imgHeight;
 
     this.refs.subject.getContext('2d').drawImage(imgData, 0, 0);
-    //this.refs.classifier.style.top = '-' + imgHeight + 'px';
 
+    //Bind Events
+    //--------------------------------
+    if ("onmousedown" in this.refs.classifier && "onmousemove" in this.refs.classifier &&
+        "onmouseup" in this.refs.classifier) {
+      this.refs.classifier.onmousedown = this.onPointerStart.bind(this);
+      this.refs.classifier.onmousemove = this.onPointerMove.bind(this);
+      this.refs.classifier.onmouseup = this.onPointerEnd.bind(this);
+    }    
+    if ("ontouchstart" in this.refs.classifier && "ontouchmove" in this.refs.classifier &&
+        "ontouchend" in this.refs.classifier && "ontouchcancel" in this.refs.classifier) {
+      this.refs.classifier.ontouchstart = this.onPointerStart.bind(this);
+      this.refs.classifier.ontouchmove = this.onPointerMove.bind(this);
+      this.refs.classifier.ontouchend = this.onPointerEnd.bind(this);
+      this.refs.classifier.ontouchcancel = this.onPointerEnd.bind(this);
+    }
+    if ("onresize" in window) {
+      window.onresize = this.updateSize.bind(this);
+    }
     this.updateSize();
+    //--------------------------------
+  }
+  
+  paint(pointer) {
+    const RADIUS = 10;
+    this.classifierContext.fillStyle = '#939';
+    this.classifierContext.beginPath();
+    this.classifierContext.arc(pointer.x, pointer.y, RADIUS, 0, 2*Math.PI);
+    this.classifierContext.fill();
   }
   
   updateSize() {
-    console.log('!!!!');
-    console.log(this.refs);
     const boundingBox = (this.refs.classifier.getBoundingClientRect)
       ? this.refs.classifier.getBoundingClientRect()
       : { left: 0, top: 0 };
     this.boundingBox = boundingBox;
-    this.sizeRatioX = this.width / this.boundingBox.width;
-    this.sizeRatioY = this.height / this.boundingBox.height;
+    this.sizeRatioX = this.refs.classifier.width / this.boundingBox.width;
+    this.sizeRatioY = this.refs.classifier.height / this.boundingBox.height;
   }
   
   stopEvent(e) {
@@ -64,5 +97,41 @@ export default class Index extends React.Component {
     e.returnValue = false;
     e.cancelBubble = true;
     return false;
+  }
+  
+  //----------------------------------------------------------------
+  
+  onPointerStart(e) {
+    this.pointerState = INPUT_ACTIVE;
+    this.paint(this.getPointerXY(e));
+    return this.stopEvent(e);
+  }
+  
+  onPointerMove(e) {
+    if (this.pointerState === INPUT_ACTIVE) {
+      this.paint(this.getPointerXY(e));
+    }
+    return this.stopEvent(e);
+  }
+  
+  onPointerEnd(e) {
+    this.pointerState = INPUT_ENDED;
+    return this.stopEvent(e);
+  }
+  
+  getPointerXY(e) {
+    let clientX = 0;
+    let clientY = 0;
+    if (e.clientX && e.clientY) {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else if (e.touches && e.touches.length > 0 && e.touches[0].clientX &&
+        e.touches[0].clientY) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+    let inputX = (clientX - this.boundingBox.left) * this.sizeRatioX;
+    let inputY = (clientY - this.boundingBox.top) * this.sizeRatioY;
+    return { x: inputX, y: inputY };
   }
 }
