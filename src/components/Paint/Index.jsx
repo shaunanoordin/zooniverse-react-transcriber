@@ -24,6 +24,11 @@ export default class Index extends React.Component {
           <canvas className="subject" ref="subject" width="10" height="10"></canvas>
           <canvas className="classifier" ref="classifier" width="10" height="10"></canvas>
         </div>
+        <div className="painter-output">
+          <h3>Painted Classification Data as Text</h3>
+          <textarea ref="output"></textarea>
+          <a ref="download" download="classification.png" href="">Download as PNG</a>
+          </div>
       </div>
     );
   }
@@ -79,6 +84,10 @@ export default class Index extends React.Component {
     this.classifierContext.beginPath();
     this.classifierContext.arc(pointer.x, pointer.y, RADIUS, 0, 2*Math.PI);
     this.classifierContext.fill();
+    
+    const dataPng = this.refs.classifier.toDataURL("image/png");
+    this.refs.output.value = dataPng;
+    this.refs.download.href = dataPng;
   }
   
   updateSize() {
