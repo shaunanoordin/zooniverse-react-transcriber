@@ -84,6 +84,7 @@ export default class Index extends React.Component {
     this.classifierContext.beginPath();
     this.classifierContext.arc(pointer.x, pointer.y, RADIUS, 0, 2*Math.PI);
     this.classifierContext.fill();
+    this.classifierContext.closePath();
     
     const dataPng = this.refs.classifier.toDataURL("image/png");
     this.refs.output.value = dataPng;
