@@ -1,5 +1,5 @@
 .painter
-  margin: 1em
+  margin: 1em auto
   border: 1px solid $tertiary
   background: $secondary
   position: relative
@@ -7,7 +7,7 @@
   > canvas
     display: block
     position: relative
-    width: 100%
+    max-width: 100%
     touch-action: none  //Prevents IE/Edge from intrepreting touch input as scroll/pan commands.
   
   .subject
