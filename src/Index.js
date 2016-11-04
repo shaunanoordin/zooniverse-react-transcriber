@@ -4,6 +4,7 @@ import { Router, Route } from 'react-router';
 import { Provider } from 'react-redux';
 import App from './components/App.jsx';
 import Transcribe from './components/Transcribe/Index.jsx';
+import Paint from './components/Paint/Index.jsx';
 
 import oauth from 'panoptes-client/lib/oauth';
 import { config } from './constants/config';
@@ -24,6 +25,7 @@ oauth.init(config.panoptesAppId)
         <Router>
           <Route path="/" component={App}>
             <Route path="/transcribe" component={Transcribe}/>
+            <Route path="/paint" component={Paint}/>
           </Route>
         </Router>
       </Provider>
