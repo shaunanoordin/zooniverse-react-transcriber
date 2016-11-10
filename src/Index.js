@@ -5,9 +5,11 @@ import { Provider } from 'react-redux';
 import App from './components/App.jsx';
 import Transcribe from './components/Transcribe/Index.jsx';
 import Paint from './components/Paint/Index.jsx';
+import Nothing from './components/Nothing.jsx';
 
 import oauth from 'panoptes-client/lib/oauth';
 import { config } from './constants/config';
+const favicon = require('./images/favicon.ico');
 
 import configureStore from './store';
 const store = configureStore();
@@ -27,6 +29,7 @@ oauth.init(config.panoptesAppId)
             <Route path="/transcribe" component={Transcribe}/>
             <Route path="/paint" component={Paint}/>
           </Route>
+          <Route path="*" component={Nothing}/>
         </Router>
       </Provider>
       , document.getElementById('root')
