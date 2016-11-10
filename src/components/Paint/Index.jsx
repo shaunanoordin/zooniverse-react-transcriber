@@ -4,6 +4,8 @@ const INPUT_IDLE = 0;
 const INPUT_ACTIVE = 1;
 const INPUT_ENDED = 2;
 
+const DEFAULT_IMAGE_SRC = require('./sample.jpg');
+
 export default class Index extends React.Component {
   constructor(props) {
     super(props);
@@ -37,8 +39,8 @@ export default class Index extends React.Component {
     this.loadSubject();
   }
   
-  loadSubject(src = './sample.jpg') {
-    let imgSrc = require(src);
+  loadSubject(src = null) {
+    let imgSrc = (src) ? src : DEFAULT_IMAGE_SRC;
     let imgData = new Image();
     imgData.onload = this.initClassifier.bind(this, imgData);
     imgData.src = imgSrc;

@@ -14,6 +14,7 @@ class SVGTarp extends Component {
   render() {
     return (
       <svg ref={(r)=>this.svg=r} className="svgTarp"
+        viewBox="0 0 500 500"
         width="500" height="500"
         onClick={this.click.bind(this)}>
         {this.state.circles}
@@ -34,10 +35,12 @@ class SVGTarp extends Component {
     this.setState({
       circles: arr
     });
+    
+    stopEvent(e);
   }
 }
 
-/*  Gets the
+/*  Gets the {x,y} coordinates of a pointer event, relative to an element.
  */
 function getPointerXY(e, element) {
   const boundingBox = (element && element.getBoundingClientRect)
@@ -62,6 +65,14 @@ function getPointerXY(e, element) {
   const inputX = (clientX - boundingBox.left) * sizeRatioX;
   const inputY = (clientY - boundingBox.top) * sizeRatioY;
   return { x: inputX, y: inputY };
+}
+
+function stopEvent(e) {
+  e.preventDefault && e.preventDefault();
+  e.stopPropagation && e.stopPropagation();
+  e.returnValue = false;
+  e.cancelBubble = true;
+  return false;
 }
 
 SVGTarp.propTypes = {};
