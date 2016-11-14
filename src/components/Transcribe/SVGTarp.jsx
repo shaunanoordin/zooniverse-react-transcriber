@@ -13,7 +13,7 @@ class SVGTarp extends Component {
     
     this.state = {
       circles: [],
-      rotate: 0,
+      rotate: 45,
       scale: 1,
       translateX: 0,
       translateY: 0,
@@ -97,16 +97,18 @@ class SVGTarp extends Component {
     const offsetX = -this.width / 2;
     const offsetY = -this.height / 2;
     
-    const rotation = 0;
-    
-    //inputX = ((inputX + offsetX) / this.state.scale - this.state.translateX) * Math.cos(rotation);
-    //inputY = ((inputY + offsetY) / this.state.scale - this.state.translateY) * Math.sin(rotation);
+    const rotation = -this.state.rotate / 180 * Math.PI;
+    console.log(this.state.rotate, rotation/Math.PI);
     
     inputX = ((inputX + offsetX) / this.state.scale - this.state.translateX);
     inputY = ((inputY + offsetY) / this.state.scale - this.state.translateY);
+    
+    const calculatedInputX = inputX * Math.cos(rotation) - inputY * Math.sin(rotation);
+    const calculatedInputY = inputX * Math.sin(rotation) + inputY * Math.cos(rotation);
+    
     //----------------
     
-    return { x: inputX, y: inputY };
+    return { x: calculatedInputX, y: calculatedInputY };
   }
 }
 
