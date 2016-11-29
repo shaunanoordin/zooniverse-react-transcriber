@@ -9,6 +9,9 @@ class SVGTarp extends Component {
     this.width = 500;
     this.height = 500;
     
+    this.offsetX = this.width / 2;
+    this.offsetY = this.height / 2;
+    
     this.getPointerXY = this.getPointerXY.bind(this);
     
     this.state = {
@@ -33,12 +36,12 @@ class SVGTarp extends Component {
             {this.state.circles}
           </g>
           <g>
-            <line x1="0" y1="-250" x2="0" y2="250" stroke-width="1" stroke="#fff"/>
-            <line x1="-250" y1="-250" x2="-250" y2="250" stroke-width="1" stroke="#fff"/>
-            <line x1="250" y1="-250" x2="250" y2="250" stroke-width="1" stroke="#fff"/>
-            <line x1="-250" y1="0" x2="250" y2="0" stroke-width="1" stroke="#fff"/>
-            <line x1="-250" y1="-250" x2="250" y2="-250" stroke-width="1" stroke="#fff"/>
-            <line x1="-250" y1="250" x2="250" y2="250" stroke-width="1" stroke="#fff"/>
+            <line x1="0" y1="-250" x2="0" y2="250" strokeWidth="1" stroke="#fff"/>
+            <line x1="-250" y1="-250" x2="-250" y2="250" strokeWidth="1" stroke="#fff"/>
+            <line x1="250" y1="-250" x2="250" y2="250" strokeWidth="1" stroke="#fff"/>
+            <line x1="-250" y1="0" x2="250" y2="0" strokeWidth="1" stroke="#fff"/>
+            <line x1="-250" y1="-250" x2="250" y2="-250" strokeWidth="1" stroke="#fff"/>
+            <line x1="-250" y1="250" x2="250" y2="250" strokeWidth="1" stroke="#fff"/>
             
             <circle cx={0+Math.cos(Math.PI*-1/2)*20} cy={0+Math.sin(Math.PI*-1/2)*20} r="10" fill="none" stroke="#fc3" strokeWidth="1" />
             <circle cx={0+Math.cos(Math.PI*5/6)*20} cy={0+Math.sin(Math.PI*5/6)*20} r="10" fill="none" stroke="#c33" strokeWidth="1" />
@@ -98,7 +101,6 @@ class SVGTarp extends Component {
     const offsetY = -this.height / 2;
     
     const rotation = -this.state.rotate / 180 * Math.PI;
-    console.log(this.state.rotate, rotation/Math.PI);
     
     inputX = ((inputX + offsetX) / this.state.scale - this.state.translateX);
     inputY = ((inputY + offsetY) / this.state.scale - this.state.translateY);
