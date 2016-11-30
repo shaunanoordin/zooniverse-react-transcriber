@@ -16,11 +16,21 @@ class SVGTarp extends Component {
     
     this.state = {
       circles: [],
-      rotate: 45,
-      scale: 1,
-      translateX: 0,
-      translateY: 0,
+      rotate: this.props.rotate,
+      scale: this.props.scale,
+      translateX: this.props.translateX,
+      translateY: this.props.translateY,
     };
+  }
+  
+  
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      rotate: nextProps.rotate,
+      scale: nextProps.scale,
+      translateX: nextProps.translateX,
+      translateY: nextProps.translateY,
+    });
   }
 
   render() {
