@@ -4,12 +4,13 @@ const INPUT_IDLE = 0;
 const INPUT_ACTIVE = 1;
 const INPUT_ENDED = 2;
 
+const DEFAULT_IMAGE_SRC = require('./sample.jpg');
+
 export default class Index extends React.Component {
   constructor(props) {
     super(props);
     
     this.classifierContext = null;
-    this.boundingBox = null;
     this.sizeRatioX = 1;
     this.sizeRatioY = 1;
     
@@ -38,8 +39,8 @@ export default class Index extends React.Component {
     this.loadSubject();
   }
   
-  loadSubject(src = './sample.jpg') {
-    let imgSrc = require(src);
+  loadSubject(src = null) {
+    let imgSrc = (src) ? src : DEFAULT_IMAGE_SRC;
     let imgData = new Image();
     imgData.onload = this.initClassifier.bind(this, imgData);
     imgData.src = imgSrc;
@@ -98,9 +99,8 @@ export default class Index extends React.Component {
     const boundingBox = (this.refs.classifier.getBoundingClientRect)
       ? this.refs.classifier.getBoundingClientRect()
       : { left: 0, top: 0 };
-    this.boundingBox = boundingBox;
-    this.sizeRatioX = this.refs.classifier.width / this.boundingBox.width;
-    this.sizeRatioY = this.refs.classifier.height / this.boundingBox.height;
+    this.sizeRatioX = this.refs.classifier.width / boundingBox.width;
+    this.sizeRatioY = this.refs.classifier.height /boundingBox.height;
   }
   
   stopEvent(e) {
@@ -133,6 +133,9 @@ export default class Index extends React.Component {
   }
   
   getPointerXY(e) {
+    const boundingBox = (this.refs.classifier.getBoundingClientRect)
+      ? this.refs.classifier.getBoundingClientRect()
+      : { left: 0, top: 0 };    
     let clientX = 0;
     let clientY = 0;
     if (e.clientX && e.clientY) {
@@ -143,8 +146,8 @@ export default class Index extends React.Component {
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
     }
-    let inputX = (clientX - this.boundingBox.left) * this.sizeRatioX;
-    let inputY = (clientY - this.boundingBox.top) * this.sizeRatioY;
+    let inputX = (clientX - boundingBox.left) * this.sizeRatioX;
+    let inputY = (clientY - boundingBox.top) * this.sizeRatioY;
     return { x: inputX, y: inputY };
   }
 }

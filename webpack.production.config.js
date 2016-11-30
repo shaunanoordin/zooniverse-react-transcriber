@@ -68,7 +68,11 @@ module.exports = {
       },
       {
         test: /\.(jpg|png|gif|otf|eot|svg|ttf|woff\d?)$/,
-        loaders: ['file-loader', 'image-webpack'],
+        loaders: ['file-loader'],
+      },
+      {
+        test: /\.ico$/,
+        loader: 'file?name=[name].[ext]',
       },
     ],
   },

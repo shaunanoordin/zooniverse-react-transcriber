@@ -62,6 +62,10 @@ module.exports = {
         loader: 'file-loader',
       },
       {
+        test: /\.ico$/,
+        loader: 'file?name=[name].[ext]',
+      },
+      {
         test: /\.styl$/,
         loader: 'style-loader!css-loader!stylus-loader',
       },
