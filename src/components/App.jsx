@@ -12,8 +12,9 @@ export default class App extends React.Component {
     return (
       <div>
         <header className="site-header">
-          <Link to="/" className="link"><h1 className="title">Zooniverse React Transcribe</h1></Link>
+          <Link to="/" className="link"><h1 className="title">Zooniverse React Transcriber</h1></Link>
           <Link to="/transcribe" className="link">Transcribe</Link>
+          <Link to="/transform" className="link">Transform</Link>
           <Link to="/paint" className="link">Paint</Link>
           <HeaderAuth />
         </header>
