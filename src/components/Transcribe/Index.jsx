@@ -9,16 +9,30 @@ class Index extends React.Component {
   }
   
   render() {
-    const test = apiClient.type('subjects').get('1275918')
-    .then((subject) => {
-      console.log('-'.repeat(80));
-      console.log(subject);
-    });
+    //const test = apiClient.type('subjects').get('1275918')
+    //.then((subject) => {
+    //  console.log('-'.repeat(80));
+    //  console.log(subject);
+    //});
     
     return (
       <div>
         <h2>Transcribe...</h2>
         <p>--{this.props.subjectStatus}--</p>
+        {(this.props.subject && this.props.subject.metadata)
+          ? <table>
+              <tbody>
+              {(() => {
+                let metadata = [];
+                for (let m in this.props.subject.metadata) {
+                  metadata.push(<tr><td>{m}</td><td>{this.props.subject.metadata[m]}</td></tr>);
+                }
+                return metadata;
+              })()}
+              </tbody>
+            </table>
+          : null
+        }
       </div>
     );
   }
