@@ -6,7 +6,9 @@ export default class LoginButton extends Component {
   render() {
     const login = this.props.login;
     return (
-      <button type="submit" onClick={login}>Login</button>
+      <div className="login-button">
+        <button type="submit" onClick={login}>Login</button>
+      </div>
     );
   }
 
