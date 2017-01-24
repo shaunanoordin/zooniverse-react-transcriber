@@ -10,7 +10,7 @@ export function fetchSubject(id) {
     });
     
     //Now attempt to fetch the subject...
-    apiClient.type('subjects').get('1275918')
+    apiClient.type('subjects').get(id)  //Con't...
     
     //Handle the success...
     .then((subject) => {
@@ -18,7 +18,7 @@ export function fetchSubject(id) {
         type: "FETCHING_SUBJECT_SUCCESS",
         subject
       });
-    })
+    })  //Con't...
     
     //And handle any errors.
     .catch((err) => {
