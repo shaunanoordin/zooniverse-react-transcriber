@@ -11,12 +11,25 @@ import SVGImage from './SVGImage.jsx';
 class Index extends React.Component {
   constructor(props) {
     super(props);
-    this.htmlInputSubjectID = null;
+    this.inputSubjectID = null;
     this.execFetchSubject = this.execFetchSubject.bind(this);
+    
+    this.inputScale = null;
+    this.inputTranslateX = null;
+    this.inputTranslateY = null;
+    this.inputRotate = null;
+    this.updateTransform = this.updateTransform.bind(this);
+    
+    this.state = {
+      scale: 1,
+      translateX: 0,
+      translateY: 0,
+      rotate: 0,
+    };
   }
   
   execFetchSubject() {
-    const subjectId = this.htmlInputSubjectID.value;
+    const subjectId = this.inputSubjectID.value;
     console.log(subjectId);
     this.props.dispatch(fetchSubject(subjectId));
   }
@@ -32,7 +45,7 @@ class Index extends React.Component {
       <div>
         <h2>Transcribe...</h2>
         <div>
-          <input type="text" ref={(ele) => { this.htmlInputSubjectID = ele; }}
+          <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
             placeholder="Panoptes Subject ID, e.g. 1275918"
             onKeyPress={(e) => {
               if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
@@ -60,11 +73,57 @@ class Index extends React.Component {
         </div>
         
         {(this.props.subject && this.props.subject.locations && this.props.subject.locations.length > 0)
-          ? <SVGViewer scale={0.3} translateX={0} translateY={0} rotate={0}>
-            {this.props.subject.locations.map((loc, locIndex) => {
-              return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
-            })}
-            </SVGViewer>
+          ? <div>
+              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate}>
+              {this.props.subject.locations.map((loc, locIndex) => {
+                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
+              })}
+              </SVGViewer>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>...</td>
+                    <td>
+                      <input
+                        value={this.state.scale}
+                        ref={(itm) => { this.inputScale = itm; }}
+                        onChange={this.updateTransform}
+                        type="number"
+                        step="0.2"
+                        min="0.2" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>...</td>
+                    <td>
+                      <input
+                        value={this.state.translateX}
+                        ref={(itm) => { this.inputTranslateX = itm; }}
+                        onChange={this.updateTransform}
+                        type="number"
+                        step="10" />
+                      <input
+                        value={this.state.translateY}
+                        ref={(itm) => { this.inputTranslateY = itm; }}
+                        onChange={this.updateTransform}
+                        type="number"
+                        step="10" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>...</td>
+                    <td>
+                      <input
+                        value={this.state.rotate}
+                        ref={(itm) => { this.inputRotate = itm; }}
+                        onChange={this.updateTransform} 
+                        type="number"
+                        step="15" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           : null
         }
         
@@ -100,6 +159,15 @@ class Index extends React.Component {
     });
     
     this.props.dispatch(fetchSubject('1275918'));
+  }
+  
+  updateTransform(e) {
+    this.setState({
+      scale: this.inputScale.value,
+      translateX: this.inputTranslateX.value,
+      translateY: this.inputTranslateY.value,
+      rotate: this.inputRotate.value,
+    });
   }
 }
 
