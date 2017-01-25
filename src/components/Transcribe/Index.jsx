@@ -5,6 +5,8 @@ import { fetchSubject } from '../../actions/subjects.js';
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
+import SVGViewer from './SVGViewer.jsx';
+
 class Index extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +32,7 @@ class Index extends React.Component {
         <h2>Transcribe...</h2>
         <div>
           <input type="text" ref={(ele) => { this.htmlInputSubjectID = ele; }}
-            placeholder="Panoptes Subject ID"
+            placeholder="Panoptes Subject ID, e.g. 1275918"
             onKeyPress={(e) => {
               if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
                 this.execFetchSubject();
@@ -56,6 +58,15 @@ class Index extends React.Component {
           })()}
         </div>
         
+        {(this.props.subject && this.props.subject.locations && this.props.subject.locations.length > 0)
+          ? <SVGViewer scale={1} translateX={0} translateY={0} rotate={0}>
+            {this.props.subject.locations.map((loc, locIndex) => {
+              return <image key={'image-'+locIndex} href={loc["image/jpeg"]} x="0" y="0" height="100px" width="100px" />;
+            })}
+            </SVGViewer>
+          : null
+        }
+        
         {(this.props.subject && this.props.subject.metadata)
           ? <table>
               <tbody>
@@ -75,7 +86,19 @@ class Index extends React.Component {
   }
   
   componentDidMount() {
+    apiClient.type('projects').get('376')
+    .then((data) => {
+      console.log('Project 376\n'+'-'.repeat(80));
+      console.log(data);
+    });
     
+    apiClient.type('set_member_subjects').get({id: '2509', page: '1'})
+    .then((data) => {
+      console.log('Set Member Subjects 2509\n'+'-'.repeat(80));
+      console.log(data);
+    });
+    
+    this.props.dispatch(fetchSubject('1275918'));
   }
 }
 
