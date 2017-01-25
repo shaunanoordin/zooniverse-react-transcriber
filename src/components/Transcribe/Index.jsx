@@ -6,6 +6,7 @@ import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
 import SVGViewer from './SVGViewer.jsx';
+import SVGImage from './SVGImage.jsx';
 
 class Index extends React.Component {
   constructor(props) {
@@ -59,9 +60,9 @@ class Index extends React.Component {
         </div>
         
         {(this.props.subject && this.props.subject.locations && this.props.subject.locations.length > 0)
-          ? <SVGViewer scale={1} translateX={0} translateY={0} rotate={0}>
+          ? <SVGViewer scale={0.3} translateX={0} translateY={0} rotate={0}>
             {this.props.subject.locations.map((loc, locIndex) => {
-              return <image key={'image-'+locIndex} href={loc["image/jpeg"]} x="0" y="0" height="100px" width="100px" />;
+              return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
             })}
             </SVGViewer>
           : null
