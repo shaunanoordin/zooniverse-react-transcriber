@@ -73,7 +73,7 @@ class SVGViewer extends Component {
     const pointerXY = this.getPointerXY(e);
     
     const arr = this.state.circles;
-    arr.push(<circle key={Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
+    arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
     
     this.setState({
       circles: arr

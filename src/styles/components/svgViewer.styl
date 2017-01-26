@@ -1,4 +1,24 @@
+@keyframes loading-pulse {
+  from {
+    fill: $primary;
+  }
+  to {
+    fill: $secondary;
+  }
+}
+
 .svgViewer
   background: $tertiary
   display: block
   margin: 0 auto
+
+.svgImage-loading
+  animation-name: loading-pulse
+  animation-duration: 1s
+  animation-direction: alternate
+  animation-iteration-count: infinite
+
+.svgImage-error
+  fill: $primary
+  stroke: $secondary
+  stroke-width: 4

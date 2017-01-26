@@ -42,47 +42,48 @@ class Index extends React.Component {
     //});
     
     return (
-      <div>
+      <div className="transcribe">
         <h2>Transcribe...</h2>
-        <div>
-          <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
-            placeholder="Panoptes Subject ID, e.g. 1275918"
-            onKeyPress={(e) => {
-              if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
-                this.execFetchSubject();
+        <div className="input-panel">
+          <div>
+            <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
+              placeholder="Panoptes Subject ID, e.g. 1275918"
+              onKeyPress={(e) => {
+                if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
+                  this.execFetchSubject();
+                }
+              }}
+            />
+            <button onClick={this.fetchSubject}>&raquo;</button>
+          </div>
+          <div className="status-subpanel">
+            {(() => {
+              switch (this.props.subjectStatus) {
+                case status.STATUS_IDLE:
+                  return "Type in a Panoptes Subject ID to search!";
+                case status.STATUS_LOADING:
+                  return "Looking for Subject...";
+                case status.STATUS_READY:
+                  return "Subject ready.";
+                case status.STATUS_ERROR:
+                  return "WHOOPS - Something went wrong!";
               }
-            }}
-          />
-          <button onClick={this.fetchSubject}>&raquo;</button>
-        </div>
-        
-        <div>
-          {(() => {
-            switch (this.props.subjectStatus) {
-              case status.STATUS_IDLE:
-                return "Type in a Panoptes Subject ID to search!";
-              case status.STATUS_LOADING:
-                return "Looking for Subject...";
-              case status.STATUS_READY:
-                return "Subject ready.";
-              case status.STATUS_ERROR:
-                return "WHOOPS - Something went wrong!";
-            }
-            return "???";
-          })()}
+              return "???";
+            })()}
+          </div>
         </div>
         
         {(this.props.subject && this.props.subject.locations && this.props.subject.locations.length > 0)
-          ? <div>
+          ? <div className="viewer-panel">
               <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate}>
               {this.props.subject.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
               })}
               </SVGViewer>
-              <table>
+              <table className="control-subpanel">
                 <tbody>
                   <tr>
-                    <td>...</td>
+                    <td>Scale</td>
                     <td>
                       <input
                         value={this.state.scale}
@@ -94,7 +95,7 @@ class Index extends React.Component {
                     </td>
                   </tr>
                   <tr>
-                    <td>...</td>
+                    <td>Translate (x,y)</td>
                     <td>
                       <input
                         value={this.state.translateX}
@@ -111,7 +112,7 @@ class Index extends React.Component {
                     </td>
                   </tr>
                   <tr>
-                    <td>...</td>
+                    <td>Rotate (deg)</td>
                     <td>
                       <input
                         value={this.state.rotate}
@@ -128,7 +129,7 @@ class Index extends React.Component {
         }
         
         {(this.props.subject && this.props.subject.metadata)
-          ? <table>
+          ? <table className="metadata-panel">
               <tbody>
               {(() => {
                 let metadata = [];
