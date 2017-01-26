@@ -11,11 +11,13 @@ export default class SVGImage extends Component {
     
     this.image = new Image();
     this.image.onload = () => {
+      if (this.props.onLoad) this.props.onLoad(this.image);
       this.setState({
         loaded: true,
       });
     };
     this.image.onerror = (err) => {
+      if (this.props.onError) this.props.onError(err);
       this.setState({
         error: true,
       });

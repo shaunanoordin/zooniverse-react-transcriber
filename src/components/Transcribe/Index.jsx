@@ -19,6 +19,7 @@ class Index extends React.Component {
     this.inputTranslateY = null;
     this.inputRotate = null;
     this.updateTransform = this.updateTransform.bind(this);
+    this.imageHasLoaded = this.imageHasLoaded.bind(this);
     
     this.state = {
       scale: 1,
@@ -32,6 +33,17 @@ class Index extends React.Component {
     const subjectId = this.inputSubjectID.value;
     console.log(subjectId);
     this.props.dispatch(fetchSubject(subjectId));
+  }
+  
+  imageHasLoaded(img) {
+    if (!img) return;
+    
+    const hScale = (img.width !== 0) ? 500 / img.width : 1;
+    const vScale = (img.height !== 0) ? 500 / img.height : 1;
+    
+    this.setState({
+      scale: Number(Math.min(hScale, vScale).toPrecision(1)),
+    });
   }
   
   render() {
@@ -77,7 +89,7 @@ class Index extends React.Component {
           ? <div className="viewer-panel">
               <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate}>
               {this.props.subject.locations.map((loc, locIndex) => {
-                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
+                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
               })}
               </SVGViewer>
               <table className="control-subpanel">
