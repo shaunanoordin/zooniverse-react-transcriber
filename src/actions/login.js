@@ -1,9 +1,8 @@
 import { browserHistory } from 'react-router';
-import apiClient from 'panoptes-client'
-import oauth from 'panoptes-client/lib/oauth'
+import apiClient from 'panoptes-client';
+import oauth from 'panoptes-client/lib/oauth';
 import * as types from '../constants/actionTypes';
 import config from '../constants/config';
-
 
 export function checkLoginUser() {  //First thing on app load - check if the user is logged in.
   return (dispatch) => {
@@ -26,7 +25,7 @@ export function setLoginUser(user) {
 export function loginToPanoptes() {  //Returns a login page URL for the user to navigate to.
   return (dispatch) => {
     return oauth.signIn(window.location.href.split('#')[0])
-  }
+  };
 }
 
 export function logoutFromPanoptes() {
@@ -35,5 +34,5 @@ export function logoutFromPanoptes() {
       .then(user => {
         dispatch(setLoginUser(user));
       });
-  }
+  };
 }

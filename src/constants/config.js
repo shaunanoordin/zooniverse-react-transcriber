@@ -1,3 +1,3 @@
 export const config = {
-  panoptesAppId: '24ad5676d5d25c6aa850dc5d5f63ec8c03dbc7ae113b6442b8571fce6c5b974c', // test-rog project for dev
+  panoptesAppId: 'b98d917fae51bcf40cb0e293620efac31d0ea185e995eff707fa2b4f5e119cc8',  //Panoptes-Staging ID for Zooniverse React Transcriber
 };
