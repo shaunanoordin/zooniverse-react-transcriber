@@ -6,8 +6,8 @@ class SVGViewer extends Component {
     super(props);
     this.svg = null;
     
-    this.width = 500;
-    this.height = 500;
+    this.width = 800;
+    this.height = 800;
     
     this.offsetX = this.width / 2;
     this.offsetY = this.height / 2;
@@ -70,6 +70,9 @@ class SVGViewer extends Component {
   }
   
   click(e) {
+    //DEBUG
+    return;
+    
     const pointerXY = this.getPointerXY(e);
     
     const arr = this.state.circles;

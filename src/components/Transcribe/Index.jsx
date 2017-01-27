@@ -26,6 +26,7 @@ class Index extends React.Component {
       translateX: 0,
       translateY: 0,
       rotate: 0,
+      loadedImage: { width: 0, height: 0 },
     };
   }
   
@@ -38,24 +39,19 @@ class Index extends React.Component {
   imageHasLoaded(img) {
     if (!img) return;
     
-    const hScale = (img.width !== 0) ? 500 / img.width : 1;
-    const vScale = (img.height !== 0) ? 500 / img.height : 1;
+    const hScale = (img.width !== 0) ? 800 / img.width : 1;
+    const vScale = (img.height !== 0) ? 800 / img.height : 1;
     
     this.setState({
       scale: Number(Math.min(hScale, vScale).toPrecision(1)),
+      loadedImage: { width: img.width, height: img.height },
     });
   }
   
   render() {
-    //const test = apiClient.type('subjects').get('1275918')
-    //.then((subject) => {
-    //  console.log('-'.repeat(80));
-    //  console.log(subject);
-    //});
-    
     return (
       <div className="transcribe">
-        <h2>Transcribe...</h2>
+        <h2>Subject Viewer</h2>
         <div className="input-panel">
           <div>
             <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
@@ -69,28 +65,65 @@ class Index extends React.Component {
             <button onClick={this.fetchSubject}>&raquo;</button>
           </div>
           <div className="status-subpanel">
+            {(this.props.subjectID)
+              ? <p>Subject ID {this.props.subjectID}</p>
+              : null
+            }
+            
             {(() => {
               switch (this.props.subjectStatus) {
                 case status.STATUS_IDLE:
-                  return "Type in a Panoptes Subject ID to search!";
+                  return <p>Type in a Panoptes Subject ID to search!</p>;
                 case status.STATUS_LOADING:
-                  return "Looking for Subject...";
+                  return <p>Looking for Subject...</p>;
                 case status.STATUS_READY:
-                  return "Subject ready.";
+                  return <p>Subject ready.</p>;
                 case status.STATUS_ERROR:
-                  return "WHOOPS - Something went wrong!";
+                  return <p>WHOOPS - Something went wrong!</p>;
               }
-              return "???";
+              return null;
+            })()}
+            
+            {(() => {
+              if (this.props.subjectStatus !== status.STATUS_READY) return null;
+              
+              switch (this.props.subjectStatus) {
+                case status.STATUS_LOADING:
+                  return <p>Looking for Aggregations...</p>;
+                case status.STATUS_READY:
+                  return <p>Aggregations ready.</p>;
+                case status.STATUS_ERROR:
+                  return <p>No Aggregations, sorry.</p>;
+              }
+              return null;
             })()}
           </div>
         </div>
         
-        {(this.props.subject && this.props.subject.locations && this.props.subject.locations.length > 0)
+        {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ? <div className="viewer-panel">
               <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate}>
-              {this.props.subject.locations.map((loc, locIndex) => {
+              {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
               })}
+                
+              {(this.props.aggregationsData)
+                ? this.props.aggregationsData.map((agg) => {
+                  return (
+                    <g transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                      <circle cx={agg.startX} cy={agg.startY} r={20} fill="rgba(255, 255, 255, 0.3)"/>
+                      <circle cx={agg.endX} cy={agg.endY} r={20} fill="rgba(255, 255, 255, 0.3)"/>
+                      <path d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} fill="rgba(255, 255, 255, 0.2)" />
+                      
+                      <text x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
+                        {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
+                      </text>
+                    </g>
+                  );
+                })
+                : null
+              }
+                
               </SVGViewer>
               <table className="control-subpanel">
                 <tbody>
@@ -140,13 +173,13 @@ class Index extends React.Component {
           : null
         }
         
-        {(this.props.subject && this.props.subject.metadata)
+        {(this.props.subjectData && this.props.subjectData.metadata)
           ? <table className="metadata-panel">
               <tbody>
               {(() => {
                 let metadata = [];
-                for (let m in this.props.subject.metadata) {
-                  metadata.push(<tr key={m}><td>{m}</td><td>{this.props.subject.metadata[m]}</td></tr>);
+                for (let m in this.props.subjectData.metadata) {
+                  metadata.push(<tr key={m}><td>{m}</td><td>{this.props.subjectData.metadata[m]}</td></tr>);
                 }
                 return metadata;
               })()}
@@ -171,7 +204,9 @@ class Index extends React.Component {
       console.log(data);
     });
     
-    this.props.dispatch(fetchSubject('1275918'));
+    //this.props.dispatch(fetchSubject('1275918'));
+    this.props.dispatch(fetchSubject('1274998'));
+    
   }
   
   updateTransform(e) {
@@ -185,19 +220,28 @@ class Index extends React.Component {
 }
 
 Index.propTypes = {
-  subject: PropTypes.object,
+  subjectID: PropTypes.string,
+  subjectData: PropTypes.object,
   subjectStatus: PropTypes.string,
+  aggregationsData: PropTypes.array,
+  aggregationsStatus: PropTypes.string,
 };
 
 Index.defaultProps = {
-  subject: null,
+  subjectID: null,
+  subjectData: null,
   subjectStatus: null,
+  aggregationsData: null,
+  aggregationsStatus: null,
 };
 
 const mapStateToProps = (state) => {
   return {
-    subject: state.subjects.subject,
+    subjectID: state.subjects.subjectID,
+    subjectData: state.subjects.subjectData,
     subjectStatus: state.subjects.subjectStatus,
+    aggregationsData: state.subjects.aggregationsData,
+    aggregationsStatus: state.subjects.aggregationsStatus,
   };
 };
 
