@@ -55,7 +55,7 @@ class Index extends React.Component {
         <div className="input-panel">
           <div>
             <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
-              placeholder="Panoptes Subject ID, e.g. 1275918"
+              placeholder="Panoptes Subject ID, e.g. 1274999"
               onKeyPress={(e) => {
                 if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
                   this.execFetchSubject();
@@ -204,9 +204,7 @@ class Index extends React.Component {
       console.log(data);
     });
     
-    //this.props.dispatch(fetchSubject('1275918'));
-    this.props.dispatch(fetchSubject('1274998'));
-    
+    this.props.dispatch(fetchSubject('1274999'));    
   }
   
   updateTransform(e) {
