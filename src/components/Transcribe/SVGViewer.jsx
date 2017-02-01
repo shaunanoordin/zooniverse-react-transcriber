@@ -1,31 +1,44 @@
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { Utility } from '../../tools/Utility.js';
+
+const INPUT_IDLE = 0;
+const INPUT_ACTIVE = 1;
 
 class SVGViewer extends Component {
   constructor(props) {
     super(props);
     this.svg = null;
     
+    this.pointer = {
+      start: { x: 0, y: 0 },
+      now: { x: 0, y: 0 },
+      state: INPUT_IDLE,
+    };
+    
+    this.tmpTransform = null;
+    
     this.offsetX = this.props.width / 2;
     this.offsetY = this.props.height / 2;
     
     this.getPointerXY = this.getPointerXY.bind(this);
+    this.getPointerXYAdjustedForSVGTransform = this.getPointerXYAdjustedForSVGTransform.bind(this);
     
     this.state = {
       circles: [],
-      rotate: this.props.rotate,
-      scale: this.props.scale,
-      translateX: this.props.translateX,
-      translateY: this.props.translateY,
+      rotate: parseFloat(this.props.rotate),
+      scale: Math.max(parseFloat(this.props.scale), 0.1),
+      translateX: parseFloat(this.props.translateX),
+      translateY: parseFloat(this.props.translateY),
     };
   }
   
   componentWillReceiveProps(nextProps) {
     this.setState({
-      rotate: nextProps.rotate,
-      scale: nextProps.scale,
-      translateX: nextProps.translateX,
-      translateY: nextProps.translateY,
+      rotate: parseFloat(nextProps.rotate),
+      scale: Math.max(parseFloat(nextProps.scale), 0.1),
+      translateX: parseFloat(nextProps.translateX),
+      translateY: parseFloat(nextProps.translateY),
     });
   }
 
@@ -33,10 +46,16 @@ class SVGViewer extends Component {
     const transform = `scale(${this.state.scale}) translate(${this.state.translateX}, ${this.state.translateY}) rotate(${this.state.rotate}) `;
     
     return (
-      <svg ref={(r)=>this.svg=r} className="svgViewer"
+      <svg ref={(r)=>this.svg=r}
+        className={'svgViewer ' + ((this.pointer.state === INPUT_IDLE) ? 'user-can-grab' : 'user-is-grabbing') }
         viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
         width={this.props.width} height={this.props.height}
-        onClick={this.click.bind(this)}>
+        onClick={this.click.bind(this)}
+        onMouseDown={this.onMouseDown.bind(this)}
+        onMouseUp={this.onMouseUp.bind(this)}
+        onMouseMove={this.onMouseMove.bind(this)}
+        onMouseLeave={this.onMouseLeave.bind(this)}
+        >
         <g transform={transform}>
           <g>
             {this.props.children}
@@ -66,11 +85,53 @@ class SVGViewer extends Component {
     
   }
   
+  onMouseDown(e) {
+    const pointerXY = this.getPointerXY(e);
+    this.pointer.state = INPUT_ACTIVE;
+    this.pointer.start = { x: pointerXY.x, y: pointerXY.y };
+    this.pointer.now = { x: pointerXY.x, y: pointerXY.y };    
+    this.tmpTransform = {
+      scale: this.state.scale,
+      translateX: this.state.translateX,
+      translateY: this.state.translateY,
+    };
+    return Utility.stopEvent(e);
+  }
+  
+  onMouseUp(e) {
+    const pointerXY = this.getPointerXY(e);
+    this.pointer.state = INPUT_IDLE;
+    this.pointer.now = { x: pointerXY.x, y: pointerXY.y };
+    this.tmpTransform = false;
+    return Utility.stopEvent(e);
+  }
+  
+  onMouseLeave(e) {
+    this.pointer.state = INPUT_IDLE;
+    return Utility.stopEvent(e);
+  }
+  
+  onMouseMove(e) {
+    const pointerXY = this.getPointerXY(e);
+    this.pointer.now = { x: pointerXY.x, y: pointerXY.y };
+    if (this.pointer.state === INPUT_ACTIVE && this.tmpTransform) {
+      const pointerDelta = {
+        x: this.pointer.now.x - this.pointer.start.x,
+        y: this.pointer.now.y - this.pointer.start.y
+      };
+      
+      this.setState({
+        translateX: parseFloat(this.tmpTransform.translateX + pointerDelta.x / this.tmpTransform.scale),
+        translateY: parseFloat(this.tmpTransform.translateY + pointerDelta.y / this.tmpTransform.scale),
+      });
+    }
+  }
+  
   click(e) {
+    const pointerXY = this.getPointerXY(e);
+    
     //DEBUG
     return;
-    
-    const pointerXY = this.getPointerXY(e);
     
     const arr = this.state.circles;
     arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
@@ -83,6 +144,34 @@ class SVGViewer extends Component {
   }
   
   getPointerXY(e) {
+    //Compensate for HTML elements
+    //----------------
+    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
+      ? this.svg.getBoundingClientRect()
+      : { left: 0, top: 0, width: 1, height: 1 };    
+    let clientX = 0;
+    let clientY = 0;
+    if (e.clientX && e.clientY) {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else if (e.touches && e.touches.length > 0 && e.touches[0].clientX &&
+        e.touches[0].clientY) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+    let elementWidth = this.props.width;
+    let elementHeight = this.props.height;
+    const sizeRatioX = elementWidth / boundingBox.width;
+    const sizeRatioY = elementHeight / boundingBox.height;
+
+    var inputX = (clientX - boundingBox.left) * sizeRatioX;
+    var inputY = (clientY - boundingBox.top) * sizeRatioY;
+    //----------------
+    
+    return { x: inputX, y: inputY };
+  }
+  
+  getPointerXYAdjustedForSVGTransform(e) {
     //Compensate for HTML elements
     //----------------
     const boundingBox = (this.svg && this.svg.getBoundingClientRect)

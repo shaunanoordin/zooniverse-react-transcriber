@@ -112,7 +112,7 @@ class Index extends React.Component {
                   const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
                   
                   return (
-                    <g className="aggregated-text" transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                    <g key={'aggtext_' + agg.startX + '_' + agg.startY} className="aggregated-text" transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
                       <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
                       <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
                       <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
