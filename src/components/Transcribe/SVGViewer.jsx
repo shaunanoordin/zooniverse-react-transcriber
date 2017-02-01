@@ -4,6 +4,7 @@ import { Utility } from '../../tools/Utility.js';
 
 const INPUT_IDLE = 0;
 const INPUT_ACTIVE = 1;
+const MIN_SCALE = 0.1;
 
 class SVGViewer extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class SVGViewer extends Component {
     this.state = {
       circles: [],
       rotate: parseFloat(this.props.rotate),
-      scale: Math.max(parseFloat(this.props.scale), 0.1),
+      scale: Math.max(parseFloat(this.props.scale), MIN_SCALE),
       translateX: parseFloat(this.props.translateX),
       translateY: parseFloat(this.props.translateY),
     };
@@ -36,7 +37,7 @@ class SVGViewer extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       rotate: parseFloat(nextProps.rotate),
-      scale: Math.max(parseFloat(nextProps.scale), 0.1),
+      scale: Math.max(parseFloat(nextProps.scale), MIN_SCALE),
       translateX: parseFloat(nextProps.translateX),
       translateY: parseFloat(nextProps.translateY),
     });
@@ -55,6 +56,21 @@ class SVGViewer extends Component {
         onMouseUp={this.onMouseUp.bind(this)}
         onMouseMove={this.onMouseMove.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
+        onWheel={(e) => {
+          console.log(e.deltaY, e.deltaMode);
+          
+          if (e.deltaY > 0) {
+            this.setState({
+              scale: Math.max(this.state.scale - 0.1, MIN_SCALE),
+            });
+          } else if (e.deltaY < 0) {
+            this.setState({
+              scale: Math.max(this.state.scale + 0.1, MIN_SCALE),
+            });
+          }
+          
+          return Utility.stopEvent(e);
+        }}
         >
         <g transform={transform}>
           <g>

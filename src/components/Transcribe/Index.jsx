@@ -8,6 +8,9 @@ import * as status from '../../constants/status.js';
 import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
 
+const DEFAULT_SVGVIEWER_WIDTH = 1024;
+const DEFAULT_SVGVIEWER_HEIGHT = 640;
+
 class Index extends React.Component {
   constructor(props) {
     super(props);
@@ -39,8 +42,8 @@ class Index extends React.Component {
   imageHasLoaded(img) {
     if (!img) return;
     
-    const hScale = (img.width !== 0) ? 800 / img.width : 1;
-    const vScale = (img.height !== 0) ? 800 / img.height : 1;
+    const hScale = (img.width !== 0) ? DEFAULT_SVGVIEWER_WIDTH / img.width : 1;
+    const vScale = (img.height !== 0) ? DEFAULT_SVGVIEWER_HEIGHT / img.height : 1;
     
     this.setState({
       scale: Number(Math.min(hScale, vScale).toPrecision(1)),
@@ -102,7 +105,7 @@ class Index extends React.Component {
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ? <div className="viewer-panel">
-              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate} width="800" height="400">
+              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate} width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}>
               {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
               })}
