@@ -102,22 +102,26 @@ class Index extends React.Component {
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ? <div className="viewer-panel">
-              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate}>
+              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate} width="800" height="400">
               {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
               })}
                 
               {(this.props.aggregationsData)
                 ? this.props.aggregationsData.map((agg) => {
+                  const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
+                  
                   return (
-                    <g transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
-                      <circle cx={agg.startX} cy={agg.startY} r={20} fill="rgba(255, 255, 255, 0.3)"/>
-                      <circle cx={agg.endX} cy={agg.endY} r={20} fill="rgba(255, 255, 255, 0.3)"/>
-                      <path d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} fill="rgba(255, 255, 255, 0.2)" />
+                    <g className="aggregated-text" transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                      <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
+                      <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
+                      <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
                       
-                      <text x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
-                        {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
-                      </text>
+                      <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngle}) translate(${-agg.startX}, ${-agg.startY})`}>
+                        <text className="text" x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
+                          {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
+                        </text>
+                      </g>
                     </g>
                   );
                 })

@@ -6,11 +6,8 @@ class SVGViewer extends Component {
     super(props);
     this.svg = null;
     
-    this.width = 800;
-    this.height = 800;
-    
-    this.offsetX = this.width / 2;
-    this.offsetY = this.height / 2;
+    this.offsetX = this.props.width / 2;
+    this.offsetY = this.props.height / 2;
     
     this.getPointerXY = this.getPointerXY.bind(this);
     
@@ -37,8 +34,8 @@ class SVGViewer extends Component {
     
     return (
       <svg ref={(r)=>this.svg=r} className="svgViewer"
-        viewBox={-this.width/2 + ' ' + -this.height/2 + ' ' + this.width + ' ' + this.height}
-        width={this.width} height={this.height}
+        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
+        width={this.props.width} height={this.props.height}
         onClick={this.click.bind(this)}>
         <g transform={transform}>
           <g>
@@ -101,8 +98,8 @@ class SVGViewer extends Component {
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
     }
-    let elementWidth = this.width;
-    let elementHeight = this.height;
+    let elementWidth = this.props.width;
+    let elementHeight = this.props.height;
     const sizeRatioX = elementWidth / boundingBox.width;
     const sizeRatioY = elementHeight / boundingBox.height;
 
@@ -112,8 +109,8 @@ class SVGViewer extends Component {
     
     //Compensate for SVG transformations
     //----------------
-    const offsetX = -this.width / 2;
-    const offsetY = -this.height / 2;
+    const offsetX = -this.props.width / 2;
+    const offsetY = -this.props.height / 2;
     
     const rotation = -this.state.rotate / 180 * Math.PI;
     
@@ -136,8 +133,14 @@ function stopEvent(e) {
   return false;
 }
 
-SVGViewer.propTypes = {};
-SVGViewer.defaultProps = {};
+SVGViewer.propTypes = {
+  width: PropTypes.number,
+  height: PropTypes.number,
+};
+SVGViewer.defaultProps = {
+  width: 400,
+  height: 400,
+};
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
   return {};
 }
