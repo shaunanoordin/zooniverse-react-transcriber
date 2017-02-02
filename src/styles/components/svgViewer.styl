@@ -11,7 +11,39 @@
   background: $tertiary
   display: block
   margin: 0 auto
-
+  border: 1px solid white
+  
+  &:focus
+    border: 1px solid red
+    
+  &.show-aggregations-none
+    .aggregated-text    
+      display: none
+    
+  &.show-aggregations-overlay
+    .aggregated-text    
+      .circle
+        fill: rgba(153, 51, 153, 0.2)
+      .path
+        fill: rgba(255, 255, 255, 0.3)
+      .text
+        fill: rgba(0, 0, 0, 0)
+    .aggregated-text:hover
+      .circle 
+      .path
+        fill: rgba(255, 255, 255, 1)
+      .text
+        fill: rgba(0, 0, 0, 1)
+  
+  &.show-aggregations-full
+    .aggregated-text    
+      .circle
+        fill: rgba(153, 51, 153, 1)
+      .path
+        fill: rgba(255, 255, 255, 1)
+      .text
+        fill: rgba(0, 0, 0, 1)
+    
 .svgImage-loading
   animation-name: loading-pulse
   animation-duration: 1s
