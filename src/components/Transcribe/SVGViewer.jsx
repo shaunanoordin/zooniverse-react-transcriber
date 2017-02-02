@@ -48,7 +48,10 @@ class SVGViewer extends Component {
     
     return (
       <svg ref={(r)=>this.svg=r}
-        className={'svgViewer ' + ((this.pointer.state === INPUT_IDLE) ? 'user-can-grab' : 'user-is-grabbing') }
+        className={
+          'svgViewer ' +
+          ((this.props.className) ? this.props.className : '')
+        }
         viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
         width={this.props.width} height={this.props.height}
         onClick={this.click.bind(this)}
@@ -57,8 +60,6 @@ class SVGViewer extends Component {
         onMouseMove={this.onMouseMove.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onWheel={(e) => {
-          console.log(e.deltaY, e.deltaMode);
-          
           if (e.deltaY > 0) {
             this.setState({
               scale: Math.max(this.state.scale - 0.1, MIN_SCALE),
@@ -145,6 +146,7 @@ class SVGViewer extends Component {
   
   click(e) {
     const pointerXY = this.getPointerXY(e);
+    console.log(pointerXY);
     
     //DEBUG
     return;
@@ -214,13 +216,10 @@ class SVGViewer extends Component {
     
     //Compensate for SVG transformations
     //----------------
-    const offsetX = -this.props.width / 2;
-    const offsetY = -this.props.height / 2;
-    
     const rotation = -this.state.rotate / 180 * Math.PI;
     
-    inputX = ((inputX + offsetX) / this.state.scale - this.state.translateX);
-    inputY = ((inputY + offsetY) / this.state.scale - this.state.translateY);
+    inputX = ((inputX - this.offsetX) / this.state.scale - this.state.translateX);
+    inputY = ((inputY - this.offsetY) / this.state.scale - this.state.translateY);
     
     const calculatedInputX = inputX * Math.cos(rotation) - inputY * Math.sin(rotation);
     const calculatedInputY = inputX * Math.sin(rotation) + inputY * Math.cos(rotation);

@@ -11,6 +11,11 @@ import SVGImage from './SVGImage.jsx';
 const DEFAULT_SVGVIEWER_WIDTH = 1024;
 const DEFAULT_SVGVIEWER_HEIGHT = 640;
 
+const SHOWAGGREGATIONS_NONE = 'show-aggregations-none';
+const SHOWAGGREGATIONS_OVERLAY = 'show-aggregations-overlay';
+const SHOWAGGREGATIONS_FULL = 'show-aggregations-full';
+const SHOWAGGREGATIONS_CENSORED = 'show-aggregations-censored';
+
 class Index extends React.Component {
   constructor(props) {
     super(props);
@@ -30,12 +35,12 @@ class Index extends React.Component {
       translateY: 0,
       rotate: 0,
       loadedImage: { width: 0, height: 0 },
+      showAggregations: SHOWAGGREGATIONS_OVERLAY,
     };
   }
   
   execFetchSubject() {
     const subjectId = this.inputSubjectID.value;
-    console.log(subjectId);
     this.props.dispatch(fetchSubject(subjectId));
   }
   
@@ -65,11 +70,15 @@ class Index extends React.Component {
                 }
               }}
             />
-            <button onClick={this.fetchSubject}>&raquo;</button>
+            <button onClick={this.execFetchSubject}>&raquo;</button>
           </div>
           <div className="status-subpanel">
             {(this.props.subjectID)
-              ? <p>Subject ID {this.props.subjectID}</p>
+              ? (<p>
+                  <button onClick={this.goToPrevPage.bind(this)}>&laquo;</button>
+                  <span>Subject ID {this.props.subjectID}</span>
+                  <button onClick={this.goToNextPage.bind(this)}>&raquo;</button>
+                </p>)
               : null
             }
             
@@ -94,7 +103,17 @@ class Index extends React.Component {
                 case status.STATUS_LOADING:
                   return <p>Looking for Aggregations...</p>;
                 case status.STATUS_READY:
-                  return <p>Aggregations ready.</p>;
+                  return (
+                    <p>
+                      Aggregations ready.
+                      <select onChange={this.setShowAggregations.bind(this)} value={this.state.showAggregations}>
+                        <option value={SHOWAGGREGATIONS_NONE}>None</option>
+                        <option value={SHOWAGGREGATIONS_OVERLAY}>Overlay</option>
+                        <option value={SHOWAGGREGATIONS_FULL}>Full</option>
+                        <option value={SHOWAGGREGATIONS_CENSORED}>Censored by the FBI</option>
+                      </select>
+                    </p>
+                  );
                 case status.STATUS_ERROR:
                   return <p>No Aggregations, sorry.</p>;
               }
@@ -105,7 +124,14 @@ class Index extends React.Component {
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ? <div className="viewer-panel">
-              <SVGViewer scale={this.state.scale} translateX={this.state.translateX} translateY={this.state.translateY} rotate={this.state.rotate} width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}>
+              <SVGViewer
+                scale={this.state.scale}
+                translateX={this.state.translateX}
+                translateY={this.state.translateY}
+                rotate={this.state.rotate}
+                width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}
+                className={this.state.showAggregations}
+              >
               {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
               })}
@@ -119,7 +145,6 @@ class Index extends React.Component {
                       <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
                       <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
                       <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
-                      
                       <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngle}) translate(${-agg.startX}, ${-agg.startY})`}>
                         <text className="text" x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
                           {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
@@ -220,6 +245,30 @@ class Index extends React.Component {
       translateX: this.inputTranslateX.value,
       translateY: this.inputTranslateY.value,
       rotate: this.inputRotate.value,
+    });
+  }
+  
+  goToNextPage() {
+    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    try {
+      const targetSubjectID = parseInt(this.props.subjectID) + 1;
+      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+    } catch (err) {}
+  }
+  
+  goToPrevPage() {
+    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    try {
+      const targetSubjectID = parseInt(this.props.subjectID) - 1;
+      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+    } catch (err) {}
+  }
+  
+  setShowAggregations(e) {
+    const val = e.target.options[e.target.selectedIndex].value;
+
+    this.setState({
+      showAggregations: val
     });
   }
 }
