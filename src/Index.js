@@ -6,6 +6,7 @@ import App from './components/App.jsx';
 import Transcribe from './components/Transcribe/Index.jsx';
 import Transform from './components/Transform/Index.jsx';
 import Paint from './components/Paint/Index.jsx';
+import Experimental from './components/Experimental/Index.jsx';
 import Nothing from './components/Nothing.jsx';
 
 import oauth from 'panoptes-client/lib/oauth';
@@ -30,6 +31,7 @@ oauth.init(config.panoptesAppId)
             <Route path="/transcribe" component={Transcribe}/>
             <Route path="/transform" component={Transform}/>
             <Route path="/paint" component={Paint}/>
+            <Route path="/experimental" component={Experimental}/>
           </Route>
           <Route path="*" component={Nothing}/>
         </Router>
