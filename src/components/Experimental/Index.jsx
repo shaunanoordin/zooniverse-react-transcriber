@@ -10,14 +10,19 @@ export default class Index extends React.Component {
     this.actors = [
       new Actor('#c33', 400, 250, 20, AVO.SHAPE_CIRCLE),
       new Actor('#39c', 400, 225, 20, AVO.SHAPE_SQUARE),
+      
       new Actor('#fc3', 300, 250, 20, AVO.SHAPE_SQUARE),
       new Actor('#3c9', 290, 240, 20, AVO.SHAPE_SQUARE),
+      
       new Actor('#939', 450, 250, 20, AVO.SHAPE_CIRCLE),
       new Actor('#3c3', 460, 250, 20, AVO.SHAPE_CIRCLE),
+      new Actor('#9c3', 450, 230, 20, AVO.SHAPE_CIRCLE),
+      
       new Actor('#c39', 400, 300, 20, AVO.SHAPE_CIRCLE),
       new Actor('#3cc', 410, 310, 20, AVO.SHAPE_SQUARE),
     ];
     
+    this.corrections = [];
     for (let a = 0; a < this.actors.length; a++ ) {
       for (let b = a+1; b < this.actors.length; b++ ) {
         const objA = this.actors[a];
@@ -25,25 +30,63 @@ export default class Index extends React.Component {
         
         const correction = this.checkCollision(this.actors[a], this.actors[b]);
         
-        if (false && !correction) {
-          
-        } else {
+        if (!!correction) {
           objA.hasCollided = true;
           objB.hasCollided = true;
+          
+          this.corrections.push(new Actor('#ccc', correction.ax, correction.ay, objA.size, objA.shape));
+          this.corrections.push(new Actor('#ccc', correction.bx, correction.by, objB.size, objB.shape));
         }
       }
     }
-    
-    
-    
+    this.actors.push(...this.corrections);
   }
   
   /*  Checks if objA is touching objB.
-      If true, returns the x-y vector for pushing objA away from objB.
+      If true, returns the corrected coordinates for objA and objB, in form:
+        { ax, ay, bx, by }
       If false, returns null.
    */
   checkCollision(objA, objB) {
     
+    if (!objA || !objB || objA === objB) return null;
+    
+    let fractionA = 0;
+    let fractionB = 0;
+    if (!objA.solid || !objB.solid) {
+      //If either object isn't solid, there's no collision correction.
+    } else if (objA.canBeMoved && objB.canBeMoved) {
+      fractionA = 0.5;
+      fractionB = 0.5;
+    } else if (objA.canBeMoved) {
+      fractionA = 1;
+    } else if (objB.canBeMoved) {
+      fractionB = 1;
+    }
+    
+    if (objA.shape === AVO.SHAPE_CIRCLE && objB.shape === AVO.SHAPE_CIRCLE) {
+      const distX = objB.x - objA.x;
+      const distY = objB.y - objA.y;
+      const dist = Math.sqrt(distX * distX + distY * distY);
+      const minimumDist = objA.radius + objB.radius;
+      if (dist >= minimumDist) {
+        return null;
+      }
+      
+      const angle = Math.atan2(distY, distX);
+      const correctDist = minimumDist;
+      const cosAngle = Math.cos(angle);
+      const sinAngle = Math.sin(angle);
+      
+      return {
+        ax: objA.x - cosAngle * (correctDist - dist) * fractionA,
+        ay: objA.y - sinAngle * (correctDist - dist) * fractionA,
+        bx: objB.x + cosAngle * (correctDist - dist) * fractionB,
+        by: objB.y + sinAngle * (correctDist - dist) * fractionB,
+      }
+    }
+    
+    return null;
   }
   
   render() {
@@ -53,7 +96,6 @@ export default class Index extends React.Component {
           <rect x="0" y="0" width={this.svgWidth} height={this.svgHeight} strokeWidth="2" stroke="#999" fill="none" />
           
           {this.actors.map((actor) => {
-            console.log(actor);
             switch (actor.shape) {
               case AVO.SHAPE_CIRCLE:
                 return (
