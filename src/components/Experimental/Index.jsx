@@ -8,18 +8,24 @@ export default class Index extends React.Component {
     this.svgHeight = 500;
     
     this.actors = [
-      new Actor('#c33', 400, 250, 40, AVO.SHAPE_CIRCLE),
-      new Actor('#39c', 400, 200, 40, AVO.SHAPE_SQUARE),
+      //new Actor('#c33', 400, 250, 40, AVO.SHAPE_CIRCLE),
+      //new Actor('#39c', 400, 200, 40, AVO.SHAPE_SQUARE),
       
-      new Actor('#c33', 170, 240, 40, AVO.SHAPE_SQUARE),
-      new Actor('#39c', 200, 230, 40, AVO.SHAPE_SQUARE),
+      //new Actor('#c33', 170, 240, 40, AVO.SHAPE_SQUARE),
+      //new Actor('#39c', 200, 230, 40, AVO.SHAPE_SQUARE),
       
-      new Actor('#c33', 500, 250, 40, AVO.SHAPE_CIRCLE),
-      new Actor('#39c', 520, 250, 40, AVO.SHAPE_CIRCLE),
-      new Actor('#fc3', 500, 210, 40, AVO.SHAPE_CIRCLE),
+      //new Actor('#39c', 120, 110, 20, AVO.SHAPE_SQUARE),
+      //new Actor('#c33', 100, 100, 40, AVO.SHAPE_SQUARE),
+      
+      //new Actor('#c33', 500, 250, 40, AVO.SHAPE_CIRCLE),
+      //new Actor('#39c', 520, 250, 40, AVO.SHAPE_CIRCLE),
+      //new Actor('#fc3', 500, 210, 40, AVO.SHAPE_CIRCLE),
       
       new Actor('#c33', 400, 350, 40, AVO.SHAPE_CIRCLE),
-      new Actor('#39c', 380, 360, 40, AVO.SHAPE_SQUARE),
+      new Actor('#39c', 400 + 30, 350 - 10, 40, AVO.SHAPE_SQUARE),
+      
+      new Actor('#39c', 500, 350, 40, AVO.SHAPE_SQUARE),
+      new Actor('#c33', 535, 350, 40, AVO.SHAPE_CIRCLE),
     ];
     
     this.corrections = [];
@@ -42,6 +48,8 @@ export default class Index extends React.Component {
     this.actors.push(...this.corrections);
   }
   
+  //----------------------------------------------------------------
+  
   /*  Checks if objA is touching objB.
       If true, returns the corrected coordinates for objA and objB, in form:
         { ax, ay, bx, by }
@@ -50,6 +58,37 @@ export default class Index extends React.Component {
   checkCollision(objA, objB) {
     if (!objA || !objB || objA === objB) return null;
     
+    if (objA.shape === AVO.SHAPE_CIRCLE && objB.shape === AVO.SHAPE_CIRCLE) {
+      return this.checkCollision_circleCircle(objA, objB);
+    }
+    
+    else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_SQUARE) {
+      return this.checkCollision_polygonPolygon(objA, objB);
+    }
+    
+    else if (objA.shape === AVO.SHAPE_CIRCLE && objB.shape === AVO.SHAPE_SQUARE) {
+      return this.checkCollision_circlePolygon(objA, objB);
+    }
+    
+    else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_CIRCLE) {
+      let correction = this.checkCollision_circlePolygon(objB, objA);
+      if (correction) {
+        correction = {
+          ax: correction.bx,
+          ay: correction.by,
+          bx: correction.ax,
+          by: correction.ay,
+        };
+      }
+      return correction;
+    }
+    
+    return null;
+  }
+  
+  //----------------------------------------------------------------
+  
+  checkCollision_circlePolygon(objA, objB) {
     let fractionA = 0;
     let fractionB = 0;
     if (!objA.solid || !objB.solid) {
@@ -63,72 +102,150 @@ export default class Index extends React.Component {
       fractionB = 1;
     }
     
-    if (objA.shape === AVO.SHAPE_CIRCLE && objB.shape === AVO.SHAPE_CIRCLE) {
-      const distX = objB.x - objA.x;
-      const distY = objB.y - objA.y;
-      const dist = Math.sqrt(distX * distX + distY * distY);
-      const minimumDist = objA.radius + objB.radius;
-      if (dist >= minimumDist) {
-        return null;
-      }
-      
-      const angle = Math.atan2(distY, distX);
-      const correctDist = minimumDist;
-      const cosAngle = Math.cos(angle);
-      const sinAngle = Math.sin(angle);
-      
-      return {
-        ax: objA.x - cosAngle * (correctDist - dist) * fractionA,
-        ay: objA.y - sinAngle * (correctDist - dist) * fractionA,
-        bx: objB.x + cosAngle * (correctDist - dist) * fractionB,
-        by: objB.y + sinAngle * (correctDist - dist) * fractionB,
+    const distX = objB.x - objA.x;
+    const distY = objB.y - objA.y;
+    const dist = Math.sqrt(distX * distX + distY * distY);
+    const angle = Math.atan2(distY, distX);
+    
+    let correction = null;
+    const verticesA = [
+      { x: objA.x + Math.cos(angle) * objA.radius, y: objA.y + Math.sin(angle) * objA.radius },
+      { x: objA.x - Math.cos(angle) * objA.radius, y: objA.y - Math.sin(angle) * objA.radius },
+    ];
+    const verticesB = objB.vertices;
+    
+    const axis = (dist !== 0)
+      ? { x: distX / dist, y: distY / dist }
+      : { x: 0, y: 0 };
+    const projectionA = { min: Infinity, max: -Infinity };
+    const projectionB = { min: Infinity, max: -Infinity };
+
+    for (let j = 0; j < verticesA.length; j++) {
+      const val = dotProduct(axis, verticesA[j]);
+      projectionA.min = Math.min(projectionA.min, val);
+      projectionA.max = Math.max(projectionA.max, val);
+    }
+    for (let j = 0; j < verticesB.length; j++) {
+      const val = dotProduct(axis, verticesB[j]);
+      projectionB.min = Math.min(projectionB.min, val);
+      projectionB.max = Math.max(projectionB.max, val);
+    }
+
+    const overlap = Math.max(0, Math.min(projectionA.max, projectionB.max) - Math.max(projectionA.min, projectionB.min));
+    if (!correction || overlap < correction.magnitude) {
+      const sign = Math.sign((projectionB.min + projectionB.max) - (projectionA.min + projectionA.max));
+      correction = {
+        magnitude: overlap,
+        x: axis.x * overlap * sign,
+        y: axis.y * overlap * sign,
       };
     }
+
+    if (correction && correction.magnitude > 0) {
+      return {
+        ax: objA.x - correction.x * fractionA,
+        ay: objA.y - correction.y * fractionA,
+        bx: objB.x + correction.x * fractionB,
+        by: objB.y + correction.y * fractionB,
+      };
+    }
+  }
+  
+  //----------------------------------------------------------------
+  
+  checkCollision_circleCircle(objA, objB) {
+    let fractionA = 0;
+    let fractionB = 0;
+    if (!objA.solid || !objB.solid) {
+      //If either object isn't solid, there's no collision correction.
+    } else if (objA.canBeMoved && objB.canBeMoved) {
+      fractionA = 0.5;
+      fractionB = 0.5;
+    } else if (objA.canBeMoved) {
+      fractionA = 1;
+    } else if (objB.canBeMoved) {
+      fractionB = 1;
+    }
     
-    else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_SQUARE) {
-      let correction = null;
-      const projectionAxes = [...this.getShapeNormals(objA), ...this.getShapeNormals(objB)];
-      const verticesA = objA.vertices;
-      const verticesB = objB.vertices;
-      for (let i = 0; i < projectionAxes.length; i++) {
-        const axis = projectionAxes[i];
-        const projectionA = { min: Infinity, max: -Infinity };
-        const projectionB = { min: Infinity, max: -Infinity };
-        
-        for (let j = 0; j < verticesA.length; j++) {
-          const valA = dotProduct(axis, verticesA[j]);
-          projectionA.min = Math.min(projectionA.min, valA);
-          projectionA.max = Math.max(projectionA.max, valA);
-        }
-        for (let j = 0; j < verticesB.length; j++) {
-          const val = dotProduct(axis, verticesB[j]);
-          projectionB.min = Math.min(projectionB.min, val);
-          projectionB.max = Math.max(projectionB.max, val);
-        }
-        
-        const overlap = Math.max(0, Math.min(projectionA.max, projectionB.max) - Math.max(projectionA.min, projectionB.min));
-        if (!correction || overlap < correction.magnitude) {
-          const sign = Math.sign((projectionB.min + projectionB.max) - (projectionA.min + projectionA.max));
-          correction = {
-            magnitude: overlap,
-            x: axis.x * overlap * sign,
-            y: axis.y * overlap * sign,
-          };
-        }
+    const distX = objB.x - objA.x;
+    const distY = objB.y - objA.y;
+    const dist = Math.sqrt(distX * distX + distY * distY);
+    const minimumDist = objA.radius + objB.radius;
+    if (dist >= minimumDist) {
+      return null;
+    }
+
+    const angle = Math.atan2(distY, distX);
+    const correctDist = minimumDist;
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+
+    return {
+      ax: objA.x - cosAngle * (correctDist - dist) * fractionA,
+      ay: objA.y - sinAngle * (correctDist - dist) * fractionA,
+      bx: objB.x + cosAngle * (correctDist - dist) * fractionB,
+      by: objB.y + sinAngle * (correctDist - dist) * fractionB,
+    };
+  }
+  
+  //----------------------------------------------------------------
+  
+  checkCollision_polygonPolygon(objA, objB) {
+    let fractionA = 0;
+    let fractionB = 0;
+    if (!objA.solid || !objB.solid) {
+      //If either object isn't solid, there's no collision correction.
+    } else if (objA.canBeMoved && objB.canBeMoved) {
+      fractionA = 0.5;
+      fractionB = 0.5;
+    } else if (objA.canBeMoved) {
+      fractionA = 1;
+    } else if (objB.canBeMoved) {
+      fractionB = 1;
+    }
+    
+    let correction = null;
+    const projectionAxes = [...this.getShapeNormals(objA), ...this.getShapeNormals(objB)];
+    const verticesA = objA.vertices;
+    const verticesB = objB.vertices;
+    for (let i = 0; i < projectionAxes.length; i++) {
+      const axis = projectionAxes[i];
+      const projectionA = { min: Infinity, max: -Infinity };
+      const projectionB = { min: Infinity, max: -Infinity };
+
+      for (let j = 0; j < verticesA.length; j++) {
+        const val = dotProduct(axis, verticesA[j]);
+        projectionA.min = Math.min(projectionA.min, val);
+        projectionA.max = Math.max(projectionA.max, val);
       }
-      
-      if (correction && correction.magnitude > 0) {
-        return {
-          ax: objA.x - correction.x * fractionA,
-          ay: objA.y - correction.y * fractionA,
-          bx: objB.x + correction.x * fractionB,
-          by: objB.y + correction.y * fractionB,
+      for (let j = 0; j < verticesB.length; j++) {
+        const val = dotProduct(axis, verticesB[j]);
+        projectionB.min = Math.min(projectionB.min, val);
+        projectionB.max = Math.max(projectionB.max, val);
+      }
+
+      const overlap = Math.max(0, Math.min(projectionA.max, projectionB.max) - Math.max(projectionA.min, projectionB.min));
+      if (!correction || overlap < correction.magnitude) {
+        const sign = Math.sign((projectionB.min + projectionB.max) - (projectionA.min + projectionA.max));
+        correction = {
+          magnitude: overlap,
+          x: axis.x * overlap * sign,
+          y: axis.y * overlap * sign,
         };
       }
     }
-    
-    return null;
+
+    if (correction && correction.magnitude > 0) {
+      return {
+        ax: objA.x - correction.x * fractionA,
+        ay: objA.y - correction.y * fractionA,
+        bx: objB.x + correction.x * fractionB,
+        by: objB.y + correction.y * fractionB,
+      };
+    }
   }
+  
+  //----------------------------------------------------------------
   
   /*  Gets the NORMALISED normals for each edge of the object's shape. Assumes the object has the 'vertices' property.
    */
@@ -162,6 +279,8 @@ export default class Index extends React.Component {
     });
     //--------------------------------
   }
+  
+  //----------------------------------------------------------------
   
   render() {
     return (
