@@ -8,18 +8,18 @@ export default class Index extends React.Component {
     this.svgHeight = 500;
     
     this.actors = [
-      //new Actor('#c33', 400, 250, 20, AVO.SHAPE_CIRCLE),
-      //new Actor('#39c', 400, 225, 20, AVO.SHAPE_SQUARE),
+      new Actor('#c33', 400, 250, 40, AVO.SHAPE_CIRCLE),
+      new Actor('#39c', 400, 200, 40, AVO.SHAPE_SQUARE),
       
-      new Actor('#fc3', 300, 250, 20, AVO.SHAPE_SQUARE),
-      new Actor('#3c9', 290, 240, 20, AVO.SHAPE_SQUARE),
+      new Actor('#c33', 170, 240, 40, AVO.SHAPE_SQUARE),
+      new Actor('#39c', 200, 230, 40, AVO.SHAPE_SQUARE),
       
-      //new Actor('#939', 450, 250, 20, AVO.SHAPE_CIRCLE),
-      //new Actor('#3c3', 460, 250, 20, AVO.SHAPE_CIRCLE),
-      //new Actor('#9c3', 450, 230, 20, AVO.SHAPE_CIRCLE),
+      new Actor('#c33', 500, 250, 40, AVO.SHAPE_CIRCLE),
+      new Actor('#39c', 520, 250, 40, AVO.SHAPE_CIRCLE),
+      new Actor('#fc3', 500, 210, 40, AVO.SHAPE_CIRCLE),
       
-      //new Actor('#c39', 400, 300, 20, AVO.SHAPE_CIRCLE),
-      //new Actor('#3cc', 410, 310, 20, AVO.SHAPE_SQUARE),
+      new Actor('#c33', 400, 350, 40, AVO.SHAPE_CIRCLE),
+      new Actor('#39c', 380, 360, 40, AVO.SHAPE_SQUARE),
     ];
     
     this.corrections = [];
@@ -83,30 +83,49 @@ export default class Index extends React.Component {
         ay: objA.y - sinAngle * (correctDist - dist) * fractionA,
         bx: objB.x + cosAngle * (correctDist - dist) * fractionB,
         by: objB.y + sinAngle * (correctDist - dist) * fractionB,
-      }
+      };
     }
     
     else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_SQUARE) {
+      let correction = null;
       const projectionAxes = [...objA.getShapeNormals(), ...objB.getShapeNormals()];
       const verticesA = objA.getShapeVertices();
       const verticesB = objB.getShapeVertices();
       for (let i = 0; i < projectionAxes.length; i++) {
+        const axis = projectionAxes[i];
         const projectionA = { min: Infinity, max: -Infinity };
         const projectionB = { min: Infinity, max: -Infinity };
         
         for (let j = 0; j < verticesA.length; j++) {
-          const valA = dotProduct(projectionAxes[i], verticesA[j]);
+          const valA = dotProduct(axis, verticesA[j]);
           projectionA.min = Math.min(projectionA.min, valA);
           projectionA.max = Math.max(projectionA.max, valA);
         }
         for (let j = 0; j < verticesB.length; j++) {
-          const val = dotProduct(projectionAxes[i], verticesB[j]);
+          const val = dotProduct(axis, verticesB[j]);
           projectionB.min = Math.min(projectionB.min, val);
           projectionB.max = Math.max(projectionB.max, val);
         }
         
-        console.log('-'.repeat(40), '\n', projectionA, projectionB);
-      };
+        const overlap = Math.max(0, Math.min(projectionA.max, projectionB.max) - Math.max(projectionA.min, projectionB.min));
+        if (!correction || overlap < correction.magnitude) {
+          const sign = Math.sign((projectionB.min + projectionB.max) - (projectionA.min + projectionA.max));
+          correction = {
+            magnitude: overlap,
+            x: axis.x * overlap * sign,
+            y: axis.y * overlap * sign,
+          };
+        }
+      }
+      
+      if (correction && correction.magnitude > 0) {
+        return {
+          ax: objA.x - correction.x * fractionA,
+          ay: objA.y - correction.y * fractionA,
+          bx: objB.x + correction.x * fractionB,
+          by: objB.y + correction.y * fractionB,
+        };
+      }
     }
     
     return null;
