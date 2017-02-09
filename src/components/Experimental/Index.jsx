@@ -48,7 +48,6 @@ export default class Index extends React.Component {
       If false, returns null.
    */
   checkCollision(objA, objB) {
-    
     if (!objA || !objB || objA === objB) return null;
     
     let fractionA = 0;
@@ -88,9 +87,9 @@ export default class Index extends React.Component {
     
     else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_SQUARE) {
       let correction = null;
-      const projectionAxes = [...objA.getShapeNormals(), ...objB.getShapeNormals()];
-      const verticesA = objA.getShapeVertices();
-      const verticesB = objB.getShapeVertices();
+      const projectionAxes = [...this.getShapeNormals(objA), ...this.getShapeNormals(objB)];
+      const verticesA = objA.vertices;
+      const verticesB = objB.vertices;
       for (let i = 0; i < projectionAxes.length; i++) {
         const axis = projectionAxes[i];
         const projectionA = { min: Infinity, max: -Infinity };
@@ -129,6 +128,39 @@ export default class Index extends React.Component {
     }
     
     return null;
+  }
+  
+  /*  Gets the NORMALISED normals for each edge of the object's shape. Assumes the object has the 'vertices' property.
+   */
+  getShapeNormals(obj) {
+    const vertices = obj.vertices;
+    if (!vertices) return null;
+    if (vertices.length < 2) return [];  //Look you need to have at least three vertices to be a shape.
+    
+    //First, calculate the edges connecting each vertice.
+    //--------------------------------
+    const edges = [];
+    for (let i = 0; i < vertices.length; i++) {
+      const p1 = vertices[i];
+      const p2 = vertices[(i+1) % vertices.length];
+      edges.push({
+        x: p2.x - p1.x,
+        y: p2.y - p1.y,
+      });
+    }
+    //--------------------------------
+    
+    //Calculate the NORMALISED normals for each edge.
+    //--------------------------------
+    return edges.map((edge) => {
+      const dist = Math.sqrt(edge.x * edge.x + edge.y * edge.y);
+      if (dist === 0) return { x: 0, y: 0 };
+      return {
+        x: -edge.y / dist,
+        y: edge.x / dist,
+      };
+    });
+    //--------------------------------
   }
   
   render() {
@@ -172,10 +204,6 @@ export class Actor {
     this.solid = (shape !== AVO.SHAPE_NONE);
     this.canBeMoved = true;
     this.rotation = AVO.ROTATION_SOUTH;  //Rotation in radians; clockwise positive.
-    
-    this.getShapeVertices = this.getShapeVertices.bind(this);
-    this.getShapeEdges = this.getShapeEdges.bind(this);
-    this.getShapeNormals = this.getShapeNormals.bind(this);
   }
   
   get left() { return this.x - this.size / 2; }
@@ -213,45 +241,17 @@ export class Actor {
         break;
     }
   }
-  
-  getShapeVertices() {
-    const vertices = [];
-    
-    //TODO
+  get vertices() {
+    const v = [];
+
     if (this.shape === AVO.SHAPE_SQUARE) {
-      vertices.push({ x: this.left, y: this.top });
-      vertices.push({ x: this.right, y: this.top });
-      vertices.push({ x: this.right, y: this.bottom });
-      vertices.push({ x: this.left, y: this.bottom });
+      v.push({ x: this.left, y: this.top });
+      v.push({ x: this.right, y: this.top });
+      v.push({ x: this.right, y: this.bottom });
+      v.push({ x: this.left, y: this.bottom });
     }
     
-    return vertices;
-  }
-  
-  getShapeEdges() {
-    const vertices = this.getShapeVertices();
-    if (vertices.length < 2) return [];
-    const edges = [];
-    for (let i = 0; i < vertices.length; i++) {
-      const p1 = vertices[i];
-      const p2 = vertices[(i+1) % vertices.length];
-      edges.push({
-        x: p2.x - p1.x,
-        y: p2.y - p1.y,
-      });
-    }    
-    return edges;
-  }
-  
-  getShapeNormals() {
-    return this.getShapeEdges().map((edge) => {
-      const dist = Math.sqrt(edge.x * edge.x + edge.y * edge.y);
-      if (dist === 0) return { x: 0, y: 0 };
-      return {
-        x: -edge.y / dist,
-        y: edge.x / dist,
-      };
-    });
+    return v;
   }
 }
 //==============================================================================
