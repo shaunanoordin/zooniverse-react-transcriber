@@ -8,18 +8,18 @@ export default class Index extends React.Component {
     this.svgHeight = 500;
     
     this.actors = [
-      new Actor('#c33', 400, 250, 20, AVO.SHAPE_CIRCLE),
-      new Actor('#39c', 400, 225, 20, AVO.SHAPE_SQUARE),
+      //new Actor('#c33', 400, 250, 20, AVO.SHAPE_CIRCLE),
+      //new Actor('#39c', 400, 225, 20, AVO.SHAPE_SQUARE),
       
       new Actor('#fc3', 300, 250, 20, AVO.SHAPE_SQUARE),
       new Actor('#3c9', 290, 240, 20, AVO.SHAPE_SQUARE),
       
-      new Actor('#939', 450, 250, 20, AVO.SHAPE_CIRCLE),
-      new Actor('#3c3', 460, 250, 20, AVO.SHAPE_CIRCLE),
-      new Actor('#9c3', 450, 230, 20, AVO.SHAPE_CIRCLE),
+      //new Actor('#939', 450, 250, 20, AVO.SHAPE_CIRCLE),
+      //new Actor('#3c3', 460, 250, 20, AVO.SHAPE_CIRCLE),
+      //new Actor('#9c3', 450, 230, 20, AVO.SHAPE_CIRCLE),
       
-      new Actor('#c39', 400, 300, 20, AVO.SHAPE_CIRCLE),
-      new Actor('#3cc', 410, 310, 20, AVO.SHAPE_SQUARE),
+      //new Actor('#c39', 400, 300, 20, AVO.SHAPE_CIRCLE),
+      //new Actor('#3cc', 410, 310, 20, AVO.SHAPE_SQUARE),
     ];
     
     this.corrections = [];
@@ -86,6 +86,29 @@ export default class Index extends React.Component {
       }
     }
     
+    else if (objA.shape === AVO.SHAPE_SQUARE && objB.shape === AVO.SHAPE_SQUARE) {
+      const projectionAxes = [...objA.getShapeNormals(), ...objB.getShapeNormals()];
+      const verticesA = objA.getShapeVertices();
+      const verticesB = objB.getShapeVertices();
+      for (let i = 0; i < projectionAxes.length; i++) {
+        const projectionA = { min: Infinity, max: -Infinity };
+        const projectionB = { min: Infinity, max: -Infinity };
+        
+        for (let j = 0; j < verticesA.length; j++) {
+          const valA = dotProduct(projectionAxes[i], verticesA[j]);
+          projectionA.min = Math.min(projectionA.min, valA);
+          projectionA.max = Math.max(projectionA.max, valA);
+        }
+        for (let j = 0; j < verticesB.length; j++) {
+          const val = dotProduct(projectionAxes[i], verticesB[j]);
+          projectionB.min = Math.min(projectionB.min, val);
+          projectionB.max = Math.max(projectionB.max, val);
+        }
+        
+        console.log('-'.repeat(40), '\n', projectionA, projectionB);
+      };
+    }
+    
     return null;
   }
   
@@ -130,6 +153,10 @@ export class Actor {
     this.solid = (shape !== AVO.SHAPE_NONE);
     this.canBeMoved = true;
     this.rotation = AVO.ROTATION_SOUTH;  //Rotation in radians; clockwise positive.
+    
+    this.getShapeVertices = this.getShapeVertices.bind(this);
+    this.getShapeEdges = this.getShapeEdges.bind(this);
+    this.getShapeNormals = this.getShapeNormals.bind(this);
   }
   
   get left() { return this.x - this.size / 2; }
@@ -167,9 +194,48 @@ export class Actor {
         break;
     }
   }
+  
+  getShapeVertices() {
+    const vertices = [];
+    
+    //TODO
+    if (this.shape === AVO.SHAPE_SQUARE) {
+      vertices.push({ x: this.left, y: this.top });
+      vertices.push({ x: this.right, y: this.top });
+      vertices.push({ x: this.right, y: this.bottom });
+      vertices.push({ x: this.left, y: this.bottom });
+    }
+    
+    return vertices;
+  }
+  
+  getShapeEdges() {
+    const vertices = this.getShapeVertices();
+    if (vertices.length < 2) return [];
+    const edges = [];
+    for (let i = 0; i < vertices.length; i++) {
+      const p1 = vertices[i];
+      const p2 = vertices[(i+1) % vertices.length];
+      edges.push({
+        x: p2.x - p1.x,
+        y: p2.y - p1.y,
+      });
+    }    
+    return edges;
+  }
+  
+  getShapeNormals() {
+    return this.getShapeEdges().map((edge) => {
+      const dist = Math.sqrt(edge.x * edge.x + edge.y * edge.y);
+      if (dist === 0) return { x: 0, y: 0 };
+      return {
+        x: -edge.y / dist,
+        y: edge.x / dist,
+      };
+    });
+  }
 }
 //==============================================================================
-
 
 export const AVO = {
   SHAPE_NONE: 0,  //No shape = no collision
@@ -183,4 +249,9 @@ export const AVO = {
   DIRECTION_SOUTH: 1,
   DIRECTION_WEST: 2,
   DIRECTION_NORTH: 3,
+}
+
+function dotProduct(vectorA, vectorB) {
+  if (!vectorA || !vectorB) return null;
+  return vectorA.x * vectorB.x + vectorA.y * vectorB.y;
 }
