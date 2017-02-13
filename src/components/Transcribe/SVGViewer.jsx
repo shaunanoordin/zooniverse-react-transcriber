@@ -98,10 +98,6 @@ class SVGViewer extends Component {
     );
   }
   
-  componentDidMount() {
-    
-  }
-  
   onMouseDown(e) {
     const pointerXY = this.getPointerXY(e);
     this.pointer.state = INPUT_ACTIVE;
@@ -188,9 +184,9 @@ class SVGViewer extends Component {
   }
   
   getPointerXYAdjustedForSVGTransform(e) {
-    const input = this.getPointerXY(e);
-    let inputX = input.x;
-    let inputY = input.y;
+    const pointerXY = this.getPointerXY(e);
+    let inputX = pointerXY.x;
+    let inputY = pointerXY.y;
     
     //Compensate for SVG transformations
     //----------------

@@ -140,8 +140,26 @@ class Index extends React.Component {
                 ? this.props.aggregationsData.map((agg) => {
                   const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
                   
+                  const testRaw = agg.raw.reduce((total, cur) => {
+                    return total + '>' + cur.text + '\n';
+                  }, 'RAW CLASSIFICATIONS\n--------\n');
+                  
+                  console.log(testRaw);
+                  
+                  const testClick = (e) => {
+                    alert(testRaw);
+                  };
+                  //const testClick = (function() { return function(e) {
+                  //  alert(testRaw);
+                  //}})();
+                  
                   return (
-                    <g key={'aggtext_' + agg.startX + '_' + agg.startY} className="aggregated-text" transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                    <g
+                      key={'aggtext_' + agg.startX + '_' + agg.startY}
+                      className="aggregated-text"
+                      transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}
+                      onClick={testClick}
+                    >
                       <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
                       <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
                       <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
