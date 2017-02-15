@@ -67,7 +67,6 @@ class Index extends React.Component {
               translateX={this.state.translateX}
               translateY={this.state.translateY}
               rotate={this.state.rotate}
-              width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}
               className={this.state.showAggregations}
             >
             {this.props.subjectData.locations.map((loc, locIndex) => {

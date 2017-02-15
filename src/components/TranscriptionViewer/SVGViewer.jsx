@@ -19,11 +19,12 @@ class SVGViewer extends Component {
     
     this.tmpTransform = null;
     
-    this.offsetX = this.props.width / 2;
-    this.offsetY = this.props.height / 2;
+    this.offsetX = 0;  //To be updated when we figure out what the bounding box for the SVG is.
+    this.offsetY = 0;
     
     this.getPointerXY = this.getPointerXY.bind(this);
     this.getPointerXYAdjustedForSVGTransform = this.getPointerXYAdjustedForSVGTransform.bind(this);
+    this.getBoundingBox = this.getBoundingBox.bind(this);
     
     this.state = {
       circles: [],
@@ -45,6 +46,9 @@ class SVGViewer extends Component {
 
   render() {
     const transform = `scale(${this.state.scale}) translate(${this.state.translateX}, ${this.state.translateY}) rotate(${this.state.rotate}) `;
+    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
+      ? this.svg.getBoundingClientRect()
+      : { left: 0, top: 0, width: 10, height: 10 };
     
     return (
       <svg ref={(r)=>this.svg=r}
@@ -52,8 +56,8 @@ class SVGViewer extends Component {
           'svg-viewer-v2 ' +
           ((this.props.className) ? this.props.className : '')
         }
-        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
-        width={this.props.width} height={this.props.height}
+        viewBox={-boundingBox.width/2 + ' ' + -boundingBox.height/2 + ' ' + boundingBox.width + ' ' + boundingBox.height}
+        width="100%" height="100%"
         onClick={this.click.bind(this)}
         onMouseDown={this.onMouseDown.bind(this)}
         onMouseUp={this.onMouseUp.bind(this)}
@@ -143,8 +147,7 @@ class SVGViewer extends Component {
   click(e) {
     const pointerXY = this.getPointerXYAdjustedForSVGTransform(e);
     
-    
-    
+    //--------
     const boundingBox = (this.svg && this.svg.getBoundingClientRect)
       ? this.svg.getBoundingClientRect()
       : { left: 0, top: 0, width: 1, height: 1 };    
@@ -160,8 +163,8 @@ class SVGViewer extends Component {
     }
     var inputX = (clientX - boundingBox.left);
     var inputY = (clientY - boundingBox.top);
-    
     console.log('CLICK:', inputX, inputY, boundingBox);
+    //--------
     
     //DEBUG
     return;
@@ -174,12 +177,17 @@ class SVGViewer extends Component {
     //stopEvent(e);
   }
   
+  getBoundingBox() {
+    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
+      ? this.svg.getBoundingClientRect()
+      : { left: 0, top: 0, width: 1, height: 1 };
+    return boundingBox;
+  }
+  
   getPointerXY(e) {
     //Compensate for HTML elements
     //----------------
-    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
-      ? this.svg.getBoundingClientRect()
-      : { left: 0, top: 0, width: 1, height: 1 };    
+    const boundingBox = this.getBoundingBox();
     let clientX = 0;
     let clientY = 0;
     if (e.clientX && e.clientY) {
