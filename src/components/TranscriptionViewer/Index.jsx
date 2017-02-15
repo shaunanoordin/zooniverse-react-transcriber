@@ -58,9 +58,126 @@ class Index extends React.Component {
   
   render() {
     return (
-      <div className="transcribe">
-        <h2>Subject Viewer</h2>
-        <div className="input-panel">
+      <div className="transcription-viewer">
+        
+        {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
+          ?
+            <SVGViewer
+              scale={this.state.scale}
+              translateX={this.state.translateX}
+              translateY={this.state.translateY}
+              rotate={this.state.rotate}
+              width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}
+              className={this.state.showAggregations}
+            >
+            {this.props.subjectData.locations.map((loc, locIndex) => {
+              return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+            })}
+
+            {(this.props.aggregationsData)
+              ? this.props.aggregationsData.map((agg) => {
+                const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
+
+                const testRaw = agg.raw.reduce((total, cur) => {
+                  return total + '>' + cur.text + '\n';
+                }, 'RAW CLASSIFICATIONS\n--------\n');
+
+                const testClick = (e) => {
+                  alert(testRaw);
+                };
+                //const testClick = (function() { return function(e) {
+                //  alert(testRaw);
+                //}})();
+
+                return (
+                  <g
+                    key={'aggtext_' + agg.startX + '_' + agg.startY}
+                    className="aggregated-text"
+                    transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}
+                    onClick={testClick}
+                  >
+                    <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
+                    <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
+                    <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
+                    <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngle}) translate(${-agg.startX}, ${-agg.startY})`}>
+                      <text className="text" x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
+                        {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
+                      </text>
+                    </g>
+                  </g>
+                );
+              })
+              : null
+            }
+
+            </SVGViewer>
+          : null
+        }
+        
+        
+        {/*
+        <table className="control-subpanel">
+          <tbody>
+            <tr>
+              <td>Scale</td>
+              <td>
+                <input
+                  value={this.state.scale}
+                  ref={(itm) => { this.inputScale = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="0.2"
+                  min="0.2" />
+              </td>
+            </tr>
+            <tr>
+              <td>Translate (x,y)</td>
+              <td>
+                <input
+                  value={this.state.translateX}
+                  ref={(itm) => { this.inputTranslateX = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+                <input
+                  value={this.state.translateY}
+                  ref={(itm) => { this.inputTranslateY = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+              </td>
+            </tr>
+            <tr>
+              <td>Rotate (deg)</td>
+              <td>
+                <input
+                  value={this.state.rotate}
+                  ref={(itm) => { this.inputRotate = itm; }}
+                  onChange={this.updateTransform} 
+                  type="number"
+                  step="15" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        */}
+        
+        {(this.props.subjectData && this.props.subjectData.metadata)
+          ? <table className="metadata-panel">
+              <tbody>
+              {(() => {
+                let metadata = [];
+                for (let m in this.props.subjectData.metadata) {
+                  metadata.push(<tr key={m}><td>{m}</td><td>{this.props.subjectData.metadata[m]}</td></tr>);
+                }
+                return metadata;
+              })()}
+              </tbody>
+            </table>
+          : null
+        }
+        
+                <div className="input-panel">
           <div>
             <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
               placeholder="Panoptes Subject ID, e.g. 1274999"
@@ -122,136 +239,12 @@ class Index extends React.Component {
           </div>
         </div>
         
-        {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
-          ? <div className="viewer-panel">
-              <SVGViewer
-                scale={this.state.scale}
-                translateX={this.state.translateX}
-                translateY={this.state.translateY}
-                rotate={this.state.rotate}
-                width={DEFAULT_SVGVIEWER_WIDTH} height={DEFAULT_SVGVIEWER_HEIGHT}
-                className={this.state.showAggregations}
-              >
-              {this.props.subjectData.locations.map((loc, locIndex) => {
-                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
-              })}
-                
-              {(this.props.aggregationsData)
-                ? this.props.aggregationsData.map((agg) => {
-                  const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
-                  
-                  const testRaw = agg.raw.reduce((total, cur) => {
-                    return total + '>' + cur.text + '\n';
-                  }, 'RAW CLASSIFICATIONS\n--------\n');
-                  
-                  const testClick = (e) => {
-                    alert(testRaw);
-                  };
-                  //const testClick = (function() { return function(e) {
-                  //  alert(testRaw);
-                  //}})();
-                  
-                  return (
-                    <g
-                      key={'aggtext_' + agg.startX + '_' + agg.startY}
-                      className="aggregated-text"
-                      transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}
-                      onClick={testClick}
-                    >
-                      <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
-                      <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
-                      <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
-                      <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngle}) translate(${-agg.startX}, ${-agg.startY})`}>
-                        <text className="text" x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
-                          {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
-                        </text>
-                      </g>
-                    </g>
-                  );
-                })
-                : null
-              }
-                
-              </SVGViewer>
-              <table className="control-subpanel">
-                <tbody>
-                  <tr>
-                    <td>Scale</td>
-                    <td>
-                      <input
-                        value={this.state.scale}
-                        ref={(itm) => { this.inputScale = itm; }}
-                        onChange={this.updateTransform}
-                        type="number"
-                        step="0.2"
-                        min="0.2" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Translate (x,y)</td>
-                    <td>
-                      <input
-                        value={this.state.translateX}
-                        ref={(itm) => { this.inputTranslateX = itm; }}
-                        onChange={this.updateTransform}
-                        type="number"
-                        step="10" />
-                      <input
-                        value={this.state.translateY}
-                        ref={(itm) => { this.inputTranslateY = itm; }}
-                        onChange={this.updateTransform}
-                        type="number"
-                        step="10" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Rotate (deg)</td>
-                    <td>
-                      <input
-                        value={this.state.rotate}
-                        ref={(itm) => { this.inputRotate = itm; }}
-                        onChange={this.updateTransform} 
-                        type="number"
-                        step="15" />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          : null
-        }
-        
-        {(this.props.subjectData && this.props.subjectData.metadata)
-          ? <table className="metadata-panel">
-              <tbody>
-              {(() => {
-                let metadata = [];
-                for (let m in this.props.subjectData.metadata) {
-                  metadata.push(<tr key={m}><td>{m}</td><td>{this.props.subjectData.metadata[m]}</td></tr>);
-                }
-                return metadata;
-              })()}
-              </tbody>
-            </table>
-          : null
-        }
       </div>
     );
   }
   
   componentDidMount() {
-    apiClient.type('projects').get('376')
-    .then((data) => {
-      console.log('Project 376\n'+'-'.repeat(80));
-      console.log(data);
-    });
-    
-    apiClient.type('set_member_subjects').get({id: '2509', page: '1'})
-    .then((data) => {
-      console.log('Set Member Subjects 2509\n'+'-'.repeat(80));
-      console.log(data);
-    });
-    
+    //DEFAULT image
     this.props.dispatch(fetchSubject('1274999'));    
   }
   

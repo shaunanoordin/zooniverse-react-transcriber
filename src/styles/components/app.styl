@@ -1,3 +1,27 @@
+/*  Layout: Make sure content-section fits the window size.
+ */
+#root
+  display: flex
+  height: 100vh
+  overflow: auto
+  & > div
+    flex: 1 1 auto
+    display: flex
+    flex-direction: column
+  .site-header
+    flex: 0 0 auto
+    margin: 0
+    padding: 0
+  .content-section
+    flex: 1 1 auto
+    display: flex
+    flex-direction: column
+    overflow: auto
+    margin: 0
+    padding: 0
+
+/*  Theme: Get the colours and sizing right
+ */
 .site-header
   color: $secondary
   background: $primary
@@ -21,6 +45,3 @@
     &.active,
     &:hover
       background-color: $tertiary
-
-.content-section
-  padding: 0
