@@ -48,16 +48,17 @@ class SVGViewer extends Component {
     const transform = `scale(${this.state.scale}) translate(${this.state.translateX}, ${this.state.translateY}) rotate(${this.state.rotate}) `;
     const boundingBox = (this.svg && this.svg.getBoundingClientRect)
       ? this.svg.getBoundingClientRect()
-      : { left: 0, top: 0, width: 10, height: 10 };
+      : { left: 0, top: 0, width: 10, height: 1 };
     
     return (
-      <svg ref={(r)=>this.svg=r}
+      <svg ref={(r)=>{this.svg=r}}
         className={
           'svg-viewer-v2 ' +
           ((this.props.className) ? this.props.className : '')
         }
-        viewBox={-boundingBox.width/2 + ' ' + -boundingBox.height/2 + ' ' + boundingBox.width + ' ' + boundingBox.height}
-        width="100%" height="100%"
+        //viewBox={-boundingBox.width/2 + ' ' + -boundingBox.height/2 + ' ' + boundingBox.width + ' ' + boundingBox.height}
+        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
+        
         onClick={this.click.bind(this)}
         onMouseDown={this.onMouseDown.bind(this)}
         onMouseUp={this.onMouseUp.bind(this)}
@@ -145,36 +146,20 @@ class SVGViewer extends Component {
   }
   
   click(e) {
+    const pointerXYOriginal = this.getPointerXY(e);
     const pointerXY = this.getPointerXYAdjustedForSVGTransform(e);
     
-    //--------
-    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
-      ? this.svg.getBoundingClientRect()
-      : { left: 0, top: 0, width: 1, height: 1 };    
-    let clientX = 0;
-    let clientY = 0;
-    if (e.clientX && e.clientY) {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else if (e.touches && e.touches.length > 0 && e.touches[0].clientX &&
-        e.touches[0].clientY) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
-    var inputX = (clientX - boundingBox.left);
-    var inputY = (clientY - boundingBox.top);
-    console.log('CLICK:', inputX, inputY, boundingBox);
-    //--------
+    console.log('CLICK\n', pointerXYOriginal, pointerXY);
     
     //DEBUG
-    return;
+    //return;
     
-    //const arr = this.state.circles;
-    //arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
-    //this.setState({
-    //  circles: arr
-    //});
-    //stopEvent(e);
+    const arr = this.state.circles;
+    arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
+    this.setState({
+      circles: arr
+    });
+    return stopEvent(e);
   }
   
   getBoundingBox() {

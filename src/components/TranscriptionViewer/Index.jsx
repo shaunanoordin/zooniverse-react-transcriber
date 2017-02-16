@@ -68,6 +68,8 @@ class Index extends React.Component {
               translateY={this.state.translateY}
               rotate={this.state.rotate}
               className={this.state.showAggregations}
+              width={DEFAULT_SVGVIEWER_WIDTH}
+              height={DEFAULT_SVGVIEWER_HEIGHT}
             >
             {this.props.subjectData.locations.map((loc, locIndex) => {
               return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
