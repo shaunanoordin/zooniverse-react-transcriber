@@ -206,7 +206,9 @@ class SVGViewer extends Component {
   }
   
   getPointerXYAdjustedForSVGTransform(e) {
-    const pointerXY = this.getPointerXY(e);
+    return null;  //TODO: Fix this. Need to compensate for bounding box of new stretched SVG
+    
+    /*const pointerXY = this.getPointerXY(e);
     let inputX = pointerXY.x;
     let inputY = pointerXY.y;
     
@@ -221,7 +223,7 @@ class SVGViewer extends Component {
     const calculatedInputY = inputX * Math.sin(rotation) + inputY * Math.cos(rotation);
     //----------------
     
-    return { x: calculatedInputX, y: calculatedInputY };
+    return { x: calculatedInputX, y: calculatedInputY };*/
   }
 }
 
