@@ -106,3 +106,12 @@ export function fetchSubject(id) {
     //----------------------------------------------------------------
   };
 }
+
+export function selectAggregation(index) {
+  return (dispatch) => {
+    dispatch({
+      type: "SELECT_AGGREGATION_V2",
+      index: index,
+    });
+  };
+}

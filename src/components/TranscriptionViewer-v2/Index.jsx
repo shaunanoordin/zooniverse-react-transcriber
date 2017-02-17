@@ -7,6 +7,7 @@ import * as status from '../../constants/status.js';
 
 import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
+import SVGAggregatedText from './SVGAggregatedText.jsx';
 
 const DEFAULT_SVGVIEWER_WIDTH = 1024;
 const DEFAULT_SVGVIEWER_HEIGHT = 640;
@@ -76,36 +77,15 @@ class Index extends React.Component {
             })}
 
             {(this.props.aggregationsData)
-              ? this.props.aggregationsData.map((agg) => {
-                const textAngle = ((Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX)  / Math.PI * 180) + 0) % 360;
-
-                const testRaw = agg.raw.reduce((total, cur) => {
-                  return total + '>' + cur.text + '\n';
-                }, 'RAW CLASSIFICATIONS\n--------\n');
-
-                const testClick = (e) => {
-                  alert(testRaw);
-                };
-                //const testClick = (function() { return function(e) {
-                //  alert(testRaw);
-                //}})();
-
+              ? this.props.aggregationsData.map((agg, index) => {
                 return (
-                  <g
+                  <SVGAggregatedText
                     key={'aggtext_' + agg.startX + '_' + agg.startY}
-                    className="aggregated-text"
-                    transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}
-                    onClick={testClick}
-                  >
-                    <circle className="circle" cx={agg.startX} cy={agg.startY} r={20} />
-                    <circle className="circle" cx={agg.endX} cy={agg.endY} r={20} />
-                    <path className="path" d={"M "+(agg.startX)+" "+(agg.startY-20)+" L "+(agg.startX)+" "+(agg.startY+20)+" L "+(agg.endX)+" "+(agg.endY+20)+" L "+(agg.endX)+" "+(agg.endY-20)+" Z"} />
-                    <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngle}) translate(${-agg.startX}, ${-agg.startY})`}>
-                      <text className="text" x={agg.startX} y={agg.startY + 20/2} fontFamily="Verdana" fontSize="20">
-                        {agg.text.replace(/&[\w\d]+;/g, ' ').replace(/<\/?[\w\d\-\_]+>/g, ' ')}
-                      </text>
-                    </g>
-                  </g>
+                    offsetX={this.state.loadedImage.width * -0.5}
+                    offsetY={this.state.loadedImage.height * -0.5}
+                    aggregation={agg}
+                    index={index}
+                  />
                 );
               })
               : null
@@ -115,53 +95,48 @@ class Index extends React.Component {
           : null
         }
         
-        
-        {/*
-        <table className="control-subpanel">
-          <tbody>
-            <tr>
-              <td>Scale</td>
-              <td>
-                <input
-                  value={this.state.scale}
-                  ref={(itm) => { this.inputScale = itm; }}
-                  onChange={this.updateTransform}
-                  type="number"
-                  step="0.2"
-                  min="0.2" />
-              </td>
-            </tr>
-            <tr>
-              <td>Translate (x,y)</td>
-              <td>
-                <input
-                  value={this.state.translateX}
-                  ref={(itm) => { this.inputTranslateX = itm; }}
-                  onChange={this.updateTransform}
-                  type="number"
-                  step="10" />
-                <input
-                  value={this.state.translateY}
-                  ref={(itm) => { this.inputTranslateY = itm; }}
-                  onChange={this.updateTransform}
-                  type="number"
-                  step="10" />
-              </td>
-            </tr>
-            <tr>
-              <td>Rotate (deg)</td>
-              <td>
-                <input
-                  value={this.state.rotate}
-                  ref={(itm) => { this.inputRotate = itm; }}
-                  onChange={this.updateTransform} 
-                  type="number"
-                  step="15" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        */}
+        <div className="control-panel">
+          <div className="row">
+            <label>Scale</label>
+            <span className="data">
+              <input
+                value={this.state.scale}
+                ref={(itm) => { this.inputScale = itm; }}
+                onChange={this.updateTransform}
+                type="number"
+                step="0.1"
+                min="0.1" />
+            </span>
+          </div>
+          <div className="row">
+            <label>Translate (x,y)</label>
+            <span className="data">
+              <input
+                value={this.state.translateX}
+                ref={(itm) => { this.inputTranslateX = itm; }}
+                onChange={this.updateTransform}
+                type="number"
+                step="10" />
+              <input
+                value={this.state.translateY}
+                ref={(itm) => { this.inputTranslateY = itm; }}
+                onChange={this.updateTransform}
+                type="number"
+                step="10" />
+            </span>
+          </div>
+          <div className="row">
+            <label>Rotate (deg)</label>
+            <span className="data">
+              <input
+                value={this.state.rotate}
+                ref={(itm) => { this.inputRotate = itm; }}
+                onChange={this.updateTransform} 
+                type="number"
+                step="15" />
+            </span>
+          </div>
+        </div>
         
         {(this.props.subjectData && this.props.subjectData.metadata)
           ? <div className="metadata-panel">
@@ -176,7 +151,7 @@ class Index extends React.Component {
           : null
         }
         
-                <div className="input-panel">
+        <div className="input-panel">
           <div>
             <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
               placeholder="Panoptes Subject ID, e.g. 1274999"
@@ -238,6 +213,21 @@ class Index extends React.Component {
           </div>
         </div>
         
+        {(this.props.currentAggregation !== null && this.props.aggregationsData && this.props.aggregationsData[this.props.currentAggregation])
+          ? <div className="aggregation-panel">
+              <div className="aggregated">{this.props.aggregationsData[this.props.currentAggregation].text}</div>
+              {(() => {
+                const agg = this.props.aggregationsData[this.props.currentAggregation];
+                if (!agg.raw) return null;
+                
+                return agg.raw.map((raw) => {
+                  return <div className="raw">{raw.text}</div>;
+                });
+              })()}
+            </div>
+          : null
+        }
+        
       </div>
     );
   }
@@ -287,6 +277,7 @@ Index.propTypes = {
   subjectStatus: PropTypes.string,
   aggregationsData: PropTypes.array,
   aggregationsStatus: PropTypes.string,
+  currentAggregation: PropTypes.number,
 };
 
 Index.defaultProps = {
@@ -295,6 +286,7 @@ Index.defaultProps = {
   subjectStatus: null,
   aggregationsData: null,
   aggregationsStatus: null,
+  currentAggregation: null,
 };
 
 const mapStateToProps = (state) => {
@@ -304,6 +296,7 @@ const mapStateToProps = (state) => {
     subjectStatus: state.transcriptionViewerV2.subjectStatus,
     aggregationsData: state.transcriptionViewerV2.aggregationsData,
     aggregationsStatus: state.transcriptionViewerV2.aggregationsStatus,
+    currentAggregation: state.transcriptionViewerV2.currentAggregation,
   };
 };
 

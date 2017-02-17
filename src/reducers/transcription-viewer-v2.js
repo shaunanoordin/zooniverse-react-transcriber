@@ -7,6 +7,7 @@ const initialState = {
   subjectStatus: status.STATUS_IDLE,
   aggregationsData: null,
   aggregationsStatus: status.STATUS_IDLE,
+  currentAggregation: null,
 };
 
 export function transcriptionViewerV2(state = initialState, action) {
@@ -33,16 +34,24 @@ export function transcriptionViewerV2(state = initialState, action) {
       return Object.assign({}, state, {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_LOADING,
+        currentAggregation: null,
       });
     case "FETCHING_AGGREGATIONS_SUCCESS_V2":
       return Object.assign({}, state, {
         aggregationsData: action.aggregations,
         aggregationsStatus: status.STATUS_READY,
+        currentAggregation: null,
       });
     case "FETCHING_AGGREGATIONS_ERROR_V2":
       return Object.assign({}, state, {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_ERROR,
+        currentAggregation: null,
+      });
+    
+    case "SELECT_AGGREGATION_V2":
+      return Object.assign({}, state, {
+        currentAggregation: action.index,
       });
       
     default:

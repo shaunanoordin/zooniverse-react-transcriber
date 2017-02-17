@@ -30,6 +30,33 @@
       background: $primary
       color: $secondary
       
+      button
+        margin: 0 1em
+  
+  .control-panel
+    border: 1px solid $tertiary
+    font-size: 0.8em
+    position: absolute
+    left: 0
+    top: 0
+    background: white
+    margin: 0 auto
+    padding: 1em
+    width: 20em
+    max-width: 100%
+    
+    .row
+      
+      label
+        display: inline-block
+        width: 40%
+      .data
+        display: inline-block
+        width: 60%
+        
+        input
+          width: 50%
+      
   .metadata-panel
     border: 1px solid $tertiary
     font-size: 0.8em
@@ -61,3 +88,26 @@
         height: 100%
         vertical-align: top
         overflow: auto
+
+  .aggregation-panel
+    border: 1px solid $tertiary
+    font-size: 0.8em
+    position: absolute
+    right: 0
+    bottom: 0
+    background: white
+    margin: 0 auto
+    padding: 1em
+    width: 20em
+    max-width: 100%
+    
+    .aggregated
+      background: $primary
+      color: $secondary
+      padding: 0.5em
+    
+    .raw
+      color: $tertiary
+      border-left: 1em solid $primary
+      padding: 0.2em
+      margin-top: 0.2em
