@@ -4,8 +4,8 @@ import { Router, Route } from 'react-router';
 import { Provider } from 'react-redux';
 import App from './components/App.jsx';
 
-import TranscriptionViewer from './components/TranscriptionViewer/Index.jsx';
-import Transcribe from './components/Transcribe/Index.jsx';
+import TranscriptionViewerV1 from './components/TranscriptionViewer-v1/Index.jsx';
+import TranscriptionViewerV2 from './components/TranscriptionViewer-v2/Index.jsx';
 import Transform from './components/Transform/Index.jsx';
 import Paint from './components/Paint/Index.jsx';
 import Nothing from './components/Nothing.jsx';
@@ -29,8 +29,9 @@ oauth.init(config.panoptesAppId)
       <Provider store={store}>
         <Router>
           <Route path="/" component={App}>
-            <Route path="/transcription-viewer" component={TranscriptionViewer}/>
-            <Route path="/transcribe" component={Transcribe}/>
+            <Route path="/transcription-viewer" component={TranscriptionViewerV2}/>
+            <Route path="/transcription-viewer-v1" component={TranscriptionViewerV1}/>
+            <Route path="/transcribe" component={TranscriptionViewerV1}/>
             <Route path="/transform" component={Transform}/>
             <Route path="/paint" component={Paint}/>
           </Route>

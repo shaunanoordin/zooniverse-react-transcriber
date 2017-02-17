@@ -1,10 +1,11 @@
 .transcription-viewer
-  background: #fc3 //$secondary
+  background: $secondary
   flex: 1 1 auto
   display: flex
   flex-direction: column
   align-items: stretch
   position: relative
+  border: 1px solid $secondary
   
   .input-panel
     font-size: 0.8em
@@ -18,7 +19,6 @@
     max-width: 100%
     border: 1px solid $tertiary
     text-align: center
-    border-radius: 1em
     
     p
       margin: 0 0.2em
@@ -31,6 +31,7 @@
       color: $secondary
       
   .metadata-panel
+    border: 1px solid $tertiary
     font-size: 0.8em
     position: absolute
     left: 0
@@ -40,13 +41,23 @@
     padding: 1em
     width: 20em
     max-width: 100%
-    border-collapse: collapse
     
-    td
-      padding: 0.2em
-      vertical-align: top
-    
-    td:first-child
-      color: $secondary
-      background: $tertiary
+    .row
+      border-top: 1px solid $secondary
+      border-bottom: 1px solid $tertiary
       
+      label
+        display: inline-block
+        color: $secondary
+        background: $tertiary
+        width: 25%
+        height: 100%
+        vertical-align: top
+        overflow: hidden
+        
+      .data
+        display: inline-block
+        width: 75%
+        height: 100%
+        vertical-align: top
+        overflow: auto
