@@ -7,15 +7,15 @@
   }
 }
 
-.svgViewer
+.svg-viewer-v2
   background: $tertiary
   display: block
   margin: 0 auto
-  border: 1px solid white
+  //border: 1px solid white
+  flex: 1 1 auto
+  width: 100%
+  cursor: all-scroll
   
-  &:focus
-    border: 1px solid red
-    
   &.show-aggregations-none
     .aggregated-text    
       display: none
@@ -44,13 +44,13 @@
       .text
         fill: rgba(0, 0, 0, 1)
     
-.svgImage-loading
+.svg-image-v2-loading
   animation-name: loading-pulse
   animation-duration: 1s
   animation-direction: alternate
   animation-iteration-count: infinite
 
-.svgImage-error
+.svg-image-v2-error
   fill: $primary
   stroke: $secondary
   stroke-width: 4

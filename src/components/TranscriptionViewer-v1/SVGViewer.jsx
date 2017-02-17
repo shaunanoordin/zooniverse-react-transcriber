@@ -49,7 +49,7 @@ class SVGViewer extends Component {
     return (
       <svg ref={(r)=>this.svg=r}
         className={
-          'svgViewer ' +
+          'svg-viewer-v1 ' +
           ((this.props.className) ? this.props.className : '')
         }
         viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
@@ -98,10 +98,6 @@ class SVGViewer extends Component {
     );
   }
   
-  componentDidMount() {
-    
-  }
-  
   onMouseDown(e) {
     const pointerXY = this.getPointerXY(e);
     this.pointer.state = INPUT_ACTIVE;
@@ -145,20 +141,18 @@ class SVGViewer extends Component {
   }
   
   click(e) {
-    const pointerXY = this.getPointerXY(e);
+    const pointerXY = this.getPointerXYAdjustedForSVGTransform(e);
     console.log(pointerXY);
     
     //DEBUG
     return;
     
-    const arr = this.state.circles;
-    arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
-    
-    this.setState({
-      circles: arr
-    });
-    
-    stopEvent(e);
+    //const arr = this.state.circles;
+    //arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
+    //this.setState({
+    //  circles: arr
+    //});
+    //stopEvent(e);
   }
   
   getPointerXY(e) {
@@ -190,29 +184,9 @@ class SVGViewer extends Component {
   }
   
   getPointerXYAdjustedForSVGTransform(e) {
-    //Compensate for HTML elements
-    //----------------
-    const boundingBox = (this.svg && this.svg.getBoundingClientRect)
-      ? this.svg.getBoundingClientRect()
-      : { left: 0, top: 0, width: 1, height: 1 };    
-    let clientX = 0;
-    let clientY = 0;
-    if (e.clientX && e.clientY) {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else if (e.touches && e.touches.length > 0 && e.touches[0].clientX &&
-        e.touches[0].clientY) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
-    let elementWidth = this.props.width;
-    let elementHeight = this.props.height;
-    const sizeRatioX = elementWidth / boundingBox.width;
-    const sizeRatioY = elementHeight / boundingBox.height;
-
-    var inputX = (clientX - boundingBox.left) * sizeRatioX;
-    var inputY = (clientY - boundingBox.top) * sizeRatioY;
-    //----------------
+    const pointerXY = this.getPointerXY(e);
+    let inputX = pointerXY.x;
+    let inputY = pointerXY.y;
     
     //Compensate for SVG transformations
     //----------------
