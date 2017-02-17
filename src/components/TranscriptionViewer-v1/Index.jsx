@@ -58,7 +58,7 @@ class Index extends React.Component {
   
   render() {
     return (
-      <div className="transcribe">
+      <div className="transcription-viewer-v1">
         <h2>Subject Viewer</h2>
         <div className="input-panel">
           <div>

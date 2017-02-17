@@ -58,7 +58,7 @@ class Index extends React.Component {
   
   render() {
     return (
-      <div className="transcription-viewer">
+      <div className="transcription-viewer-v2">
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ?

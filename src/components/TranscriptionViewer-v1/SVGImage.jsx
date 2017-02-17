@@ -28,7 +28,7 @@ export default class SVGImage extends Component {
   render() {
     if (this.state.loaded) {
       return (
-        <image className="svgImage"
+        <image className="svg-image-v1"
           href={this.image.src}
           width={this.image.width}
           height={this.image.height}
@@ -37,13 +37,13 @@ export default class SVGImage extends Component {
       );
     } else if (this.state.error) {
       return (
-        <g className="svgImage-error">
+        <g className="svg-image-v1-error">
           <path d="M -60 -80 L 0 -20 L 60 -80 L 80 -60 L 20 0 L 80 60 L 60 80 L 0 20 L -60 80 L -80 60 L -20 0 L -80 -60 Z" />
         </g>
       );
     } else {
       return (
-        <circle className="svgImage-loading" cx={0} cy={0} r={100} />
+        <circle className="svg-image-v1-loading" cx={0} cy={0} r={100} />
       );
     }
   }

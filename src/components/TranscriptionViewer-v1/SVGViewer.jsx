@@ -49,7 +49,7 @@ class SVGViewer extends Component {
     return (
       <svg ref={(r)=>this.svg=r}
         className={
-          'svgViewer ' +
+          'svg-viewer-v1 ' +
           ((this.props.className) ? this.props.className : '')
         }
         viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
