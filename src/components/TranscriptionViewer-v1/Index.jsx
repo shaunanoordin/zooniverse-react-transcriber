@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import apiClient from 'panoptes-client/lib/api-client.js';
-import { fetchSubject } from '../../actions/subjects.js';
+import { fetchSubject } from '../../actions/transcription-viewer-v1.js';
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
@@ -307,11 +307,11 @@ Index.defaultProps = {
 
 const mapStateToProps = (state) => {
   return {
-    subjectID: state.subjects.subjectID,
-    subjectData: state.subjects.subjectData,
-    subjectStatus: state.subjects.subjectStatus,
-    aggregationsData: state.subjects.aggregationsData,
-    aggregationsStatus: state.subjects.aggregationsStatus,
+    subjectID: state.transcriptionViewerV1.subjectID,
+    subjectData: state.transcriptionViewerV1.subjectData,
+    subjectStatus: state.transcriptionViewerV1.subjectStatus,
+    aggregationsData: state.transcriptionViewerV1.aggregationsData,
+    aggregationsStatus: state.transcriptionViewerV1.aggregationsStatus,
   };
 };
 

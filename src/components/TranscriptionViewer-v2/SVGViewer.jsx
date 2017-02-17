@@ -57,8 +57,7 @@ class SVGViewer extends Component {
           ((this.props.className) ? this.props.className : '')
         }
         //viewBox={-boundingBox.width/2 + ' ' + -boundingBox.height/2 + ' ' + boundingBox.width + ' ' + boundingBox.height}
-        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}
-        
+        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}        
         onClick={this.click.bind(this)}
         onMouseDown={this.onMouseDown.bind(this)}
         onMouseUp={this.onMouseUp.bind(this)}
@@ -74,7 +73,6 @@ class SVGViewer extends Component {
               scale: Math.max(this.state.scale + 0.1, MIN_SCALE),
             });
           }
-          
           return Utility.stopEvent(e);
         }}
         >

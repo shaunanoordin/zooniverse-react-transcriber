@@ -7,7 +7,7 @@ export function fetchSubject(id) {
     //----------------------------------------------------------------
     //First, inform
     dispatch({
-      type: "FETCHING_SUBJECT",
+      type: "FETCHING_SUBJECT_V1",
       id,
     });
     
@@ -17,7 +17,7 @@ export function fetchSubject(id) {
     //Handle the success...
     .then((subject) => {
       dispatch({
-        type: "FETCHING_SUBJECT_SUCCESS",
+        type: "FETCHING_SUBJECT_SUCCESS_V1",
         subject,
       });
       
@@ -25,7 +25,7 @@ export function fetchSubject(id) {
       //--------------------------------
       //Inform
       dispatch({
-        type: "FETCHING_AGGREGATIONS",
+        type: "FETCHING_AGGREGATIONS_V1",
       });
       
       //Fetch
@@ -33,7 +33,7 @@ export function fetchSubject(id) {
       
       //Success
       .then((agg) => {
-        console.log("FETCHING_AGGREGATION_SUCCESS");
+        console.log("FETCHING_AGGREGATION_SUCCESS_V1");
         console.log(agg);
         const textClusters = (agg && agg[0] && agg[0].aggregation && agg[0].aggregation.T2 && agg[0].aggregation.T2['text clusters'])
           ? agg[0].aggregation.T2['text clusters']
@@ -80,7 +80,7 @@ export function fetchSubject(id) {
           });
         }
         dispatch({
-          type: "FETCHING_AGGREGATIONS_SUCCESS",
+          type: "FETCHING_AGGREGATIONS_SUCCESS_V1",
           aggregations,
         });
       })  //Con't ...
@@ -89,7 +89,7 @@ export function fetchSubject(id) {
       .catch((err) => {
         console.error("ERROR in fetchSubject()/aggregations: ", err);
         dispatch({
-          type: "FETCHING_AGGREGATIONS_ERROR",
+          type: "FETCHING_AGGREGATIONS_ERROR_V1",
         });
       });
       //--------------------------------
@@ -100,7 +100,7 @@ export function fetchSubject(id) {
     .catch((err) => {
       console.error("ERROR in fetchSubject(): ", err);
       dispatch({
-        type: "FETCHING_SUBJECT_ERROR",
+        type: "FETCHING_SUBJECT_ERROR_V1",
       });
     });
     //----------------------------------------------------------------
