@@ -234,7 +234,8 @@ class Index extends React.Component {
   
   componentDidMount() {
     //DEFAULT image
-    this.props.dispatch(fetchSubject('1274999'));    
+    this.props.dispatch(fetchSubject('1274999'));
+    //this.props.dispatch(fetchSubject('671184'));
   }
   
   updateTransform(e) {
