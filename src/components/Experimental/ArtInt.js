@@ -142,8 +142,15 @@ class ScoredQueue {
   }
   
   put(item, score) {
-    this.elements.push({ item, score });
-    this.elements.sort((a, b) => { return a.score - b.score; });
+    let index = 0;
+    for (; index < this.elements.length; index++) {
+      if (score <= this.elements[index].score) break;
+    }
+    this.elements.splice(index, 0, { item, score });
+    
+    //Alternative version:
+    //this.elements.push({ item, score });
+    //this.elements.sort((a, b) => { return a.score - b.score; });
   }
   
   get() {
