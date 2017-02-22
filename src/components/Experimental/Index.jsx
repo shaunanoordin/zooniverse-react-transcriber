@@ -21,7 +21,7 @@ class Index extends React.Component {
     
     this.start = { x: 0, y: 0, };
     this.goal = { x: 9, y: 9, };
-    this.path = ArtInt.aStar(this.start, this.goal, this.grid);
+    this.path = ArtInt.aStar(this.start, this.goal, this.grid, true);
   }
   
   render() {
