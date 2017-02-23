@@ -10,8 +10,8 @@
   .input-panel
     font-size: 0.8em
     position: absolute
-    right: 0
-    top: 0
+    left: 0
+    bottom: 0
     background: white
     padding: 0.5em
     margin: 0 auto
@@ -32,12 +32,45 @@
       
       button
         margin: 0 1em
+    
+    .metadata-subpanel
+      border: 1px solid $tertiary
+      font-size: 0.8em
+      background: white
+      margin: 0.5em auto 0 auto
+      padding: 0
+      max-height: 30em
+      overflow: auto
+
+      .row
+        border-top: 1px solid $secondary
+        border-bottom: 1px solid $tertiary
+        display: flex
+        align-items: stretch
+
+        label
+          flex: 0 0 auto
+          display: inline-block
+          color: $secondary
+          background: $tertiary
+          width: 25%
+          height: 100%
+          vertical-align: top
+          overflow: hidden
+
+        .data
+          flex: 0 0 auto
+          display: inline-block
+          width: 75%
+          height: 100%
+          vertical-align: top
+          overflow: auto
   
   .control-panel
     border: 1px solid $tertiary
     font-size: 0.8em
     position: absolute
-    left: 0
+    right: 0
     top: 0
     background: white
     margin: 0 auto
@@ -57,38 +90,6 @@
         input
           width: 50%
       
-  .metadata-panel
-    border: 1px solid $tertiary
-    font-size: 0.8em
-    position: absolute
-    left: 0
-    bottom: 0
-    background: white
-    margin: 0 auto
-    padding: 1em
-    width: 20em
-    max-width: 100%
-    
-    .row
-      border-top: 1px solid $secondary
-      border-bottom: 1px solid $tertiary
-      
-      label
-        display: inline-block
-        color: $secondary
-        background: $tertiary
-        width: 25%
-        height: 100%
-        vertical-align: top
-        overflow: hidden
-        
-      .data
-        display: inline-block
-        width: 75%
-        height: 100%
-        vertical-align: top
-        overflow: auto
-
   .aggregation-panel
     border: 1px solid $tertiary
     font-size: 0.8em
@@ -100,6 +101,8 @@
     padding: 1em
     width: 20em
     max-width: 100%
+    max-height: 20em
+    overflow: auto
     
     .aggregated
       background: $primary

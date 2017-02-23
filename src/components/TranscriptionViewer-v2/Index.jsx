@@ -138,19 +138,6 @@ class Index extends React.Component {
           </div>
         </div>
         
-        {(this.props.subjectData && this.props.subjectData.metadata)
-          ? <div className="metadata-panel">
-              {(() => {
-                let metadata = [];
-                for (let m in this.props.subjectData.metadata) {
-                  metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
-                }
-                return metadata;
-              })()}
-            </div>
-          : null
-        }
-        
         <div className="input-panel">
           <div>
             <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
@@ -211,6 +198,21 @@ class Index extends React.Component {
               return null;
             })()}
           </div>
+          
+          {(this.props.subjectData && this.props.subjectData.metadata)
+            ? (() => {
+                let metadata = [];
+                for (let m in this.props.subjectData.metadata) {
+                  metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
+                }
+                return (
+                  <div className="metadata-subpanel">
+                    {metadata}
+                  </div>
+                );
+              })()
+            : null
+          }
         </div>
         
         {(this.props.currentAggregation !== null && this.props.aggregationsData && this.props.aggregationsData[this.props.currentAggregation])
