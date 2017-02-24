@@ -49,20 +49,41 @@ export function fetchSubject(id) {
           let startY = textClusters[tc].center[2];
           let endY = textClusters[tc].center[3];
           
-          //The .aligned_text and ."individual points" attributes contain the raw Classification text.
-          //Why does one attribute have a name that utilises underscores and the other has a space? Who knows! Making sense is for blueberry polka dot ham sandwich.
           let raw = [];
-          const rawText = textClusters[tc]["aligned_text"];
-          const rawCoords = textClusters[tc]["individual points"];
-          for (let i = 0; i < rawText.length && i < rawCoords.length; i++) {
-            raw.push({
-              text: rawText[i],
-              startX: rawCoords[i][0],
-              endX: rawCoords[i][1],
-              startY: rawCoords[i][2],
-              endY: rawCoords[i][3],
+          
+          //Get raw text for Shakespeare's World
+          //Raw text is stored in an array called "aligned_text". Raw coordinates are stored in an array called "individual points".
+          //Why does one attribute have a name that utilises underscores and the other has a space? Who knows! Making sense is for blueberry polka dot ham sandwich.
+          if (textClusters[tc]["aligned_text"]) {
+            const rawText = textClusters[tc]["aligned_text"];
+            const rawCoords = textClusters[tc]["individual points"];
+            for (let i = 0; i < rawText.length && i < rawCoords.length; i++) {
+              raw.push({
+                text: rawText[i],
+                startX: rawCoords[i][0],
+                endX: rawCoords[i][1],
+                startY: rawCoords[i][2],
+                endY: rawCoords[i][3],
+              });
+            }
+          }
+          
+          //Get raw text for AnnoTate
+          //Raw text is stored as the fifth member of an array, which itself is stored in an array called "cluster members".
+          else if (textClusters[tc]["cluster members"]) {
+            raw = textClusters[tc]["cluster members"].map((data) => {
+              return {
+                text: data[4],
+                startX: data[0],
+                endX: data[1],
+                startY: data[2],
+                endY: data[3],
+              };
             });
           }
+          
+          //Space reserved for future standardised transcription aggregations
+          else if (false) {}
           
           if (startX > endX) {
             let tmp;
@@ -112,6 +133,18 @@ export function selectAggregation(index) {
     dispatch({
       type: "SELECT_AGGREGATION_V2",
       index: index,
+    });
+  };
+}
+
+export function setView(rotate, scale, translateX, translateY) {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_VIEW_V2",
+      rotate: rotate,
+      scale: scale,
+      translateX: translateX,
+      translateY: translateY,
     });
   };
 }

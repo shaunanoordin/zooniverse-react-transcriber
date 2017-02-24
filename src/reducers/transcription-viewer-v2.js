@@ -8,6 +8,10 @@ const initialState = {
   aggregationsData: null,
   aggregationsStatus: status.STATUS_IDLE,
   currentAggregation: null,
+  viewRotate: 0,
+  viewScale: 1,
+  viewTranslateX: 0,
+  viewTranslateY: 0,
 };
 
 export function transcriptionViewerV2(state = initialState, action) {
@@ -23,6 +27,10 @@ export function transcriptionViewerV2(state = initialState, action) {
       return Object.assign({}, state, {
         subjectData: action.subject,
         subjectStatus: status.STATUS_READY,
+        viewRotate: 0,
+        viewScale: 1,
+        viewTranslateX: 0,
+        viewTranslateY: 0,
       });
     case "FETCHING_SUBJECT_ERROR_V2":
       return Object.assign({}, state, {
@@ -52,6 +60,14 @@ export function transcriptionViewerV2(state = initialState, action) {
     case "SELECT_AGGREGATION_V2":
       return Object.assign({}, state, {
         currentAggregation: action.index,
+      });
+    
+    case "SET_VIEW_V2":
+      return Object.assign({}, state, {
+        viewRotate: (action.rotate !== null) ? Math.round(action.rotate) : state.viewRotate,
+        viewScale: (action.scale !== null) ? Number(Number(action.scale).toPrecision(2)) : state.viewScale,
+        viewTranslateX: (action.translateX !== null) ? Math.round(action.translateX) : state.viewTranslateX,
+        viewTranslateY: (action.translateY !== null) ? Math.round(action.translateY) : state.viewTranslateY,
       });
       
     default:
