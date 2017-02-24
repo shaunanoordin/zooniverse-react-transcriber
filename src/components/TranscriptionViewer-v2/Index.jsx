@@ -234,18 +234,11 @@ class Index extends React.Component {
   
   componentDidMount() {
     //DEFAULT image
-    this.props.dispatch(fetchSubject('1274999'));
-    //this.props.dispatch(fetchSubject('671184'));
+    this.props.dispatch(fetchSubject('1274999'));  //Shakespeare's World
+    //this.props.dispatch(fetchSubject('671184'));  //AnnoTate
   }
   
   updateTransform(e) {
-    //this.setState({
-    //  scale: this.inputScale.value,
-    //  translateX: this.inputTranslateX.value,
-    //  translateY: this.inputTranslateY.value,
-    //  rotate: this.inputRotate.value,
-    //});
-    
     this.props.dispatch(setView(
       parseFloat(this.inputRotate.value),
       parseFloat(this.inputScale.value),

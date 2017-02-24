@@ -26,25 +26,8 @@ class SVGViewer extends Component {
     this.getPointerXY = this.getPointerXY.bind(this);
     this.getPointerXYAdjustedForSVGTransform = this.getPointerXYAdjustedForSVGTransform.bind(this);
     this.getBoundingBox = this.getBoundingBox.bind(this);
-    
-    //this.state = {
-    //  circles: [],
-    //  rotate: parseFloat(this.props.rotate),
-    //  scale: Math.max(parseFloat(this.props.scale), MIN_SCALE),
-    //  translateX: parseFloat(this.props.translateX),
-    //  translateY: parseFloat(this.props.translateY),
-    //};
   }
   
-  componentWillReceiveProps(nextProps) {
-    //this.setState({
-    //  rotate: parseFloat(nextProps.rotate),
-    //  scale: Math.max(parseFloat(nextProps.scale), MIN_SCALE),
-    //  translateX: parseFloat(nextProps.translateX),
-    //  translateY: parseFloat(nextProps.translateY),
-    //});
-  }
-
   render() {
     const transform = `scale(${this.props.scale}) translate(${this.props.translateX}, ${this.props.translateY}) rotate(${this.props.rotate}) `;
     const boundingBox = (this.svg && this.svg.getBoundingClientRect)
@@ -66,14 +49,7 @@ class SVGViewer extends Component {
         onMouseLeave={this.onMouseLeave.bind(this)}
         onWheel={(e) => {
           if (e.deltaY > 0) {
-            //this.setState({
-            //  scale: Math.max(this.state.scale - 0.1, MIN_SCALE),
-            //});
-            this.props.dispatch(setView(null, Math.max(this.props.scale - 0.1, MIN_SCALE), null, null ));
           } else if (e.deltaY < 0) {
-            //this.setState({
-            //  scale: Math.max(this.state.scale + 0.1, MIN_SCALE),
-            //});
             this.props.dispatch(setView(null, Math.max(this.props.scale + 0.1, MIN_SCALE), null, null ));
           }
           return Utility.stopEvent(e);

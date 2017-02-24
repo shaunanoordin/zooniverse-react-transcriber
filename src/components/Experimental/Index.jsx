@@ -6,7 +6,7 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     
-    this.grid = [
+    /*this.grid = [
       [0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0],
       [0,0,1,0,0,0,0,0,1,0,0],
@@ -23,19 +23,22 @@ class Index extends React.Component {
     this.start = { x: 5, y: 0, };
     this.goal = { x: 5, y: 8, };
     this.path = ArtInt.findPath(this.start, this.goal, this.grid, true);
+    */
     
     const TMP = this.generateRandomMap();
-    this.start = TMP.start;
-    this.goal = TMP.goal;
-    this.grid = TMP.grid;
-    this.path = ArtInt.findPath(this.start, this.goal, this.grid, true);
+    this.state = {
+      start: TMP.start,
+      goal: TMP.goal,
+      grid: TMP.grid,
+    };
   }
   
   render() {
+    const path = ArtInt.findPath(this.state.start, this.state.goal, this.state.grid, true);
     return (
       <div className="experimental">
         <table>
-        {this.grid.map((row, y) => {
+        {this.state.grid.map((row, y) => {
           return (
             <tr>
               {row.map((col, x) => {
@@ -43,17 +46,17 @@ class Index extends React.Component {
                 let cellContent = '';
                 
                 if (col > 0) cellClass += 'wall ';
-                if (this.start.x === x && this.start.y === y) cellContent += 'S';
-                if (this.goal.x === x && this.goal.y === y) cellContent += 'G';
+                if (this.state.start.x === x && this.state.start.y === y) cellContent += 'S';
+                if (this.state.goal.x === x && this.state.goal.y === y) cellContent += 'G';
                 
-                const isOnPath = this.path.find((step) => {
+                const isOnPath = path.find((step) => {
                   return step.x === x && step.y === y;
                 });
                 if (isOnPath) cellContent += '.';
                 if (isOnPath) cellClass += 'path ';
                 
                 return (
-                  <td className={cellClass}>
+                  <td className={cellClass} onClick={this.onClick.bind(this, x, y)} style={{ cursor: "pointer" }}>
                     {cellContent}
                   </td>
                 );
@@ -62,8 +65,25 @@ class Index extends React.Component {
           );
         })}
         </table>
+        <div className="info">
+          <h2>A* Pathfinding</h2>
+          <p>Finds a path from the (S)tart to the (G)oal!</p>
+          <p>Refresh the page to generate a new random map.</p>
+          <p>Click to add/remove walls.</p>
+          <p>(In case you're wondering: if there are multiple paths to the goal, I've coded the app to try a slightly different path every time.)</p>
+        </div>
       </div>
     );
+  }
+  
+  onClick(x, y, e) {
+    const cellVal = this.state.grid[y][x];
+    const newGrid = this.state.grid;
+    newGrid[y][x] = (cellVal === 0) ? 1 : 0;
+    
+    this.setState({
+      grid: newGrid,
+    });
   }
   
   generateRandomMap(width = 9, height = 9) {
