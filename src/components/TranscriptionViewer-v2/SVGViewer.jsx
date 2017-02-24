@@ -234,12 +234,24 @@ function stopEvent(e) {
 }
 
 SVGViewer.propTypes = {
+  className: PropTypes.string,
   width: PropTypes.number,
   height: PropTypes.number,
+  scale: PropTypes.number,
+  translateX: PropTypes.number,
+  translateY: PropTypes.number,
+  rotate: PropTypes.number,
+  onViewUpdated: PropTypes.func,
 };
 SVGViewer.defaultProps = {
+  className: '',
   width: 400,
   height: 400,
+  scale: 1,
+  translateX: 0,
+  translateY: 0,
+  rotate: 0,
+  onViewUpdated: null,
 };
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
   return {};

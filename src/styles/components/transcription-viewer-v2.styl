@@ -41,11 +41,11 @@
       padding: 0
       max-height: 30em
       overflow: auto
+      text-align: left
 
       .row
-        border-top: 1px solid $secondary
-        border-bottom: 1px solid $tertiary
         display: flex
+        flex-direction: row
         align-items: stretch
 
         label
@@ -54,15 +54,12 @@
           color: $secondary
           background: $tertiary
           width: 25%
-          height: 100%
           vertical-align: top
           overflow: hidden
 
         .data
-          flex: 0 0 auto
+          flex: 1 1 auto
           display: inline-block
-          width: 75%
-          height: 100%
           vertical-align: top
           overflow: auto
   
