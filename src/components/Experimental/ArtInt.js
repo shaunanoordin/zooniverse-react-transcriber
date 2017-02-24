@@ -11,7 +11,7 @@ export const ArtInt = {
         [{x:1,y:0},{x:0,y:0},{x:0,y:1},{x:0,y:2},{x:1,y:2},]
       Optional 'spiceUpPathing' flag gives slightly different routes every time.
    */
-  aStar: function (start, goal, grid, spiceUpPathing = false) {
+  findPath: function (start, goal, grid, spiceUpPathing = false) {
     //First, let's set up our playing field.
     //----------------------------------------------------------------
     const MIN_X = 0;
