@@ -1,6 +1,7 @@
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Utility } from '../../tools/Utility.js';
+import { setView } from '../../actions/transcription-viewer-v2.js';
 
 const INPUT_IDLE = 0;
 const INPUT_ACTIVE = 1;
@@ -26,26 +27,26 @@ class SVGViewer extends Component {
     this.getPointerXYAdjustedForSVGTransform = this.getPointerXYAdjustedForSVGTransform.bind(this);
     this.getBoundingBox = this.getBoundingBox.bind(this);
     
-    this.state = {
-      circles: [],
-      rotate: parseFloat(this.props.rotate),
-      scale: Math.max(parseFloat(this.props.scale), MIN_SCALE),
-      translateX: parseFloat(this.props.translateX),
-      translateY: parseFloat(this.props.translateY),
-    };
+    //this.state = {
+    //  circles: [],
+    //  rotate: parseFloat(this.props.rotate),
+    //  scale: Math.max(parseFloat(this.props.scale), MIN_SCALE),
+    //  translateX: parseFloat(this.props.translateX),
+    //  translateY: parseFloat(this.props.translateY),
+    //};
   }
   
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      rotate: parseFloat(nextProps.rotate),
-      scale: Math.max(parseFloat(nextProps.scale), MIN_SCALE),
-      translateX: parseFloat(nextProps.translateX),
-      translateY: parseFloat(nextProps.translateY),
-    });
+    //this.setState({
+    //  rotate: parseFloat(nextProps.rotate),
+    //  scale: Math.max(parseFloat(nextProps.scale), MIN_SCALE),
+    //  translateX: parseFloat(nextProps.translateX),
+    //  translateY: parseFloat(nextProps.translateY),
+    //});
   }
 
   render() {
-    const transform = `scale(${this.state.scale}) translate(${this.state.translateX}, ${this.state.translateY}) rotate(${this.state.rotate}) `;
+    const transform = `scale(${this.props.scale}) translate(${this.props.translateX}, ${this.props.translateY}) rotate(${this.props.rotate}) `;
     const boundingBox = (this.svg && this.svg.getBoundingClientRect)
       ? this.svg.getBoundingClientRect()
       : { left: 0, top: 0, width: 10, height: 1 };
@@ -65,13 +66,15 @@ class SVGViewer extends Component {
         onMouseLeave={this.onMouseLeave.bind(this)}
         onWheel={(e) => {
           if (e.deltaY > 0) {
-            this.setState({
-              scale: Math.max(this.state.scale - 0.1, MIN_SCALE),
-            });
+            //this.setState({
+            //  scale: Math.max(this.state.scale - 0.1, MIN_SCALE),
+            //});
+            this.props.dispatch(setView(null, Math.max(this.props.scale - 0.1, MIN_SCALE), null, null ));
           } else if (e.deltaY < 0) {
-            this.setState({
-              scale: Math.max(this.state.scale + 0.1, MIN_SCALE),
-            });
+            //this.setState({
+            //  scale: Math.max(this.state.scale + 0.1, MIN_SCALE),
+            //});
+            this.props.dispatch(setView(null, Math.max(this.props.scale + 0.1, MIN_SCALE), null, null ));
           }
           return Utility.stopEvent(e);
         }}
@@ -81,7 +84,7 @@ class SVGViewer extends Component {
             {this.props.children}
           </g>
           <g>
-            {this.state.circles}
+            {/*this.state.circles*/}
           </g>
           <g>
             <line x1="0" y1="-250" x2="0" y2="250" strokeWidth="1" stroke="#fff"/>
@@ -107,9 +110,9 @@ class SVGViewer extends Component {
     this.pointer.start = { x: pointerXY.x, y: pointerXY.y };
     this.pointer.now = { x: pointerXY.x, y: pointerXY.y };    
     this.tmpTransform = {
-      scale: this.state.scale,
-      translateX: this.state.translateX,
-      translateY: this.state.translateY,
+      scale: this.props.scale,
+      translateX: this.props.translateX,
+      translateY: this.props.translateY,
     };
     return Utility.stopEvent(e);
   }
@@ -136,10 +139,15 @@ class SVGViewer extends Component {
         y: this.pointer.now.y - this.pointer.start.y
       };
       
-      this.setState({
-        translateX: parseFloat(this.tmpTransform.translateX + pointerDelta.x / this.tmpTransform.scale),
-        translateY: parseFloat(this.tmpTransform.translateY + pointerDelta.y / this.tmpTransform.scale),
-      });
+      //this.setState({
+      //  translateX: parseFloat(this.tmpTransform.translateX + pointerDelta.x / this.tmpTransform.scale),
+      //  translateY: parseFloat(this.tmpTransform.translateY + pointerDelta.y / this.tmpTransform.scale),
+      //});
+      
+      this.props.dispatch(setView(null, null,
+        this.tmpTransform.translateX + pointerDelta.x / this.tmpTransform.scale,
+        this.tmpTransform.translateY + pointerDelta.y / this.tmpTransform.scale
+      ));
     }
   }
   
@@ -254,6 +262,11 @@ SVGViewer.defaultProps = {
   onViewUpdated: null,
 };
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
-  return {};
+  return {
+    rotate: state.transcriptionViewerV2.viewRotate,
+    scale: state.transcriptionViewerV2.viewScale,
+    translateX: state.transcriptionViewerV2.viewTranslateX,
+    translateY: state.transcriptionViewerV2.viewTranslateY,
+  };
 }
 export default connect(mapStateToProps)(SVGViewer);  //Connects the Component to the Redux Store

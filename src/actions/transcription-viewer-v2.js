@@ -136,3 +136,15 @@ export function selectAggregation(index) {
     });
   };
 }
+
+export function setView(rotate, scale, translateX, translateY) {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_VIEW_V2",
+      rotate: rotate,
+      scale: scale,
+      translateX: translateX,
+      translateY: translateY,
+    });
+  };
+}

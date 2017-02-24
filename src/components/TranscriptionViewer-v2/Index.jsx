@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import apiClient from 'panoptes-client/lib/api-client.js';
-import { fetchSubject } from '../../actions/transcription-viewer-v2.js';
+import { fetchSubject, setView } from '../../actions/transcription-viewer-v2.js';
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
@@ -52,9 +52,11 @@ class Index extends React.Component {
     const vScale = (img.height !== 0) ? DEFAULT_SVGVIEWER_HEIGHT / img.height : 1;
     
     this.setState({
-      scale: Number(Math.min(hScale, vScale).toPrecision(1)),
+      //scale: Number(Math.min(hScale, vScale).toPrecision(1)),
       loadedImage: { width: img.width, height: img.height },
     });
+    
+    this.props.dispatch(setView(null, Math.min(hScale, vScale), null, null));
   }
   
   render() {
@@ -64,10 +66,6 @@ class Index extends React.Component {
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ?
             <SVGViewer
-              scale={this.state.scale}
-              translateX={this.state.translateX}
-              translateY={this.state.translateY}
-              rotate={this.state.rotate}
               className={this.state.showAggregations}
               width={DEFAULT_SVGVIEWER_WIDTH}
               height={DEFAULT_SVGVIEWER_HEIGHT}
@@ -100,7 +98,7 @@ class Index extends React.Component {
             <label>Scale</label>
             <span className="data">
               <input
-                value={this.state.scale}
+                value={this.props.scale}
                 ref={(itm) => { this.inputScale = itm; }}
                 onChange={this.updateTransform}
                 type="number"
@@ -112,13 +110,13 @@ class Index extends React.Component {
             <label>Translate (x,y)</label>
             <span className="data">
               <input
-                value={this.state.translateX}
+                value={this.props.translateX}
                 ref={(itm) => { this.inputTranslateX = itm; }}
                 onChange={this.updateTransform}
                 type="number"
                 step="10" />
               <input
-                value={this.state.translateY}
+                value={this.props.translateY}
                 ref={(itm) => { this.inputTranslateY = itm; }}
                 onChange={this.updateTransform}
                 type="number"
@@ -129,7 +127,7 @@ class Index extends React.Component {
             <label>Rotate (deg)</label>
             <span className="data">
               <input
-                value={this.state.rotate}
+                value={this.props.rotate}
                 ref={(itm) => { this.inputRotate = itm; }}
                 onChange={this.updateTransform} 
                 type="number"
@@ -241,12 +239,19 @@ class Index extends React.Component {
   }
   
   updateTransform(e) {
-    this.setState({
-      scale: this.inputScale.value,
-      translateX: this.inputTranslateX.value,
-      translateY: this.inputTranslateY.value,
-      rotate: this.inputRotate.value,
-    });
+    //this.setState({
+    //  scale: this.inputScale.value,
+    //  translateX: this.inputTranslateX.value,
+    //  translateY: this.inputTranslateY.value,
+    //  rotate: this.inputRotate.value,
+    //});
+    
+    this.props.dispatch(setView(
+      parseFloat(this.inputRotate.value),
+      parseFloat(this.inputScale.value),
+      parseFloat(this.inputTranslateX.value),
+      parseFloat(this.inputTranslateY.value),
+    ));
   }
   
   goToNextPage() {
@@ -281,6 +286,10 @@ Index.propTypes = {
   aggregationsData: PropTypes.array,
   aggregationsStatus: PropTypes.string,
   currentAggregation: PropTypes.number,
+  rotate: PropTypes.number,
+  scale: PropTypes.number,
+  translateX: PropTypes.number,
+  translateY: PropTypes.number,
 };
 
 Index.defaultProps = {
@@ -290,6 +299,10 @@ Index.defaultProps = {
   aggregationsData: null,
   aggregationsStatus: null,
   currentAggregation: null,
+  rotate: 0,
+  scale: 1,
+  translateX: 0,
+  translateY: 0,
 };
 
 const mapStateToProps = (state) => {
@@ -300,6 +313,10 @@ const mapStateToProps = (state) => {
     aggregationsData: state.transcriptionViewerV2.aggregationsData,
     aggregationsStatus: state.transcriptionViewerV2.aggregationsStatus,
     currentAggregation: state.transcriptionViewerV2.currentAggregation,
+    rotate: state.transcriptionViewerV2.viewRotate,
+    scale: state.transcriptionViewerV2.viewScale,
+    translateX: state.transcriptionViewerV2.viewTranslateX,
+    translateY: state.transcriptionViewerV2.viewTranslateY,
   };
 };
 
