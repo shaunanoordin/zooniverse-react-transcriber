@@ -65,31 +65,65 @@ class Index extends React.Component {
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ?
-            <SVGViewer
-              className={this.state.showAggregations}
-              width={DEFAULT_SVGVIEWER_WIDTH}
-              height={DEFAULT_SVGVIEWER_HEIGHT}
-            >
-            {this.props.subjectData.locations.map((loc, locIndex) => {
-              return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
-            })}
+            <div className="data-panel">
+              <SVGViewer
+                className={this.state.showAggregations}
+                width={DEFAULT_SVGVIEWER_WIDTH}
+                height={DEFAULT_SVGVIEWER_HEIGHT}
+              >
+              {this.props.subjectData.locations.map((loc, locIndex) => {
+                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+              })}
 
-            {(this.props.aggregationsData)
-              ? this.props.aggregationsData.map((agg, index) => {
-                return (
-                  <SVGAggregatedText
-                    key={'aggtext_' + agg.startX + '_' + agg.startY}
-                    offsetX={this.state.loadedImage.width * -0.5}
-                    offsetY={this.state.loadedImage.height * -0.5}
-                    aggregation={agg}
-                    index={index}
-                  />
-                );
-              })
-              : null
-            }
+              {(this.props.aggregationsData)
+                ? this.props.aggregationsData.map((agg, index) => {
+                  return (
+                    <SVGAggregatedText
+                      key={'aggtext_' + agg.startX + '_' + agg.startY}
+                      offsetX={this.state.loadedImage.width * -0.5}
+                      offsetY={this.state.loadedImage.height * -0.5}
+                      aggregation={agg}
+                      index={index}
+                    />
+                  );
+                })
+                : null
+              }
 
-            </SVGViewer>
+              </SVGViewer>
+            </div>
+          : null
+        }
+        
+        {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
+          ?
+            <div className="data-panel">
+              <SVGViewer
+                className="show-aggregations-full"
+                width={DEFAULT_SVGVIEWER_WIDTH}
+                height={DEFAULT_SVGVIEWER_HEIGHT}
+              >
+              {this.props.subjectData.locations.map((loc, locIndex) => {
+                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+              })}
+
+              {(this.props.aggregationsData)
+                ? this.props.aggregationsData.map((agg, index) => {
+                  return (
+                    <SVGAggregatedText
+                      key={'aggtext_' + agg.startX + '_' + agg.startY}
+                      offsetX={this.state.loadedImage.width * -0.5}
+                      offsetY={this.state.loadedImage.height * -0.5}
+                      aggregation={agg}
+                      index={index}
+                    />
+                  );
+                })
+                : null
+              }
+
+              </SVGViewer>
+            </div>
           : null
         }
         
@@ -299,17 +333,18 @@ Index.defaultProps = {
 };
 
 const mapStateToProps = (state) => {
+  const store = state.transcriptionViewerV3;
   return {
-    subjectID: state.transcriptionViewerV3.subjectID,
-    subjectData: state.transcriptionViewerV3.subjectData,
-    subjectStatus: state.transcriptionViewerV3.subjectStatus,
-    aggregationsData: state.transcriptionViewerV3.aggregationsData,
-    aggregationsStatus: state.transcriptionViewerV3.aggregationsStatus,
-    currentAggregation: state.transcriptionViewerV3.currentAggregation,
-    rotate: state.transcriptionViewerV3.viewRotate,
-    scale: state.transcriptionViewerV3.viewScale,
-    translateX: state.transcriptionViewerV3.viewTranslateX,
-    translateY: state.transcriptionViewerV3.viewTranslateY,
+    subjectID: store.subjectID,
+    subjectData: store.subjectData,
+    subjectStatus: store.subjectStatus,
+    aggregationsData: store.aggregationsData,
+    aggregationsStatus: store.aggregationsStatus,
+    currentAggregation: store.currentAggregation,
+    rotate: store.viewRotate,
+    scale: store.viewScale,
+    translateX: store.viewTranslateX,
+    translateY: store.viewTranslateY,
   };
 };
 

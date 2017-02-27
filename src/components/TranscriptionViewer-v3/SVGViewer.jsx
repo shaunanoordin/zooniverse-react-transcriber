@@ -239,11 +239,12 @@ SVGViewer.defaultProps = {
   onViewUpdated: null,
 };
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
+  const store = state.transcriptionViewerV3;
   return {
-    rotate: state.transcriptionViewerV3.viewRotate,
-    scale: state.transcriptionViewerV3.viewScale,
-    translateX: state.transcriptionViewerV3.viewTranslateX,
-    translateY: state.transcriptionViewerV3.viewTranslateY,
+    rotate: store.viewRotate,
+    scale: store.viewScale,
+    translateX: store.viewTranslateX,
+    translateY: store.viewTranslateY,
   };
 }
 export default connect(mapStateToProps)(SVGViewer);  //Connects the Component to the Redux Store
