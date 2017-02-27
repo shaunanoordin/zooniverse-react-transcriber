@@ -49,6 +49,7 @@ class SVGViewer extends Component {
         onMouseLeave={this.onMouseLeave.bind(this)}
         onWheel={(e) => {
           if (e.deltaY > 0) {
+            this.props.dispatch(setView(null, Math.max(this.props.scale - 0.1, MIN_SCALE), null, null ));
           } else if (e.deltaY < 0) {
             this.props.dispatch(setView(null, Math.max(this.props.scale + 0.1, MIN_SCALE), null, null ));
           }
