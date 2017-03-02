@@ -12,86 +12,58 @@
     flex: 1 1 auto
     display: flex
   
-  .input-panel
+  .control-panel
+    flex: 1 1 10em
+    max-width: 20%
     font-size: 0.8em
-    position: absolute
-    left: 0
-    bottom: 0
-    background: white
-    padding: 0.5em
-    margin: 0 auto
-    width: 20em
-    max-width: 100%
-    border: 1px solid $tertiary
-    text-align: center
     
-    p
-      margin: 0 0.2em
-    
-    .status-subpanel
-      border-radius: 1em
-      margin: 0.5em 0 0 0
-      padding: 0.5em
+    > div
+      margin-top: 1em
       background: $primary
       color: $secondary
+      border-radius: 1em
+      padding: 0.5em
       
-      button
-        margin: 0 1em
-    
-    .metadata-subpanel
-      border: 1px solid $tertiary
-      font-size: 0.8em
-      background: white
-      margin: 0.5em auto 0 auto
-      padding: 0
-      max-height: 30em
-      overflow: auto
-      text-align: left
-
       .row
         display: flex
-        flex-direction: row
-        align-items: stretch
-
+        margin-bottom: 0.1em
+        
         label
-          flex: 0 0 auto
-          display: inline-block
-          color: $secondary
-          background: $tertiary
-          width: 25%
-          vertical-align: top
+          flex: 1 1 30%
           overflow: hidden
-
+          padding: 0.2em
+          
         .data
-          flex: 1 1 auto
-          display: inline-block
-          vertical-align: top
+          flex: 1 1 70%
           overflow: auto
-  
-  .control-panel
-    border: 1px solid $tertiary
-    font-size: 0.8em
-    position: absolute
-    right: 0
-    top: 0
-    background: white
-    margin: 0 auto
-    padding: 1em
-    width: 20em
-    max-width: 100%
+          padding: 0.2em
+          
+          input
+            display: inline-block
+            width: 100%
     
-    .row
+    .subjectID-subpanel
+      text-align: center
       
-      label
-        display: inline-block
-        width: 40%
-      .data
+      input
         display: inline-block
         width: 60%
-        
-        input
-          width: 50%
       
+      button
+        display: inline-block
+        width: 20%
+    
+    .status-subpanel
+      text-align: center
+      
+      p
+        margin: 0.2em 0
+      
+    .metadata-subpanel
+      .data
+        background: $secondary
+        color: $tertiary
+  
   .aggregation-panel
     border: 1px solid $tertiary
     font-size: 0.8em

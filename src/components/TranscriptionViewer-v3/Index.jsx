@@ -9,7 +9,7 @@ import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
 import SVGAggregatedText from './SVGAggregatedText.jsx';
 
-const DEFAULT_SVGVIEWER_WIDTH = 1024;
+const DEFAULT_SVGVIEWER_WIDTH = 480;
 const DEFAULT_SVGVIEWER_HEIGHT = 640;
 
 const SHOWAGGREGATIONS_NONE = 'show-aggregations-none';
@@ -62,6 +62,126 @@ class Index extends React.Component {
   render() {
     return (
       <div className="transcription-viewer-v3">
+        
+        <div className="control-panel">
+          <div className="subjectID-subpanel">
+            <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
+              placeholder="Panoptes Subject ID, e.g. 1274999"
+              onKeyPress={(e) => {
+                if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
+                  this.execFetchSubject();
+                }
+              }}
+            />
+            <button onClick={this.execFetchSubject}>&raquo;</button>
+          </div>
+          <div className="status-subpanel">
+            {(this.props.subjectID)
+              ? (<p>
+                  <button onClick={this.goToPrevPage.bind(this)}>&laquo;</button>
+                  <span>Subject ID {this.props.subjectID}</span>
+                  <button onClick={this.goToNextPage.bind(this)}>&raquo;</button>
+                </p>)
+              : null
+            }
+            
+            {(() => {
+              switch (this.props.subjectStatus) {
+                case status.STATUS_IDLE:
+                  return <p>Type in a Panoptes Subject ID to search!</p>;
+                case status.STATUS_LOADING:
+                  return <p>Looking for Subject...</p>;
+                case status.STATUS_READY:
+                  return <p>Subject ready.</p>;
+                case status.STATUS_ERROR:
+                  return <p>WHOOPS - Something went wrong!</p>;
+              }
+              return null;
+            })()}
+            
+            {(() => {
+              if (this.props.subjectStatus !== status.STATUS_READY) return null;
+              
+              switch (this.props.subjectStatus) {
+                case status.STATUS_LOADING:
+                  return <p>Looking for Aggregations...</p>;
+                case status.STATUS_READY:
+                  return (
+                    <p>
+                      Aggregations ready.
+                      <select onChange={this.setShowAggregations.bind(this)} value={this.state.showAggregations}>
+                        <option value={SHOWAGGREGATIONS_NONE}>None</option>
+                        <option value={SHOWAGGREGATIONS_OVERLAY}>Overlay</option>
+                        <option value={SHOWAGGREGATIONS_FULL}>Full</option>
+                        <option value={SHOWAGGREGATIONS_CENSORED}>Censored by the FBI</option>
+                      </select>
+                    </p>
+                  );
+                case status.STATUS_ERROR:
+                  return <p>No Aggregations, sorry.</p>;
+              }
+              return null;
+            })()}
+          </div>
+          
+          <div className="viewControl-subpanel">
+            <div className="row">
+              <label>Scale</label>
+              <span className="data">
+                <input
+                  value={this.props.scale}
+                  ref={(itm) => { this.inputScale = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="0.1"
+                  min="0.1" />
+              </span>
+            </div>
+            <div className="row">
+              <label>Translate (x,y)</label>
+              <span className="data">
+                <input
+                  value={this.props.translateX}
+                  ref={(itm) => { this.inputTranslateX = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+                <input
+                  value={this.props.translateY}
+                  ref={(itm) => { this.inputTranslateY = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+              </span>
+            </div>
+            <div className="row">
+              <label>Rotate (deg)</label>
+              <span className="data">
+                <input
+                  value={this.props.rotate}
+                  ref={(itm) => { this.inputRotate = itm; }}
+                  onChange={this.updateTransform} 
+                  type="number"
+                  step="15" />
+              </span>
+            </div>
+          </div>
+          
+          {(this.props.subjectData && this.props.subjectData.metadata)
+            ? (() => {
+                let metadata = [];
+                for (let m in this.props.subjectData.metadata) {
+                  metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
+                }
+                return (
+                  <div className="metadata-subpanel">
+                    {metadata}
+                  </div>
+                );
+              })()
+            : null
+          }
+        </div>
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
           ?
@@ -126,126 +246,6 @@ class Index extends React.Component {
             </div>
           : null
         }
-        
-        <div className="control-panel">
-          <div className="row">
-            <label>Scale</label>
-            <span className="data">
-              <input
-                value={this.props.scale}
-                ref={(itm) => { this.inputScale = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="0.1"
-                min="0.1" />
-            </span>
-          </div>
-          <div className="row">
-            <label>Translate (x,y)</label>
-            <span className="data">
-              <input
-                value={this.props.translateX}
-                ref={(itm) => { this.inputTranslateX = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
-              <input
-                value={this.props.translateY}
-                ref={(itm) => { this.inputTranslateY = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
-            </span>
-          </div>
-          <div className="row">
-            <label>Rotate (deg)</label>
-            <span className="data">
-              <input
-                value={this.props.rotate}
-                ref={(itm) => { this.inputRotate = itm; }}
-                onChange={this.updateTransform} 
-                type="number"
-                step="15" />
-            </span>
-          </div>
-        </div>
-        
-        <div className="input-panel">
-          <div>
-            <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
-              placeholder="Panoptes Subject ID, e.g. 1274999"
-              onKeyPress={(e) => {
-                if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
-                  this.execFetchSubject();
-                }
-              }}
-            />
-            <button onClick={this.execFetchSubject}>&raquo;</button>
-          </div>
-          <div className="status-subpanel">
-            {(this.props.subjectID)
-              ? (<p>
-                  <button onClick={this.goToPrevPage.bind(this)}>&laquo;</button>
-                  <span>Subject ID {this.props.subjectID}</span>
-                  <button onClick={this.goToNextPage.bind(this)}>&raquo;</button>
-                </p>)
-              : null
-            }
-            
-            {(() => {
-              switch (this.props.subjectStatus) {
-                case status.STATUS_IDLE:
-                  return <p>Type in a Panoptes Subject ID to search!</p>;
-                case status.STATUS_LOADING:
-                  return <p>Looking for Subject...</p>;
-                case status.STATUS_READY:
-                  return <p>Subject ready.</p>;
-                case status.STATUS_ERROR:
-                  return <p>WHOOPS - Something went wrong!</p>;
-              }
-              return null;
-            })()}
-            
-            {(() => {
-              if (this.props.subjectStatus !== status.STATUS_READY) return null;
-              
-              switch (this.props.subjectStatus) {
-                case status.STATUS_LOADING:
-                  return <p>Looking for Aggregations...</p>;
-                case status.STATUS_READY:
-                  return (
-                    <p>
-                      Aggregations ready.
-                      <select onChange={this.setShowAggregations.bind(this)} value={this.state.showAggregations}>
-                        <option value={SHOWAGGREGATIONS_NONE}>None</option>
-                        <option value={SHOWAGGREGATIONS_OVERLAY}>Overlay</option>
-                        <option value={SHOWAGGREGATIONS_FULL}>Full</option>
-                        <option value={SHOWAGGREGATIONS_CENSORED}>Censored by the FBI</option>
-                      </select>
-                    </p>
-                  );
-                case status.STATUS_ERROR:
-                  return <p>No Aggregations, sorry.</p>;
-              }
-              return null;
-            })()}
-          </div>
-          
-          {(this.props.subjectData && this.props.subjectData.metadata)
-            ? (() => {
-                let metadata = [];
-                for (let m in this.props.subjectData.metadata) {
-                  metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
-                }
-                return (
-                  <div className="metadata-subpanel">
-                    {metadata}
-                  </div>
-                );
-              })()
-            : null
-          }
-        </div>
         
         {(this.props.currentAggregation !== null && this.props.aggregationsData && this.props.aggregationsData[this.props.currentAggregation])
           ? <div className="aggregation-panel">
