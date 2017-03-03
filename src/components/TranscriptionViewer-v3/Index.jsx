@@ -36,7 +36,7 @@ class Index extends React.Component {
       translateY: 0,
       rotate: 0,
       loadedImage: { width: 0, height: 0 },
-      showAggregations: SHOWAGGREGATIONS_OVERLAY,
+      showAggregations: SHOWAGGREGATIONS_NONE,
     };
   }
   
@@ -224,7 +224,7 @@ class Index extends React.Component {
                 height={DEFAULT_SVGVIEWER_HEIGHT}
               >
               {this.props.subjectData.locations.map((loc, locIndex) => {
-                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+                return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
               })}
 
               {(this.props.aggregationsData)
@@ -270,6 +270,7 @@ class Index extends React.Component {
     //DEFAULT image
     //this.props.dispatch(fetchSubject('1274999'));  //Shakespeare's World
     this.props.dispatch(fetchSubject('671183'));  //AnnoTate
+    //this.props.dispatch(fetchSubject('671189'));  //AnnoTate with some... funky fresh text directions
   }
   
   updateTransform(e) {
