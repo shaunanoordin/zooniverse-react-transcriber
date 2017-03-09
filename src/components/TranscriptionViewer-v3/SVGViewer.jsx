@@ -63,19 +63,6 @@ class SVGViewer extends Component {
           <g>
             {/*this.state.circles*/}
           </g>
-          <g>
-            <line x1="0" y1="-250" x2="0" y2="250" strokeWidth="1" stroke="#fff"/>
-            <line x1="-250" y1="-250" x2="-250" y2="250" strokeWidth="1" stroke="#fff"/>
-            <line x1="250" y1="-250" x2="250" y2="250" strokeWidth="1" stroke="#fff"/>
-            <line x1="-250" y1="0" x2="250" y2="0" strokeWidth="1" stroke="#fff"/>
-            <line x1="-250" y1="-250" x2="250" y2="-250" strokeWidth="1" stroke="#fff"/>
-            <line x1="-250" y1="250" x2="250" y2="250" strokeWidth="1" stroke="#fff"/>
-            
-            <circle cx={0+Math.cos(Math.PI*-1/2)*20} cy={0+Math.sin(Math.PI*-1/2)*20} r="10" fill="none" stroke="#fc3" strokeWidth="1" />
-            <circle cx={0+Math.cos(Math.PI*5/6)*20} cy={0+Math.sin(Math.PI*5/6)*20} r="10" fill="none" stroke="#c33" strokeWidth="1" />
-            <circle cx={0+Math.cos(Math.PI*1/6)*20} cy={0+Math.sin(Math.PI*1/6)*20} r="10" fill="none" stroke="#39c" strokeWidth="1" />
-            <circle cx={0} cy={0} r="10" fill="none" stroke="#fff" strokeWidth="1" />
-          </g>
         </g>
       </svg>
     );

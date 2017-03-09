@@ -85,12 +85,6 @@ export function fetchSubject(id) {
           //Space reserved for future standardised transcription aggregations
           else if (false) {}
           
-          if (startX > endX) {
-            let tmp;
-            tmp = startX; startX = endX; endX = tmp;
-            tmp = startY; startY = endY; endY = tmp;
-          }
-          
           aggregations.push({
             startX,
             endX,

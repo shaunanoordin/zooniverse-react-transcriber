@@ -6,15 +6,9 @@
   align-items: stretch
   position: relative
   
-  .data-panel
-    border: 1px solid $primary
-    margin: 1px
-    flex: 1 1 auto
-    display: flex
-  
   .control-panel
-    flex: 1 1 10em
-    max-width: 20%
+    flex: 0 0 auto
+    width: 16em
     font-size: 0.8em
     margin: 1px
     
@@ -64,6 +58,19 @@
       .data
         background: $secondary
         color: $tertiary
+  
+  .data-panel
+    border: 1px solid $primary
+    margin: 1px
+    flex: 1 1 auto
+    display: flex
+  
+  .examination-panel
+    flex: 0 0 auto
+    width: 16em
+    font-size: 0.8em
+    margin: 1px
+    overflow: auto
   
   .aggregation-panel
     border: 1px solid $tertiary

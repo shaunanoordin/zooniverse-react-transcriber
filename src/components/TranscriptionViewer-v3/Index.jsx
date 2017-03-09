@@ -184,8 +184,7 @@ class Index extends React.Component {
         </div>
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
-          ?
-            <div className="data-panel">
+          ? <div className="data-panel">
               <SVGViewer
                 className={this.state.showAggregations}
                 width={DEFAULT_SVGVIEWER_WIDTH}
@@ -216,8 +215,7 @@ class Index extends React.Component {
         }
         
         {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
-          ?
-            <div className="data-panel">
+          ? <div className="data-panel">
               <SVGViewer
                 className="show-aggregations-full"
                 width={DEFAULT_SVGVIEWER_WIDTH}
@@ -241,8 +239,27 @@ class Index extends React.Component {
                 })
                 : null
               }
-
               </SVGViewer>
+            </div>
+          : null
+        }
+        
+        {(this.props.aggregationsData)
+          ? <div className="examination-panel">
+              <h2>ALL AGGREGATIONS</h2>
+              {this.props.aggregationsData.map((agg, index) => {
+                console.log(agg);
+                return (
+                  <div>
+                    <div>{agg.text}</div>
+                    {agg.raw.map(raw => {
+                      return (
+                        <div>{raw.text}</div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
           : null
         }

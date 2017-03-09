@@ -32,8 +32,8 @@ class SVGAggregatedText extends Component {
         transform={'translate(' + this.props.offsetX + ',' + this.props.offsetY + ') '}
         onClick={this.onClick}
       >
-        <circle className="circle" cx={agg.startX} cy={agg.startY} r={RADIUS} />
-        <circle className="circle" cx={agg.endX} cy={agg.endY} r={RADIUS} />
+        <circle className="circle start" cx={agg.startX} cy={agg.startY} r={RADIUS} />
+        <circle className="circle end" cx={agg.endX} cy={agg.endY} r={RADIUS} />
         <path className="path" d={pathDefinition} />
         <g transform={`translate(${agg.startX}, ${agg.startY}) rotate(${textAngleClockwiseDeg}) translate(${-agg.startX}, ${-agg.startY})`}>
           <text className="text" x={agg.startX + RADIUS/2} y={agg.startY + RADIUS/2} fontFamily="Verdana" fontSize={RADIUS}>
