@@ -60,10 +60,20 @@
         color: $tertiary
   
   .data-panel
-    border: 1px solid $primary
-    margin: 1px
     flex: 1 1 auto
     display: flex
+    background: $quaternary
+    margin: 0 3px
+    flex-direction: row
+    
+    &.vertical
+      flex-direction: column
+    
+    .data-subpanel
+      border: 1px solid $primary
+      margin: 3px
+      flex: 1 1 auto
+      display: flex
   
   .examination-panel
     flex: 0 0 auto

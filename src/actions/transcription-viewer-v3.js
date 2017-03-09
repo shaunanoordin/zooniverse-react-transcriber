@@ -142,3 +142,12 @@ export function setView(rotate, scale, translateX, translateY) {
     });
   };
 }
+
+export function setViewOptions(options) {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_VIEWOPTIONS_V3",
+      options: options,
+    });
+  };
+}

@@ -12,6 +12,9 @@ const initialState = {
   viewScale: 1,
   viewTranslateX: 0,
   viewTranslateY: 0,
+  viewOptions: {
+    layout: 'horizontal',
+  }
 };
 
 export function transcriptionViewerV3(state = initialState, action) {
@@ -68,6 +71,11 @@ export function transcriptionViewerV3(state = initialState, action) {
         viewScale: (action.scale !== null) ? Number(Number(action.scale).toPrecision(2)) : state.viewScale,
         viewTranslateX: (action.translateX !== null) ? Math.round(action.translateX) : state.viewTranslateX,
         viewTranslateY: (action.translateY !== null) ? Math.round(action.translateY) : state.viewTranslateY,
+      });
+      
+    case "SET_VIEWOPTIONS_V3":
+      return Object.assign({}, state, {
+        viewOptions: Object.assign({}, state.viewOptions, action.options),
       });
       
     default:
