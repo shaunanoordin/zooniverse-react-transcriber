@@ -67,7 +67,6 @@ class Index extends React.Component {
                   })
                   : null
                 }
-
                 </SVGViewer>
               </div>
             : null
@@ -75,7 +74,6 @@ class Index extends React.Component {
 
           {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
             ? <div className="data-subpanel">
-                {console.log('x'.repeat(40), this.props.viewOptions)}
                 <SVGViewer
                   className="show-aggregations-full"
                   width={DEFAULT_SVGVIEWER_WIDTH}
@@ -109,7 +107,6 @@ class Index extends React.Component {
           ? <div className="examination-panel">
               <h2>ALL AGGREGATIONS</h2>
               {this.props.aggregationsData.map((agg, index) => {
-                console.log(agg);
                 return (
                   <div>
                     <div>{agg.text}</div>
@@ -168,7 +165,6 @@ Index.defaultProps = {
 
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV3;
-  console.log('!'.repeat(40), store.viewOptions)
   return {
     subjectData: store.subjectData,
     aggregationsData: store.aggregationsData,

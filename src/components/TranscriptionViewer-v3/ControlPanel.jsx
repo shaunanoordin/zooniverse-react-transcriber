@@ -34,14 +34,14 @@ class ControlPanel extends React.Component {
               }
             }}
           />
-          <button className="button" onClick={this.execFetchSubject}>&raquo;</button>
+          <button className="button fa fa-search" onClick={this.execFetchSubject} />
         </div>
         <div className="status-subpanel">
           {(this.props.subjectID)
             ? (<p>
-                <button className="button" onClick={this.goToPrevPage.bind(this)}>&laquo;</button>
+                <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
                 <span>Subject ID {this.props.subjectID}</span>
-                <button className="button" onClick={this.goToNextPage.bind(this)}>&raquo;</button>
+                <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
               </p>)
             : null
           }
@@ -119,8 +119,11 @@ class ControlPanel extends React.Component {
             </span>
           </div>
           <div className="row">
-            <button className="button fa fa-caret-square-o-right" onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
-            <button className="button fa fa-caret-square-o-down" onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+            <label>Layout</label>
+            <span className="data">
+              <button className="button fa fa-caret-square-o-right" onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+              <button className="button fa fa-caret-square-o-down" onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+            </span>
           </div>
         </div>
 
