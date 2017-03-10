@@ -53,9 +53,29 @@
   display: inline-block
   margin: 0.25em
   padding: 0.25em 1em
-  border: 1px solid $primary
+  border: 0.2em solid $primary
   color: $primary
   background: $secondary
   vertical-align: middle
   border-radius: 1em
   cursor: pointer
+  box-shadow: 0 0.2em 0.2em #333
+  
+  &:hover
+    color: $highlight
+    border: 0.2em solid $highlight
+    transform: translate(0, -0.1em)
+    box-shadow: 0 0.3em 0.2em #333
+
+.message
+  margin: 0.25em
+  padding: 0.5em
+  border: 0.2em solid $primary
+  color: $tertiary
+  text-align: center
+  border-radius: 1em
+
+  &.error
+    background: $anti
+    border: 0.2em solid $tertiary
+    color: $secondary

@@ -5,6 +5,7 @@
   flex-direction: row
   align-items: stretch
   position: relative
+  background: $neutral-light
   
   .control-panel
     flex: 0 0 auto
@@ -62,7 +63,7 @@
   .data-panel
     flex: 1 1 auto
     display: flex
-    background: $quaternary
+    background: $neutral
     margin: 0 3px
     flex-direction: row
     
@@ -75,14 +76,34 @@
       flex: 1 1 auto
       display: flex
   
-  .examination-panel
+  .aggregations-panel
     flex: 0 0 auto
     width: 16em
     font-size: 0.8em
     margin: 1px
     overflow: auto
+    
+    > div
+      margin-top: 1em
+      background: $secondary
+      color: $tertiary
+      border-radius: 1em
+      padding: 0.5em
+      
+      .aggregated
+        display: block
+        color: $primary-dark
+        border-bottom: 1px solid $primary
+        
+      ul.raw
+        margin: 0
+        padding: 0
+
+        li
+          margin: 0
+          padding: 0
   
-  .aggregation-panel
+  /*.aggregation-panel
     border: 1px solid $tertiary
     font-size: 0.8em
     position: absolute
@@ -105,4 +126,4 @@
       color: $tertiary
       border-left: 1em solid $primary
       padding: 0.2em
-      margin-top: 0.2em
+      margin-top: 0.2em*/

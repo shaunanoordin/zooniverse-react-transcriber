@@ -8,7 +8,7 @@
 }
 
 .svg-viewer-v3
-  background: $secondary
+  background: $neutral-dark
   display: block
   margin: 0 auto
   cursor: all-scroll
@@ -36,13 +36,13 @@
   &.show-aggregations-full
     .aggregated-text    
       .circle.start
-        fill: rgba(153, 51, 153, 0.5)
+        fill: rgba($primary-light, 0.5)
       .circle.end
-        fill: rgba(34, 34, 136, 0.5)
+        fill: rgba($primary-light, 0.5)
       .path
-        fill: rgba(255, 255, 255, 0.9)
+        fill: rgba($secondary, 0.9)
       .text
-        fill: rgba(0, 0, 0, 1)
+        fill: rgba($tertiary, 1)
     
 .svg-image-v3-loading
   animation-name: loading-pulse

@@ -4,6 +4,7 @@ import { fetchSubject, setView } from '../../actions/transcription-viewer-v3.js'
 import * as status from '../../constants/status.js';
 
 import ControlPanel from './ControlPanel.jsx';
+import AggregationsPanel from './AggregationsPanel.jsx';
 import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
 import SVGAggregatedText from './SVGAggregatedText.jsx';
@@ -103,24 +104,7 @@ class Index extends React.Component {
           }
         </div>
         
-        {(this.props.aggregationsData)
-          ? <div className="examination-panel">
-              <h2>ALL AGGREGATIONS</h2>
-              {this.props.aggregationsData.map((agg, index) => {
-                return (
-                  <div>
-                    <div>{agg.text}</div>
-                    {agg.raw.map(raw => {
-                      return (
-                        <div>{raw.text}</div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          : null
-        }
+        <AggregationsPanel />
         
         {/*(this.props.currentAggregation !== null && this.props.aggregationsData && this.props.aggregationsData[this.props.currentAggregation])
           ? <div className="aggregation-panel">
