@@ -34,15 +34,20 @@
         fill: rgba(0, 0, 0, 1)
   
   &.show-aggregations-full
-    .aggregated-text    
+    .aggregated-text
       .circle.start
         fill: rgba($primary-light, 0.5)
       .circle.end
-        fill: rgba($primary-light, 0.5)
+        fill: rgba($primary-dark, 0.5)
       .path
         fill: rgba($secondary, 0.9)
       .text
         fill: rgba($tertiary, 1)
+      &.selected
+        .path
+          fill: rgba($primary-light, 0.9)
+        .text
+          fill: rgba($secondary, 1)
     
 .svg-image-v3-loading
   animation-name: loading-pulse

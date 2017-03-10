@@ -77,6 +77,14 @@ export function transcriptionViewerV3(state = initialState, action) {
       return Object.assign({}, state, {
         viewOptions: Object.assign({}, state.viewOptions, action.options),
       });
+    
+    case "SHOW_AGGREGATION_V3":
+      return Object.assign({}, state, {
+        aggregationsData: state.aggregationsData.map((agg, index) => {
+          if (action.index === index) agg.show = action.show;
+          return agg;
+        }),
+      });
       
     default:
       return state;

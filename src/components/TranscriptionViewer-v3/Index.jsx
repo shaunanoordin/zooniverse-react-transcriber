@@ -51,23 +51,8 @@ class Index extends React.Component {
                   height={DEFAULT_SVGVIEWER_HEIGHT}
                 >
                 {this.props.subjectData.locations.map((loc, locIndex) => {
-                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
                 })}
-
-                {(this.props.aggregationsData)
-                  ? this.props.aggregationsData.map((agg, index) => {
-                    return (
-                      <SVGAggregatedText
-                        key={'aggtext_' + agg.startX + '_' + agg.startY}
-                        offsetX={this.state.loadedImage.width * -0.5}
-                        offsetY={this.state.loadedImage.height * -0.5}
-                        aggregation={agg}
-                        index={index}
-                      />
-                    );
-                  })
-                  : null
-                }
                 </SVGViewer>
               </div>
             : null
@@ -81,22 +66,20 @@ class Index extends React.Component {
                   height={DEFAULT_SVGVIEWER_HEIGHT}
                 >
                 {this.props.subjectData.locations.map((loc, locIndex) => {
-                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
+                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
                 })}
 
-                {(this.props.aggregationsData)
-                  ? this.props.aggregationsData.map((agg, index) => {
-                    return (
-                      <SVGAggregatedText
-                        key={'aggtext_' + agg.startX + '_' + agg.startY}
-                        offsetX={this.state.loadedImage.width * -0.5}
-                        offsetY={this.state.loadedImage.height * -0.5}
-                        aggregation={agg}
-                        index={index}
-                      />
-                    );
-                  })
-                  : null
+                {(!this.props.aggregationsData) ? null :
+                  this.props.aggregationsData.filter((agg) => { return agg.show }).map((agg, index) => { return (
+                    <SVGAggregatedText
+                      className={(index === this.props.currentAggregation) ? 'selected' : ''}
+                      key={'aggtext_' + agg.startX + '_' + agg.startY}
+                      offsetX={this.state.loadedImage.width * -0.5}
+                      offsetY={this.state.loadedImage.height * -0.5}
+                      aggregation={agg}
+                      index={index}
+                    />
+                  )})
                 }
                 </SVGViewer>
               </div>
@@ -136,12 +119,14 @@ class Index extends React.Component {
 Index.propTypes = {
   subjectData: PropTypes.object,
   aggregationsData: PropTypes.array,
+  currentAggregation: PropTypes.number,
   viewOptions: PropTypes.object,
 };
 
 Index.defaultProps = {
   subjectData: null,
   aggregationsData: null,
+  currentAggregation: null,
   viewOptions: {
     layout: 'horizontal'
   },
@@ -152,6 +137,7 @@ const mapStateToProps = (state) => {
   return {
     subjectData: store.subjectData,
     aggregationsData: store.aggregationsData,
+    currentAggregation: store.currentAggregation,
     viewOptions: store.viewOptions,
   };
 };

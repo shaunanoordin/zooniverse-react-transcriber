@@ -28,7 +28,7 @@ class SVGAggregatedText extends Component {
     
     return (
       <g
-        className="aggregated-text"
+        className={'aggregated-text ' + ((this.props.className) ? this.props.className : '')}
         transform={'translate(' + this.props.offsetX + ',' + this.props.offsetY + ') '}
         onClick={this.onClick}
       >

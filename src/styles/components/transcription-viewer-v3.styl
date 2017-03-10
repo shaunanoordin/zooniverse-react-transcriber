@@ -90,18 +90,30 @@
       border-radius: 1em
       padding: 0.5em
       
+      &.selected
+        color: $secondary
+        background: $primary-light
+      
       .aggregated
-        display: block
-        color: $primary-dark
+        display: flex
         border-bottom: 1px solid $primary
+        justify-content: flex-start
+
+        input
+          flex: 0 0 auto
+        
+        span
+          flex: 1 1 auto
         
       ul.raw
+        font-size: 0.8em
         margin: 0
         padding: 0
 
         li
-          margin: 0
-          padding: 0
+          border-left: 0.5em solid $primary
+          margin: 0.2em 0 0 0
+          padding: 0 0 0 0.2em
   
   /*.aggregation-panel
     border: 1px solid $tertiary

@@ -86,12 +86,13 @@ export function fetchSubject(id) {
           else if (false) {}
           
           aggregations.push({
+            text: textClusters[tc].center[4],
             startX,
             endX,
             startY,
             endY,
-            text: textClusters[tc].center[4],
             raw,
+            show: true,
           });
         }
         dispatch({
@@ -148,6 +149,15 @@ export function setViewOptions(options) {
     dispatch({
       type: "SET_VIEWOPTIONS_V3",
       options: options,
+    });
+  };
+}
+
+export function showAggregation(index, show) {
+  return (dispatch) => {
+    dispatch({
+      type: "SHOW_AGGREGATION_V3",
+      index, show
     });
   };
 }

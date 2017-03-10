@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-//import { fetchSubject, setView, setViewOptions } from '../../actions/transcription-viewer-v3.js';
+import { showAggregation, selectAggregation } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
 class AggregationsPanel extends React.Component {
@@ -31,13 +31,17 @@ class AggregationsPanel extends React.Component {
         return <div className="error message">ERROR: Something unexpected happened. Perhaps this Subject has no transcription data?</div>;
     }
   }
+  
   render_aggregatedText() {
     if (!this.props.aggregationsData) return null;
     
     return this.props.aggregationsData.map ((agg, index1) => {
       return (
-        <div className="data-point" key={'agg_' + index1}>
-          <span className="aggregated">{agg.text}</span>
+        <div className={'data-point' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
+          <span className="aggregated">
+            <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
+            <span onClick={() => { this.props.dispatch(selectAggregation(index1)) }}>{agg.text}</span>
+          </span>
           <ul className="raw">
             {(!agg.raw) ? null :
               agg.raw.map((rawLine, index2) => {
@@ -48,6 +52,14 @@ class AggregationsPanel extends React.Component {
         </div>
       )
     });
+  }
+  
+  toggleShowAggregation(index, e) {
+    this.props.dispatch(showAggregation(index, !this.props.aggregationsData[index].show));
+  }
+  
+  selectAggregation(e) {
+    
   }
 }
 
