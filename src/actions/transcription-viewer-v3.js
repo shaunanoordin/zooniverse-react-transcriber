@@ -85,19 +85,14 @@ export function fetchSubject(id) {
           //Space reserved for future standardised transcription aggregations
           else if (false) {}
           
-          if (startX > endX) {
-            let tmp;
-            tmp = startX; startX = endX; endX = tmp;
-            tmp = startY; startY = endY; endY = tmp;
-          }
-          
           aggregations.push({
+            text: textClusters[tc].center[4],
             startX,
             endX,
             startY,
             endY,
-            text: textClusters[tc].center[4],
             raw,
+            show: true,
           });
         }
         dispatch({
@@ -145,6 +140,24 @@ export function setView(rotate, scale, translateX, translateY) {
       scale: scale,
       translateX: translateX,
       translateY: translateY,
+    });
+  };
+}
+
+export function setViewOptions(options) {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_VIEWOPTIONS_V3",
+      options: options,
+    });
+  };
+}
+
+export function showAggregation(index, show) {
+  return (dispatch) => {
+    dispatch({
+      type: "SHOW_AGGREGATION_V3",
+      index, show
     });
   };
 }
