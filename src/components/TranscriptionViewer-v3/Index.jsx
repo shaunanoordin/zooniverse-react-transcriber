@@ -43,7 +43,8 @@ class Index extends React.Component {
         <ControlPanel />
         
         <div className={'data-panel' + ((this.props.viewOptions && this.props.viewOptions.layout === 'vertical') ? ' vertical' : '') }>
-          {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
+          {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0
+            && this.props.viewOptions.layout !== 'single')
             ? <div className="data-subpanel">
                 <SVGViewer
                   className="show-aggregations-none"
@@ -70,7 +71,7 @@ class Index extends React.Component {
                 })}
 
                 {(!this.props.aggregationsData) ? null :
-                  this.props.aggregationsData.filter((agg) => { return agg.show }).map((agg, index) => { return (
+                  this.props.aggregationsData.map((agg, index) => { return (!agg.show) ? null : (
                     <SVGAggregatedText
                       className={(index === this.props.currentAggregation) ? 'selected' : ''}
                       key={'aggtext_' + agg.startX + '_' + agg.startY}
