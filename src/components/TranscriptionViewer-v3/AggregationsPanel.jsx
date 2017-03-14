@@ -3,11 +3,16 @@ import { connect } from 'react-redux';
 import { showAggregation, selectAggregation } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
+//const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
+//const SMOOTHSCROLL_TRANSITION_FRAMES = 10;
+
 class AggregationsPanel extends React.Component {
   constructor(props) {
     super(props);
     this.list = null;
     this.aggregatedTexts = [];
+    //this.smoothScrollTarget = 0;
+    //this.smoothScrollSpeed = 0;
   }
   
   render() {
@@ -73,6 +78,18 @@ class AggregationsPanel extends React.Component {
     const offsetParent = current.offsetParent;
     this.list.scrollTop = current.offsetTop;
   }
+  
+  /*smoothScrollToSelectedAggregation() {
+    if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
+    const current = this.aggregatedTexts[next.currentAggregation];
+    const offsetParent = current.offsetParent;
+    
+    setTimeout(smoothScroll, SMOOTHSCROLL_INTENDED_TIME / SMOOTHSCROLL_TRANSITION_FRAMES);
+  }
+  
+  smoothScroll() {
+    
+  }*/
 }
 
 AggregationsPanel.propTypes = {

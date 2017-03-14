@@ -29,7 +29,6 @@ class Index extends React.Component {
     const vScale = (img.height !== 0) ? DEFAULT_SVGVIEWER_HEIGHT / img.height : 1;
     
     this.setState({
-      //scale: Number(Math.min(hScale, vScale).toPrecision(1)),
       loadedImage: { width: img.width, height: img.height },
     });
     
@@ -47,13 +46,32 @@ class Index extends React.Component {
             && this.props.viewOptions.layout !== 'single')
             ? <div className="data-subpanel">
                 <SVGViewer
-                  className="show-aggregations-none"
                   width={DEFAULT_SVGVIEWER_WIDTH}
                   height={DEFAULT_SVGVIEWER_HEIGHT}
                 >
-                {this.props.subjectData.locations.map((loc, locIndex) => {
-                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
-                })}
+                  {this.props.subjectData.locations.map((loc, locIndex) => {
+                    return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
+                  })}
+                  {(!this.props.aggregationsData || this.props.currentAggregation === null) ? null : (()=>{
+                    const agg = this.props.aggregationsData[this.props.currentAggregation];
+                    const textAngleRad = Math.atan2(agg.endY - agg.startY, agg.endX - agg.startX);
+                    const RADIUS = 30;
+                    const pathDefinition = 'M ' +
+                      (agg.startX + RADIUS * Math.cos(textAngleRad - Math.PI/2)) + ' ' + (agg.startY + RADIUS * Math.sin(textAngleRad - Math.PI/2)) +
+                      ' L ' +
+                      (agg.startX + RADIUS * Math.cos(textAngleRad + Math.PI/2)) + ' ' + (agg.startY + RADIUS * Math.sin(textAngleRad + Math.PI/2)) +
+                      ' L ' + 
+                      (agg.endX + RADIUS * Math.cos(textAngleRad + Math.PI/2)) + ' ' + (agg.endY + RADIUS * Math.sin(textAngleRad + Math.PI/2)) +
+                      ' L ' +
+                      (agg.endX + RADIUS * Math.cos(textAngleRad - Math.PI/2)) + ' ' + (agg.endY + RADIUS * Math.sin(textAngleRad - Math.PI/2)) +
+                      ' Z';
+                    
+                    return (
+                      <g transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                        <path className="highlight-path" d={pathDefinition} />
+                      </g>
+                    );
+                  })()}
                 </SVGViewer>
               </div>
             : null
@@ -62,25 +80,24 @@ class Index extends React.Component {
           {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
             ? <div className="data-subpanel">
                 <SVGViewer
-                  className="show-aggregations-full"
                   width={DEFAULT_SVGVIEWER_WIDTH}
                   height={DEFAULT_SVGVIEWER_HEIGHT}
                 >
-                {this.props.subjectData.locations.map((loc, locIndex) => {
-                  return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
-                })}
+                  {this.props.subjectData.locations.map((loc, locIndex) => {
+                    return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
+                  })}
 
-                {(!this.props.aggregationsData) ? null :
-                  this.props.aggregationsData.map((agg, index) => { return (!agg.show) ? null : (
-                    <SVGAggregatedText
-                      className={(index === this.props.currentAggregation) ? 'selected' : ''}
-                      key={'aggtext_' + agg.startX + '_' + agg.startY}
-                      offsetX={this.state.loadedImage.width * -0.5}
-                      offsetY={this.state.loadedImage.height * -0.5}
-                      aggregation={agg}
-                      index={index}
-                    />
-                  )})
+                  {(!this.props.aggregationsData) ? null :
+                    this.props.aggregationsData.map((agg, index) => { return (!agg.show) ? null : (
+                      <SVGAggregatedText
+                        className={(index === this.props.currentAggregation) ? 'selected' : ''}
+                        key={'aggtext_' + agg.startX + '_' + agg.startY}
+                        offsetX={this.state.loadedImage.width * -0.5}
+                        offsetY={this.state.loadedImage.height * -0.5}
+                        aggregation={agg}
+                        index={index}
+                      />
+                    )})
                 }
                 </SVGViewer>
               </div>
