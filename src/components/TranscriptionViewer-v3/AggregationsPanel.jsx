@@ -6,13 +6,17 @@ import * as status from '../../constants/status.js';
 class AggregationsPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.list = null;
+    this.aggregatedTexts = [];
   }
   
   render() {
     return (
       <div className="aggregations-panel">
         {this.render_statusMessage()}
-        {this.render_aggregatedText()}
+        <div className="list" ref={(r)=>{this.list=r}}>
+          {this.render_aggregatedText()}
+        </div>
       </div>
     );
   }
@@ -34,10 +38,11 @@ class AggregationsPanel extends React.Component {
   
   render_aggregatedText() {
     if (!this.props.aggregationsData) return null;
+    this.aggregatedTexts = [];
     
     return this.props.aggregationsData.map ((agg, index1) => {
       return (
-        <div className={'data-point' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
+        <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'data-point' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
           <span className="aggregated">
             <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
             <span onClick={() => { this.props.dispatch(selectAggregation(index1)) }}>{agg.text}</span>
@@ -58,8 +63,15 @@ class AggregationsPanel extends React.Component {
     this.props.dispatch(showAggregation(index, !this.props.aggregationsData[index].show));
   }
   
-  selectAggregation(e) {
-    
+  componentWillReceiveProps(next) {
+    this.scrollToSelectedAggregation(next);
+  }
+  
+  scrollToSelectedAggregation(next) {
+    if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
+    const current = this.aggregatedTexts[next.currentAggregation];
+    const offsetParent = current.offsetParent;
+    this.list.scrollTop = current.offsetTop;
   }
 }
 
