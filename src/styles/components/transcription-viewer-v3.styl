@@ -68,9 +68,12 @@
     background: $neutral
     margin: 0 3px
     flex-direction: row
+    overflow: hidden
     
     &.vertical
       flex-direction: column
+      .data-subpanel
+        height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
     
     .data-subpanel
       border: 1px solid $primary
@@ -147,3 +150,24 @@
       border-left: 1em solid $primary
       padding: 0.2em
       margin-top: 0.2em*/
+
+/*
+.transcription-viewer-v3
+  justify-content: stretch
+  align-items: stretch
+  border: 5px solid green
+  
+.data-panel
+  justify-content: stretch
+  align-items: stretch
+  border: 5px solid red
+  
+  &.vertical
+    overflow: auto
+    
+    .data-subpanel
+      height: 50%
+  
+.data-subpanel
+  border: 5px solid blue !important
+*/
