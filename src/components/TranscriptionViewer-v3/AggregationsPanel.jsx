@@ -47,7 +47,7 @@ class AggregationsPanel extends React.Component {
     
     return this.props.aggregationsData.map ((agg, index1) => {
       return (
-        <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'data-point' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
+        <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'item' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
           <span className="aggregated">
             <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
             <span onClick={() => { this.props.dispatch(selectAggregation(index1)) }}>{agg.text}</span>

@@ -13,6 +13,7 @@
     width: 16em
     font-size: 0.8em
     margin: 1px
+    overflow: auto  //Allow users to scroll to see more metadata content if window is too small
     
     > div
       margin-top: 1em
@@ -87,9 +88,9 @@
     
     .list
       flex: 1 1 auto
-      overflow: auto
+      overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
       
-      > div
+      .item
         margin-top: 1em
         background: $secondary
         color: $tertiary
