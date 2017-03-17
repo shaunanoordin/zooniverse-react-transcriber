@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import HeaderAuth from './HeaderAuth';
+import HomePage from './HomePage';
 
 export default class App extends React.Component {
   returnSomething(something) {
@@ -19,7 +20,7 @@ export default class App extends React.Component {
           <HeaderAuth />
         </header>
         <section className="content-section">
-          {this.props.children || 'Welcome to React Starterify'}
+          {this.props.children || <HomePage />}
         </section>
       </div>
     );

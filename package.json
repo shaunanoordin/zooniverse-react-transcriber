@@ -1,7 +1,7 @@
 {
   "name": "zooniverse-react-transcriber",
   "version": "1.0.0",
-  "description": "A generic React-based Transcription project powered by the Zooniverse.",
+  "description": "A tool for reviewing data from Zooniverse transcription projects.",
   "main": "app.js",
   "repository": {
     "type": "git",
