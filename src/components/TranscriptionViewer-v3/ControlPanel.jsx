@@ -121,8 +121,9 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Layout</label>
             <span className="data">
-              <button className="button fa fa-caret-square-o-right" onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
-              <button className="button fa fa-caret-square-o-down" onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+              <button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />
+              <button className={'button fa fa-caret-square-o-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+              <button className={'button fa fa-caret-square-o-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
             </span>
           </div>
         </div>
@@ -181,6 +182,7 @@ ControlPanel.propTypes = {
   scale: PropTypes.number,
   translateX: PropTypes.number,
   translateY: PropTypes.number,
+  viewOptions: PropTypes.object,
 };
 
 ControlPanel.defaultProps = {
@@ -193,6 +195,9 @@ ControlPanel.defaultProps = {
   scale: 1,
   translateX: 0,
   translateY: 0,
+  viewOptions: {
+    layout: 'horizontal'
+  },
 };
 
 const mapStateToProps = (state) => {
@@ -207,6 +212,7 @@ const mapStateToProps = (state) => {
     scale: store.viewScale,
     translateX: store.viewTranslateX,
     translateY: store.viewTranslateY,
+    viewOptions: store.viewOptions,
   };
 };
 

@@ -6,12 +6,14 @@
   align-items: stretch
   position: relative
   background: $neutral-light
+  height: 100%  //Prevents inner content from stretching the size of this container in FF
   
   .control-panel
     flex: 0 0 auto
     width: 16em
     font-size: 0.8em
     margin: 1px
+    overflow: auto  //Allow users to scroll to see more metadata content if window is too small
     
     > div
       margin-top: 1em
@@ -66,9 +68,12 @@
     background: $neutral
     margin: 0 3px
     flex-direction: row
+    overflow: hidden
     
     &.vertical
       flex-direction: column
+      .data-subpanel
+        height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
     
     .data-subpanel
       border: 1px solid $primary
@@ -78,42 +83,48 @@
   
   .aggregations-panel
     flex: 0 0 auto
+    display: flex
+    flex-direction: column
     width: 16em
     font-size: 0.8em
     margin: 1px
-    overflow: auto
     
-    > div
-      margin-top: 1em
-      background: $secondary
-      color: $tertiary
-      border-radius: 1em
-      padding: 0.5em
+    .list
+      flex: 1 1 auto
+      overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
       
-      &.selected
-        color: $secondary
-        background: $primary-light
-      
-      .aggregated
-        display: flex
-        border-bottom: 1px solid $primary
-        justify-content: flex-start
+      .item
+        margin-top: 1em
+        background: $secondary
+        color: $tertiary
+        border-radius: 1em
+        padding: 0.5em
 
-        input
-          flex: 0 0 auto
-        
-        span
-          flex: 1 1 auto
-        
-      ul.raw
-        font-size: 0.8em
-        margin: 0
-        padding: 0
+        &.selected
+          color: $secondary
+          background: $primary-light
 
-        li
-          border-left: 0.5em solid $primary
-          margin: 0.2em 0 0 0
-          padding: 0 0 0 0.2em
+        .aggregated
+          display: flex
+          border-bottom: 1px solid $primary
+          justify-content: flex-start
+
+          input
+            flex: 0 0 auto
+
+          span
+            flex: 1 1 auto
+
+        ul.raw
+          font-size: 0.8em
+          margin: 0
+          padding: 0
+          list-style: none
+
+          li
+            border-left: 0.5em solid $primary
+            margin: 0.2em 0 0 0
+            padding: 0 0 0 0.2em
   
   /*.aggregation-panel
     border: 1px solid $tertiary
@@ -139,3 +150,24 @@
       border-left: 1em solid $primary
       padding: 0.2em
       margin-top: 0.2em*/
+
+/*
+.transcription-viewer-v3
+  justify-content: stretch
+  align-items: stretch
+  border: 5px solid green
+  
+.data-panel
+  justify-content: stretch
+  align-items: stretch
+  border: 5px solid red
+  
+  &.vertical
+    overflow: auto
+    
+    .data-subpanel
+      height: 50%
+  
+.data-subpanel
+  border: 5px solid blue !important
+*/

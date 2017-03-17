@@ -3,16 +3,25 @@ import { connect } from 'react-redux';
 import { showAggregation, selectAggregation } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
+//const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
+//const SMOOTHSCROLL_TRANSITION_FRAMES = 10;
+
 class AggregationsPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.list = null;
+    this.aggregatedTexts = [];
+    //this.smoothScrollTarget = 0;
+    //this.smoothScrollSpeed = 0;
   }
   
   render() {
     return (
       <div className="aggregations-panel">
         {this.render_statusMessage()}
-        {this.render_aggregatedText()}
+        <div className="list" ref={(r)=>{this.list=r}}>
+          {this.render_aggregatedText()}
+        </div>
       </div>
     );
   }
@@ -34,10 +43,11 @@ class AggregationsPanel extends React.Component {
   
   render_aggregatedText() {
     if (!this.props.aggregationsData) return null;
+    this.aggregatedTexts = [];
     
     return this.props.aggregationsData.map ((agg, index1) => {
       return (
-        <div className={'data-point' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
+        <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'item' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
           <span className="aggregated">
             <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
             <span onClick={() => { this.props.dispatch(selectAggregation(index1)) }}>{agg.text}</span>
@@ -58,9 +68,28 @@ class AggregationsPanel extends React.Component {
     this.props.dispatch(showAggregation(index, !this.props.aggregationsData[index].show));
   }
   
-  selectAggregation(e) {
-    
+  componentWillReceiveProps(next) {
+    this.scrollToSelectedAggregation(next);
   }
+  
+  scrollToSelectedAggregation(next) {
+    if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
+    const current = this.aggregatedTexts[next.currentAggregation];
+    const offsetParent = current.offsetParent;
+    this.list.scrollTop = current.offsetTop;
+  }
+  
+  /*smoothScrollToSelectedAggregation() {
+    if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
+    const current = this.aggregatedTexts[next.currentAggregation];
+    const offsetParent = current.offsetParent;
+    
+    setTimeout(smoothScroll, SMOOTHSCROLL_INTENDED_TIME / SMOOTHSCROLL_TRANSITION_FRAMES);
+  }
+  
+  smoothScroll() {
+    
+  }*/
 }
 
 AggregationsPanel.propTypes = {
