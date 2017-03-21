@@ -33,8 +33,6 @@ export function fetchSubject(id) {
       
       //Success
       .then((agg) => {
-        console.log("FETCHING_AGGREGATION_SUCCESS_V3");
-        console.log(agg);
         const textClusters = (agg && agg[0] && agg[0].aggregation && agg[0].aggregation.T2 && agg[0].aggregation.T2['text clusters'])
           ? agg[0].aggregation.T2['text clusters']
           : null;
@@ -123,6 +121,15 @@ export function fetchSubject(id) {
   };
 }
 
+export function setSubjectImageSize(imgSize) {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_SUBJECT_IMAGE_SIZE_V3",
+      subjectImageSize: imgSize,
+    });
+  };
+}
+
 export function selectAggregation(index) {
   return (dispatch) => {
     dispatch({
@@ -166,7 +173,16 @@ export function showAggregation(index, show) {
   return (dispatch) => {
     dispatch({
       type: "SHOW_AGGREGATION_V3",
-      index, show
+      index, show,
+    });
+  };
+}
+
+export function centreViewOnAggregation(index) {
+  return (dispatch) => {
+    dispatch({
+      type: "CENTRE_VIEW_ON_AGGREGATION_V3",
+      index,
     });
   };
 }

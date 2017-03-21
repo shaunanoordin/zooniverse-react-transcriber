@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchSubject, setView } from '../../actions/transcription-viewer-v3.js';
+import { fetchSubject, setView, setSubjectImageSize } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
 import ControlPanel from './ControlPanel.jsx';
@@ -31,6 +31,8 @@ class Index extends React.Component {
     this.setState({
       loadedImage: { width: img.width, height: img.height },
     });
+    
+    this.props.dispatch(setSubjectImageSize({ width: img.width, height: img.height }));
     
     this.props.dispatch(setView(null, Math.min(hScale, vScale), null, null));
   }
@@ -67,7 +69,7 @@ class Index extends React.Component {
                       ' Z';
                     
                     return (
-                      <g transform={'translate(' + (this.state.loadedImage.width * -0.5) + ',' + (this.state.loadedImage.height * -0.5) + ') '}>
+                      <g transform={'translate(' + (this.props.subjectImageSize.width * -0.5) + ',' + (this.props.subjectImageSize.height * -0.5) + ') '}>
                         <path className="highlight-path" d={pathDefinition} />
                       </g>
                     );
@@ -91,8 +93,8 @@ class Index extends React.Component {
                     this.props.aggregationsData.map((agg, index) => { return (!agg.show || (index === this.props.currentAggregation)) ? null : (
                       <SVGAggregatedText
                         key={'aggtext_' + agg.startX + '_' + agg.startY}
-                        offsetX={this.state.loadedImage.width * -0.5}
-                        offsetY={this.state.loadedImage.height * -0.5}
+                        offsetX={this.props.subjectImageSize.width * -0.5}
+                        offsetY={this.props.subjectImageSize.height * -0.5}
                         aggregation={agg}
                         index={index}
                       />
@@ -104,8 +106,8 @@ class Index extends React.Component {
                     <SVGAggregatedText
                       key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].startY}
                       className="selected"
-                      offsetX={this.state.loadedImage.width * -0.5}
-                      offsetY={this.state.loadedImage.height * -0.5}
+                      offsetX={this.props.subjectImageSize.width * -0.5}
+                      offsetY={this.props.subjectImageSize.height * -0.5}
                       aggregation={this.props.aggregationsData[this.props.currentAggregation]}
                       index={this.props.currentAggregation}
                     />
@@ -115,8 +117,8 @@ class Index extends React.Component {
                     <SVGAggregatedText
                       key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startY}
                       className="selected"
-                      offsetX={this.state.loadedImage.width * -0.5}
-                      offsetY={this.state.loadedImage.height * -0.5}
+                      offsetX={this.props.subjectImageSize.width * -0.5}
+                      offsetY={this.props.subjectImageSize.height * -0.5}
                       aggregation={this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification]}
                       index={this.props.currentAggregation}
                     />
@@ -143,6 +145,7 @@ class Index extends React.Component {
 
 Index.propTypes = {
   subjectData: PropTypes.object,
+  subjectImageSize: PropTypes.object,
   aggregationsData: PropTypes.array,
   currentAggregation: PropTypes.number,
   currentRawClassification: PropTypes.number,
@@ -151,6 +154,7 @@ Index.propTypes = {
 
 Index.defaultProps = {
   subjectData: null,
+  subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
   currentAggregation: null,
   currentRawClassification: null,
@@ -163,6 +167,7 @@ const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV3;
   return {
     subjectData: store.subjectData,
+    subjectImageSize: store.subjectImageSize,
     aggregationsData: store.aggregationsData,
     currentAggregation: store.currentAggregation,
     currentRawClassification: store.currentRawClassification,

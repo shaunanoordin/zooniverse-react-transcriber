@@ -5,6 +5,7 @@ const initialState = {
   subjectID: null,
   subjectData: null,
   subjectStatus: status.STATUS_IDLE,
+  subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
   aggregationsStatus: status.STATUS_IDLE,
   currentAggregation: null,
@@ -26,6 +27,7 @@ export function transcriptionViewerV3(state = initialState, action) {
         subjectData: null,
         subjectStatus: status.STATUS_LOADING,
         aggregationsStatus: status.STATUS_IDLE,
+        subjectImageSize: { width: 0, height: 0 },
       });
     case "FETCHING_SUBJECT_SUCCESS_V3":
       return Object.assign({}, state, {
@@ -65,6 +67,16 @@ export function transcriptionViewerV3(state = initialState, action) {
       });
     
     case "SELECT_AGGREGATION_V3":
+      console.log('!'.repeat(256));
+      const agg2 = state.aggregationsData[action.index];
+      console.log(
+        'agg: ', agg2, '\n',
+        'aggX:', (agg2.startX+agg2.endX)/2, '\n',
+        'aggY:', (agg2.startY+agg2.endY)/2, '\n',
+        'imgW:', (state.subjectImageSize.width), '\n',
+        'imgH:', (state.subjectImageSize.height), '\n',
+      );
+      
       return Object.assign({}, state, {
         currentAggregation: action.index,
         currentRawClassification: null,
@@ -73,6 +85,11 @@ export function transcriptionViewerV3(state = initialState, action) {
     case "SELECT_RAW_CLASSIFICATION_V3":
       return Object.assign({}, state, {
         currentRawClassification: action.index,
+      });
+      
+    case "SET_SUBJECT_IMAGE_SIZE_V3":
+      return Object.assign({}, state, {
+        subjectImageSize: action.subjectImageSize,
       });
     
     case "SET_VIEW_V3":
@@ -94,6 +111,18 @@ export function transcriptionViewerV3(state = initialState, action) {
           if (action.index === index) agg.show = action.show;
           return agg;
         }),
+      });
+    
+    case "CENTRE_VIEW_ON_AGGREGATION_V3":
+      if (state.aggregationsData === null || action.index === null || !state.aggregationsData[action.index]) return state;
+      
+      const agg = state.aggregationsData[action.index];
+      const newX = state.subjectImageSize.width / 2 - (agg.startX + agg.endX) / 2;
+      const newY = state.subjectImageSize.height / 2 - (agg.startY + agg.endY) / 2;
+      
+      return Object.assign({}, state, {
+        viewTranslateX: newX,
+        viewTranslateY: newY,
       });
       
     default:

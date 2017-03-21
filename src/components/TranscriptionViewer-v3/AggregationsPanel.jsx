@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { showAggregation, selectAggregation, selectRawClassification } from '../../actions/transcription-viewer-v3.js';
+import { showAggregation, selectAggregation, selectRawClassification, centreViewOnAggregation } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
 //const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
@@ -50,12 +50,20 @@ class AggregationsPanel extends React.Component {
         <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'item' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
           <span className="aggregated">
             <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
-            <span onClick={() => { this.props.dispatch(selectAggregation(index1)) }}>{agg.text}</span>
+            <span onClick={() => { this.props.dispatch(selectAggregation(index1)); this.props.dispatch(centreViewOnAggregation(index1)); }}>{agg.text}</span>
           </span>
           <ul className="raw">
             {(!agg.raw) ? null :
               agg.raw.map((rawLine, index2) => {
-                return <li className={(index2 === this.props.currentRawClassification) ? 'selected' : ''} key={'agg_' + index1 + '_' + index2} onClick={() => { this.props.dispatch(selectRawClassification(index2)) }}>{rawLine.text}</li>;
+                return (
+                  <li
+                    className={(index2 === this.props.currentRawClassification) ? 'selected' : ''}
+                    key={'agg_' + index1 + '_' + index2}
+                    onClick={() => { this.props.dispatch(selectRawClassification(index2)) }}
+                  >
+                    {rawLine.text}
+                  </li>
+                );
               })
             }
           </ul>
