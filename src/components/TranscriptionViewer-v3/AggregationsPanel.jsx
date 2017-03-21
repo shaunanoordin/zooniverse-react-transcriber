@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { showAggregation, selectAggregation } from '../../actions/transcription-viewer-v3.js';
+import { showAggregation, selectAggregation, selectRawClassification } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
 //const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
@@ -55,7 +55,7 @@ class AggregationsPanel extends React.Component {
           <ul className="raw">
             {(!agg.raw) ? null :
               agg.raw.map((rawLine, index2) => {
-                return <li key={'agg_' + index1 + '_' + index2}>{rawLine.text}</li>;
+                return <li className={(index2 === this.props.currentRawClassification) ? 'selected' : ''} key={'agg_' + index1 + '_' + index2} onClick={() => { this.props.dispatch(selectRawClassification(index2)) }}>{rawLine.text}</li>;
               })
             }
           </ul>
@@ -97,6 +97,7 @@ AggregationsPanel.propTypes = {
   aggregationsData: PropTypes.array,
   aggregationsStatus: PropTypes.string,
   currentAggregation: PropTypes.number,
+  currentRawClassification: PropTypes.number,
 };
 
 AggregationsPanel.defaultProps = {
@@ -104,6 +105,7 @@ AggregationsPanel.defaultProps = {
   aggregationsData: null,
   aggregationsStatus: null,
   currentAggregation: null,
+  currentRawClassification: null,
 };
 
 const mapStateToProps = (state) => {
@@ -113,6 +115,7 @@ const mapStateToProps = (state) => {
     aggregationsData: store.aggregationsData,
     aggregationsStatus: store.aggregationsStatus,
     currentAggregation: store.currentAggregation,
+    currentRawClassification: store.currentRawClassification,
   };
 };
 

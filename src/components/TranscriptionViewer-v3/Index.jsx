@@ -87,7 +87,7 @@ class Index extends React.Component {
                     return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
                   })}
                   
-                  {(!this.props.aggregationsData) ? null :  //Show all aggregations, except for the selected one, because...
+                  {(!this.props.aggregationsData || this.props.currentRawClassification !== null) ? null :  //Show all aggregations, except for the selected one, because...
                     this.props.aggregationsData.map((agg, index) => { return (!agg.show || (index === this.props.currentAggregation)) ? null : (
                       <SVGAggregatedText
                         key={'aggtext_' + agg.startX + '_' + agg.startY}
@@ -99,7 +99,7 @@ class Index extends React.Component {
                     )})
                   }
                   
-                  {(!this.props.aggregationsData || this.props.currentAggregation === null || !this.props.aggregationsData[this.props.currentAggregation].show)
+                  {(!this.props.aggregationsData || this.props.currentAggregation === null || !this.props.aggregationsData[this.props.currentAggregation].show  || this.props.currentRawClassification !== null)
                     ? null :  //...we want to show the selected aggregation ABOVE the others.
                     <SVGAggregatedText
                       key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].startY}
@@ -107,6 +107,17 @@ class Index extends React.Component {
                       offsetX={this.state.loadedImage.width * -0.5}
                       offsetY={this.state.loadedImage.height * -0.5}
                       aggregation={this.props.aggregationsData[this.props.currentAggregation]}
+                      index={this.props.currentAggregation}
+                    />
+                  }
+                  
+                  {(!this.props.aggregationsData || this.props.currentAggregation === null || this.props.currentRawClassification === null) ? null :
+                    <SVGAggregatedText
+                      key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startY}
+                      className="selected"
+                      offsetX={this.state.loadedImage.width * -0.5}
+                      offsetY={this.state.loadedImage.height * -0.5}
+                      aggregation={this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification]}
                       index={this.props.currentAggregation}
                     />
                   }
@@ -134,6 +145,7 @@ Index.propTypes = {
   subjectData: PropTypes.object,
   aggregationsData: PropTypes.array,
   currentAggregation: PropTypes.number,
+  currentRawClassification: PropTypes.number,
   viewOptions: PropTypes.object,
 };
 
@@ -141,6 +153,7 @@ Index.defaultProps = {
   subjectData: null,
   aggregationsData: null,
   currentAggregation: null,
+  currentRawClassification: null,
   viewOptions: {
     layout: 'horizontal'
   },
@@ -152,6 +165,7 @@ const mapStateToProps = (state) => {
     subjectData: store.subjectData,
     aggregationsData: store.aggregationsData,
     currentAggregation: store.currentAggregation,
+    currentRawClassification: store.currentRawClassification,
     viewOptions: store.viewOptions,
   };
 };

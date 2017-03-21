@@ -126,8 +126,16 @@
 
           li
             border-left: 0.5em solid $primary
+            border-top-left-radius: 0.5em
             margin: 0.2em 0 0 0
-            padding: 0 0 0 0.2em
+            padding: 0 0 0 0.3em
+            cursor: pointer
+            
+            &:hover
+              border-left: 0.5em solid $secondary
+            
+            &.selected
+              border-left: 0.5em solid $secondary
         
         &.selected
           color: $secondary

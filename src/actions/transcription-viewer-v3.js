@@ -132,6 +132,15 @@ export function selectAggregation(index) {
   };
 }
 
+export function selectRawClassification(index) {
+  return (dispatch) => {
+    dispatch({
+      type: "SELECT_RAW_CLASSIFICATION_V3",
+      index: index,
+    });
+  };
+}
+
 export function setView(rotate, scale, translateX, translateY) {
   return (dispatch) => {
     dispatch({

@@ -8,6 +8,7 @@ const initialState = {
   aggregationsData: null,
   aggregationsStatus: status.STATUS_IDLE,
   currentAggregation: null,
+  currentRawClassification: null,
   viewRotate: 0,
   viewScale: 1,
   viewTranslateX: 0,
@@ -46,23 +47,32 @@ export function transcriptionViewerV3(state = initialState, action) {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_LOADING,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_SUCCESS_V3":
       return Object.assign({}, state, {
         aggregationsData: action.aggregations,
         aggregationsStatus: status.STATUS_READY,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_ERROR_V3":
       return Object.assign({}, state, {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_ERROR,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     
     case "SELECT_AGGREGATION_V3":
       return Object.assign({}, state, {
         currentAggregation: action.index,
+        currentRawClassification: null,
+      });
+    
+    case "SELECT_RAW_CLASSIFICATION_V3":
+      return Object.assign({}, state, {
+        currentRawClassification: action.index,
       });
     
     case "SET_VIEW_V3":
