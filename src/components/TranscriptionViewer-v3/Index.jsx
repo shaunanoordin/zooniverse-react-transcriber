@@ -86,21 +86,9 @@ class Index extends React.Component {
                   {this.props.subjectData.locations.map((loc, locIndex) => {
                     return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
                   })}
-
-                  {/*(!this.props.aggregationsData) ? null :
-                    this.props.aggregationsData.map((agg, index) => { return (!agg.show) ? null : (
-                      <SVGAggregatedText
-                        className={(index === this.props.currentAggregation) ? 'selected' : ''}
-                        key={'aggtext_' + agg.startX + '_' + agg.startY}
-                        offsetX={this.state.loadedImage.width * -0.5}
-                        offsetY={this.state.loadedImage.height * -0.5}
-                        aggregation={agg}
-                        index={index}
-                      />
-                    )})
-                  */}
+                  
                   {(!this.props.aggregationsData) ? null :  //Show all aggregations, except for the selected one, because...
-                    this.props.aggregationsData.map((agg, index) => { return (!agg.show && (index !== this.props.currentAggregation)) ? null : (
+                    this.props.aggregationsData.map((agg, index) => { return (!agg.show || (index === this.props.currentAggregation)) ? null : (
                       <SVGAggregatedText
                         key={'aggtext_' + agg.startX + '_' + agg.startY}
                         offsetX={this.state.loadedImage.width * -0.5}
@@ -111,7 +99,8 @@ class Index extends React.Component {
                     )})
                   }
                   
-                  {(!this.props.aggregationsData || this.props.currentAggregation === null) ? null :  //...we want to show the selected aggregation ABOVE the others.
+                  {(!this.props.aggregationsData || this.props.currentAggregation === null || !this.props.aggregationsData[this.props.currentAggregation].show)
+                    ? null :  //...we want to show the selected aggregation ABOVE the others.
                     <SVGAggregatedText
                       key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].startY}
                       className="selected"
@@ -128,21 +117,6 @@ class Index extends React.Component {
         </div>
         
         <AggregationsPanel />
-        
-        {/*(this.props.currentAggregation !== null && this.props.aggregationsData && this.props.aggregationsData[this.props.currentAggregation])
-          ? <div className="aggregation-panel">
-              <div className="aggregated">{this.props.aggregationsData[this.props.currentAggregation].text}</div>
-              {(() => {
-                const agg = this.props.aggregationsData[this.props.currentAggregation];
-                if (!agg.raw) return null;
-                
-                return agg.raw.map((raw) => {
-                  return <div className="raw">{raw.text}</div>;
-                });
-              })()}
-            </div>
-          : null
-        */}
         
       </div>
     );

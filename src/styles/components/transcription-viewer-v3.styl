@@ -100,10 +100,6 @@
         border-radius: 1em
         padding: 0.5em
 
-        &.selected
-          color: $secondary
-          background: $primary-light
-
         .aggregated
           display: flex
           border-bottom: 1px solid $primary
@@ -111,11 +107,18 @@
 
           input
             flex: 0 0 auto
+            cursor: pointer
 
           span
             flex: 1 1 auto
+            color: $primary
+            
+            &:hover
+              color: $primary-light
+              cursor: pointer
 
         ul.raw
+          display: none
           font-size: 0.8em
           margin: 0
           padding: 0
@@ -125,49 +128,13 @@
             border-left: 0.5em solid $primary
             margin: 0.2em 0 0 0
             padding: 0 0 0 0.2em
-  
-  /*.aggregation-panel
-    border: 1px solid $tertiary
-    font-size: 0.8em
-    position: absolute
-    right: 0
-    bottom: 0
-    background: white
-    margin: 0 auto
-    padding: 1em
-    width: 20em
-    max-width: 100%
-    max-height: 20em
-    overflow: auto
-    
-    .aggregated
-      background: $primary
-      color: $secondary
-      padding: 0.5em
-    
-    .raw
-      color: $tertiary
-      border-left: 1em solid $primary
-      padding: 0.2em
-      margin-top: 0.2em*/
-
-/*
-.transcription-viewer-v3
-  justify-content: stretch
-  align-items: stretch
-  border: 5px solid green
-  
-.data-panel
-  justify-content: stretch
-  align-items: stretch
-  border: 5px solid red
-  
-  &.vertical
-    overflow: auto
-    
-    .data-subpanel
-      height: 50%
-  
-.data-subpanel
-  border: 5px solid blue !important
-*/
+        
+        &.selected
+          color: $secondary
+          background: $primary-light
+          
+          .aggregated span, .aggregated span:hover
+            color: $secondary
+          
+          ul.raw
+            display: block
