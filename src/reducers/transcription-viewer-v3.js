@@ -67,16 +67,6 @@ export function transcriptionViewerV3(state = initialState, action) {
       });
     
     case "SELECT_AGGREGATION_V3":
-      console.log('!'.repeat(256));
-      const agg2 = state.aggregationsData[action.index];
-      console.log(
-        'agg: ', agg2, '\n',
-        'aggX:', (agg2.startX+agg2.endX)/2, '\n',
-        'aggY:', (agg2.startY+agg2.endY)/2, '\n',
-        'imgW:', (state.subjectImageSize.width), '\n',
-        'imgH:', (state.subjectImageSize.height), '\n',
-      );
-      
       return Object.assign({}, state, {
         currentAggregation: action.index,
         currentRawClassification: null,
@@ -109,6 +99,14 @@ export function transcriptionViewerV3(state = initialState, action) {
       return Object.assign({}, state, {
         aggregationsData: state.aggregationsData.map((agg, index) => {
           if (action.index === index) agg.show = action.show;
+          return agg;
+        }),
+      });
+    
+    case "SHOW_ALL_AGGREGATIONS_V3":
+      return Object.assign({}, state, {
+        aggregationsData: state.aggregationsData.map((agg) => {
+          agg.show = action.show;
           return agg;
         }),
       });

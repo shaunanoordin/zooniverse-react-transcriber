@@ -116,7 +116,7 @@ class Index extends React.Component {
                   {(!this.props.aggregationsData || this.props.currentAggregation === null || this.props.currentRawClassification === null) ? null :
                     <SVGAggregatedText
                       key={'aggtext_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startX + '_' + this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification].startY}
-                      className="selected"
+                      className="selected-raw"
                       offsetX={this.props.subjectImageSize.width * -0.5}
                       offsetY={this.props.subjectImageSize.height * -0.5}
                       aggregation={this.props.aggregationsData[this.props.currentAggregation].raw[this.props.currentRawClassification]}

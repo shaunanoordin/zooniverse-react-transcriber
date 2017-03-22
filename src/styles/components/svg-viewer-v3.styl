@@ -25,9 +25,14 @@
       fill: rgba($tertiary, 1)
     &.selected
       .path
-        fill: rgba($primary-light, 0.9)
+        fill: rgba($primary-light, 0.95)
       .text
         fill: rgba($secondary, 1)
+    &.selected-raw
+      .path
+        fill: rgba($secondary, 0.95)
+      .text
+        fill: rgba($primary-light, 1)
         
   .highlight-path
     fill: none

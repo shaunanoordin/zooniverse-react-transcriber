@@ -178,6 +178,15 @@ export function showAggregation(index, show) {
   };
 }
 
+export function showAllAggregations(show) {
+  return (dispatch) => {
+    dispatch({
+      type: "SHOW_ALL_AGGREGATIONS_V3",
+      show,
+    });
+  };
+}
+
 export function centreViewOnAggregation(index) {
   return (dispatch) => {
     dispatch({

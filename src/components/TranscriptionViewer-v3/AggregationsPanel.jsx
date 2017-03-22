@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { showAggregation, selectAggregation, selectRawClassification, centreViewOnAggregation } from '../../actions/transcription-viewer-v3.js';
+import { showAggregation, showAllAggregations, selectAggregation, selectRawClassification, centreViewOnAggregation } from '../../actions/transcription-viewer-v3.js';
 import * as status from '../../constants/status.js';
 
 //const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
 //const SMOOTHSCROLL_TRANSITION_FRAMES = 10;
+const SCROLL_PADDING_TOP = 5;
 
 class AggregationsPanel extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class AggregationsPanel extends React.Component {
     return (
       <div className="aggregations-panel">
         {this.render_statusMessage()}
+        {this.render_helperControls()}
         <div className="list" ref={(r)=>{this.list=r}}>
           {this.render_aggregatedText()}
         </div>
@@ -41,6 +43,21 @@ class AggregationsPanel extends React.Component {
     }
   }
   
+  render_helperControls() {
+    if (this.props.aggregationsStatus !== status.STATUS_READY || !this.props.aggregationsData) return null;
+    
+    return (
+      <div className="helper-controls">
+        <button className="button fa fa-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(false)) }}></button>
+        <button className="button fa fa-check-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}></button>
+        
+        {(this.props.currentAggregation === null) ? null :
+          <button className="button fa fa-ban" onClick={()=>{ this.props.dispatch(selectAggregation(null)) }}></button>
+        }
+      </div>
+    );
+  }
+  
   render_aggregatedText() {
     if (!this.props.aggregationsData) return null;
     this.aggregatedTexts = [];
@@ -48,25 +65,25 @@ class AggregationsPanel extends React.Component {
     return this.props.aggregationsData.map ((agg, index1) => {
       return (
         <div ref={(r)=>{this.aggregatedTexts[index1]=r}} className={'item' + ((index1 === this.props.currentAggregation) ? ' selected' : '')} key={'agg_' + index1}>
-          <span className="aggregated">
+          <div className="aggregated">
             <input type="checkbox" onChange={this.toggleShowAggregation.bind(this, index1)} checked={agg.show} />
-            <span onClick={() => { this.props.dispatch(selectAggregation(index1)); this.props.dispatch(centreViewOnAggregation(index1)); }}>{agg.text}</span>
-          </span>
-          <ul className="raw">
+            <a onClick={() => { this.props.dispatch(selectAggregation(index1)); this.props.dispatch(centreViewOnAggregation(index1)); }}>{agg.text}</a>
+          </div>
+          <div className="raw">
             {(!agg.raw) ? null :
               agg.raw.map((rawLine, index2) => {
                 return (
-                  <li
+                  <a
                     className={(index2 === this.props.currentRawClassification) ? 'selected' : ''}
                     key={'agg_' + index1 + '_' + index2}
                     onClick={() => { this.props.dispatch(selectRawClassification(index2)) }}
                   >
                     {rawLine.text}
-                  </li>
+                  </a>
                 );
               })
             }
-          </ul>
+          </div>
         </div>
       )
     });
@@ -84,7 +101,7 @@ class AggregationsPanel extends React.Component {
     if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
     const current = this.aggregatedTexts[next.currentAggregation];
     const offsetParent = current.offsetParent;
-    this.list.scrollTop = current.offsetTop;
+    this.list.scrollTop = -SCROLL_PADDING_TOP - this.list.offsetTop + current.offsetTop;
   }
   
   /*smoothScrollToSelectedAggregation() {
