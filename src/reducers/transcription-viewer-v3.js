@@ -15,7 +15,7 @@ const initialState = {
   viewTranslateX: 0,
   viewTranslateY: 0,
   viewOptions: {
-    layout: 'vertical',
+    layout: 'horizontal',
   }
 };
 

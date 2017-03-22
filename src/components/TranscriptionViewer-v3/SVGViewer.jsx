@@ -126,13 +126,12 @@ class SVGViewer extends Component {
   }
   
   click(e) {
-    const pointerXYOriginal = this.getPointerXY(e);
-    const pointerXY = this.getPointerXYAdjustedForSVGTransform(e);
-    
-    console.log('CLICK\n', pointerXYOriginal, pointerXY);
-    
     //DEBUG
     return;
+    
+    //const pointerXYOriginal = this.getPointerXY(e);
+    //const pointerXY = this.getPointerXYAdjustedForSVGTransform(e);
+    //console.log('CLICK\n', pointerXYOriginal, pointerXY);
     
     //const arr = this.state.circles;
     //arr.push(<circle key={'circle-'+Math.floor(Math.random() * 1000000)} cx={pointerXY.x} cy={pointerXY.y} r="20" stroke="#c9c" strokeWidth="4" fill="#c9c" />);
@@ -215,23 +214,17 @@ function stopEvent(e) {
 
 SVGViewer.propTypes = {
   className: PropTypes.string,
-  width: PropTypes.number,
-  height: PropTypes.number,
   scale: PropTypes.number,
   translateX: PropTypes.number,
   translateY: PropTypes.number,
   rotate: PropTypes.number,
-  onViewUpdated: PropTypes.func,
 };
 SVGViewer.defaultProps = {
   className: '',
-  width: 400,
-  height: 400,
   scale: 1,
   translateX: 0,
   translateY: 0,
   rotate: 0,
-  onViewUpdated: null,
 };
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
   const store = state.transcriptionViewerV3;

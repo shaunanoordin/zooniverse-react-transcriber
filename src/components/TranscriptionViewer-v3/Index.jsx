@@ -9,13 +9,14 @@ import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
 import SVGAggregatedText from './SVGAggregatedText.jsx';
 
-const DEFAULT_SVGVIEWER_WIDTH = 480;
-const DEFAULT_SVGVIEWER_HEIGHT = 640;
+const DEFAULT_SVGVIEWER_WIDTH = 500;
+const DEFAULT_SVGVIEWER_HEIGHT = 500;
 
 class Index extends React.Component {
   constructor(props) {
     super(props);
     this.imageHasLoaded = this.imageHasLoaded.bind(this);
+    this.primarySVGViewer = null;
     
     this.state = {
       loadedImage: { width: 0, height: 0 },
@@ -25,8 +26,14 @@ class Index extends React.Component {
   imageHasLoaded(img) {
     if (!img) return;
     
-    const hScale = (img.width !== 0) ? DEFAULT_SVGVIEWER_WIDTH / img.width : 1;
-    const vScale = (img.height !== 0) ? DEFAULT_SVGVIEWER_HEIGHT / img.height : 1;
+    const viewerWidth = (this.primarySVGViewer && this.primarySVGViewer.containerWidth > 0) ? this.primarySVGViewer.containerWidth : DEFAULT_SVGVIEWER_WIDTH;
+    const viewerHeight = (this.primarySVGViewer && this.primarySVGViewer.containerHeight > 0) ? this.primarySVGViewer.containerHeight : DEFAULT_SVGVIEWER_HEIGHT;
+    
+    console.log('+'.repeat(128), '\n');
+    console.log(this.primarySVGViewer.renderedElement);
+    
+    const hScale = (img.width !== 0) ? viewerWidth / img.width : 1;
+    const vScale = (img.height !== 0) ? viewerHeight / img.height : 1;
     
     this.setState({
       loadedImage: { width: img.width, height: img.height },
@@ -75,7 +82,7 @@ class Index extends React.Component {
           }
 
           {(this.props.subjectData && this.props.subjectData.locations && this.props.subjectData.locations.length > 0)
-            ? <SVGViewer>
+            ? <SVGViewer ref={(c)=>{this.primarySVGViewer=c}}>
                 {this.props.subjectData.locations.map((loc, locIndex) => {
                   return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
                 })}
