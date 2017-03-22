@@ -18,10 +18,13 @@ class SVGViewer extends Component {
       state: INPUT_IDLE,
     };
     
-    this.tmpTransform = null;
-    
+    this.container = null;
+    this.containerWidth = 0;
+    this.containerHeight = 0;
     this.offsetX = 0;  //To be updated when we figure out what the bounding box for the SVG is.
     this.offsetY = 0;
+    
+    this.tmpTransform = null;
     
     this.getPointerXY = this.getPointerXY.bind(this);
     this.getPointerXYAdjustedForSVGTransform = this.getPointerXYAdjustedForSVGTransform.bind(this);
@@ -35,36 +38,43 @@ class SVGViewer extends Component {
       : { left: 0, top: 0, width: 10, height: 1 };
     
     return (
-      <svg ref={(r)=>{this.svg=r}}
-        className={
-          'svg-viewer-v3 ' +
-          ((this.props.className) ? this.props.className : '')
-        }
-        //viewBox={-boundingBox.width/2 + ' ' + -boundingBox.height/2 + ' ' + boundingBox.width + ' ' + boundingBox.height}
-        viewBox={-this.props.width/2 + ' ' + -this.props.height/2 + ' ' + this.props.width + ' ' + this.props.height}        
-        onClick={this.click.bind(this)}
-        onMouseDown={this.onMouseDown.bind(this)}
-        onMouseUp={this.onMouseUp.bind(this)}
-        onMouseMove={this.onMouseMove.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}
-        onWheel={(e) => {
-          if (e.deltaY > 0) {
-            this.props.dispatch(setView(null, Math.max(this.props.scale - 0.1, MIN_SCALE), null, null ));
-          } else if (e.deltaY < 0) {
-            this.props.dispatch(setView(null, Math.max(this.props.scale + 0.1, MIN_SCALE), null, null ));
-          }
-          return Utility.stopEvent(e);
+      <div
+        className={'svg-viewer-v3 ' + ((this.props.className) ? this.props.className : '')}
+        ref={(c)=>{
+          if (!c) return;
+          this.container = c;
+          this.containerWidth = c.offsetWidth;
+          this.containerHeight = c.offsetHeight;
+          this.offsetX = c.offsetWidth * 0.5;
+          this.offsetY = c.offsetHeight * 0.5;
         }}
-        >
-        <g transform={transform}>
-          <g>
-            {this.props.children}
+      >
+        <svg ref={(r)=>{this.svg=r}}
+          viewBox={-this.containerWidth/2 + ' ' + -this.containerHeight/2 + ' ' + this.containerWidth + ' ' + this.containerHeight}
+          onClick={this.click.bind(this)}
+          onMouseDown={this.onMouseDown.bind(this)}
+          onMouseUp={this.onMouseUp.bind(this)}
+          onMouseMove={this.onMouseMove.bind(this)}
+          onMouseLeave={this.onMouseLeave.bind(this)}
+          onWheel={(e) => {
+            if (e.deltaY > 0) {
+              this.props.dispatch(setView(null, Math.max(this.props.scale - 0.1, MIN_SCALE), null, null ));
+            } else if (e.deltaY < 0) {
+              this.props.dispatch(setView(null, Math.max(this.props.scale + 0.1, MIN_SCALE), null, null ));
+            }
+            return Utility.stopEvent(e);
+          }}
+          >
+          <g transform={transform}>
+            <g>
+              {this.props.children}
+            </g>
+            <g>
+              {/*this.state.circles*/}
+            </g>
           </g>
-          <g>
-            {/*this.state.circles*/}
-          </g>
-        </g>
-      </svg>
+        </svg>
+      </div>
     );
   }
   
@@ -176,24 +186,22 @@ class SVGViewer extends Component {
   }
   
   getPointerXYAdjustedForSVGTransform(e) {
-    return null;  //TODO: Fix this. Need to compensate for bounding box of new stretched SVG
-    
-    /*const pointerXY = this.getPointerXY(e);
+    const pointerXY = this.getPointerXY(e);
     let inputX = pointerXY.x;
     let inputY = pointerXY.y;
     
     //Compensate for SVG transformations
     //----------------
-    const rotation = -this.state.rotate / 180 * Math.PI;
+    const rotation = -this.props.rotate / 180 * Math.PI;
     
-    inputX = ((inputX - this.offsetX) / this.state.scale - this.state.translateX);
-    inputY = ((inputY - this.offsetY) / this.state.scale - this.state.translateY);
+    inputX = ((inputX - this.offsetX) / this.props.scale - this.props.translateX);
+    inputY = ((inputY - this.offsetY) / this.props.scale - this.props.translateY);
     
     const calculatedInputX = inputX * Math.cos(rotation) - inputY * Math.sin(rotation);
     const calculatedInputY = inputX * Math.sin(rotation) + inputY * Math.cos(rotation);
     //----------------
     
-    return { x: calculatedInputX, y: calculatedInputY };*/
+    return { x: calculatedInputX, y: calculatedInputY };
   }
 }
 

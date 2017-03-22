@@ -8,37 +8,42 @@
 }
 
 .svg-viewer-v3
-  background: $neutral-dark
-  display: block
-  margin: 0 auto
-  cursor: all-scroll
+  margin: 0.2em
   flex: 1 1 auto
+  display: flex
   
-  .aggregated-text
-    .circle.start
-      fill: rgba($primary-light, 0.5)
-    .circle.end
-      fill: rgba($primary-dark, 0.5)
-    .path
-      fill: rgba($secondary, 0.95)
-    .text
-      fill: rgba($tertiary, 1)
-    &.selected
-      .path
-        fill: rgba($primary-light, 0.95)
-      .text
-        fill: rgba($secondary, 1)
-    &.selected-raw
+  svg
+    background: $neutral-dark
+    display: block
+    margin: 0 auto
+    cursor: all-scroll
+    flex: 1 1 auto
+
+    .aggregated-text
+      .circle.start
+        fill: rgba($primary-light, 0.5)
+      .circle.end
+        fill: rgba($primary-dark, 0.5)
       .path
         fill: rgba($secondary, 0.95)
       .text
-        fill: rgba($primary-light, 1)
-        
-  .highlight-path
-    fill: none
-    stroke: rgba($primary-light, 0.8)
-    stroke-width: 10px
-    
+        fill: rgba($tertiary, 1)
+      &.selected
+        .path
+          fill: rgba($primary-light, 0.95)
+        .text
+          fill: rgba($secondary, 1)
+      &.selected-raw
+        .path
+          fill: rgba($secondary, 0.95)
+        .text
+          fill: rgba($primary-light, 1)
+
+    .highlight-path
+      fill: none
+      stroke: rgba($primary-light, 0.8)
+      stroke-width: 10px
+
 .svg-image-v3-loading
   animation-name: loading-pulse
   animation-duration: 1s
