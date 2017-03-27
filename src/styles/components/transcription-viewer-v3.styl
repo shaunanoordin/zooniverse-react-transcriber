@@ -1,5 +1,4 @@
 .transcription-viewer-v3
-  background: $secondary
   flex: 1 1 auto
   display: flex
   flex-direction: row
@@ -72,14 +71,8 @@
     
     &.vertical
       flex-direction: column
-      .data-subpanel
+      .svg-viewer-v3
         height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
-    
-    .data-subpanel
-      border: 1px solid $primary
-      margin: 3px
-      flex: 1 1 auto
-      display: flex
   
   .aggregations-panel
     flex: 0 0 auto
@@ -89,20 +82,24 @@
     font-size: 0.8em
     margin: 1px
     
+    .helper-controls
+      background: $primary
+      border-bottom: 0.5em solid $primary-dark
+      margin-top: 0.2em
+      border-top-left-radius: 0.5em
+      border-top-right-radius: 0.5em
+    
     .list
       flex: 1 1 auto
       overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
+      padding: 0.5em 0 80vh 0
       
       .item
-        margin-top: 1em
+        margin-bottom: 1em
         background: $secondary
         color: $tertiary
         border-radius: 1em
         padding: 0.5em
-
-        &.selected
-          color: $secondary
-          background: $primary-light
 
         .aggregated
           display: flex
@@ -111,63 +108,43 @@
 
           input
             flex: 0 0 auto
+            cursor: pointer
 
-          span
+          a
             flex: 1 1 auto
+            color: $primary
+            
+            &:hover
+              color: $primary-light
+              cursor: pointer
 
-        ul.raw
+        .raw
+          display: none
           font-size: 0.8em
-          margin: 0
-          padding: 0
-          list-style: none
 
-          li
+          a
+            display: block
             border-left: 0.5em solid $primary
+            border-top-left-radius: 0.5em
             margin: 0.2em 0 0 0
-            padding: 0 0 0 0.2em
-  
-  /*.aggregation-panel
-    border: 1px solid $tertiary
-    font-size: 0.8em
-    position: absolute
-    right: 0
-    bottom: 0
-    background: white
-    margin: 0 auto
-    padding: 1em
-    width: 20em
-    max-width: 100%
-    max-height: 20em
-    overflow: auto
-    
-    .aggregated
-      background: $primary
-      color: $secondary
-      padding: 0.5em
-    
-    .raw
-      color: $tertiary
-      border-left: 1em solid $primary
-      padding: 0.2em
-      margin-top: 0.2em*/
-
-/*
-.transcription-viewer-v3
-  justify-content: stretch
-  align-items: stretch
-  border: 5px solid green
-  
-.data-panel
-  justify-content: stretch
-  align-items: stretch
-  border: 5px solid red
-  
-  &.vertical
-    overflow: auto
-    
-    .data-subpanel
-      height: 50%
-  
-.data-subpanel
-  border: 5px solid blue !important
-*/
+            padding: 0 0 0 0.3em
+            cursor: pointer
+            
+            &:hover
+              border-left: 0.5em solid $secondary
+            
+            &.selected
+              border-left: 0.5em solid $secondary
+        
+        &.selected
+          color: $secondary
+          background: $primary-light
+          
+          .aggregated a, .aggregated a:hover
+            color: $secondary
+          
+          .raw
+            display: block
+            
+            a, a:hover
+              color: $secondary

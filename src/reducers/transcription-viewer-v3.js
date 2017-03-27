@@ -5,15 +5,17 @@ const initialState = {
   subjectID: null,
   subjectData: null,
   subjectStatus: status.STATUS_IDLE,
+  subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
   aggregationsStatus: status.STATUS_IDLE,
   currentAggregation: null,
+  currentRawClassification: null,
   viewRotate: 0,
   viewScale: 1,
   viewTranslateX: 0,
   viewTranslateY: 0,
   viewOptions: {
-    layout: 'vertical',
+    layout: 'horizontal',
   }
 };
 
@@ -25,6 +27,7 @@ export function transcriptionViewerV3(state = initialState, action) {
         subjectData: null,
         subjectStatus: status.STATUS_LOADING,
         aggregationsStatus: status.STATUS_IDLE,
+        subjectImageSize: { width: 0, height: 0 },
       });
     case "FETCHING_SUBJECT_SUCCESS_V3":
       return Object.assign({}, state, {
@@ -46,23 +49,37 @@ export function transcriptionViewerV3(state = initialState, action) {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_LOADING,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_SUCCESS_V3":
       return Object.assign({}, state, {
         aggregationsData: action.aggregations,
         aggregationsStatus: status.STATUS_READY,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_ERROR_V3":
       return Object.assign({}, state, {
         aggregationsData: null,
         aggregationsStatus: status.STATUS_ERROR,
         currentAggregation: null,
+        currentRawClassification: null,
       });
     
     case "SELECT_AGGREGATION_V3":
       return Object.assign({}, state, {
         currentAggregation: action.index,
+        currentRawClassification: null,
+      });
+    
+    case "SELECT_RAW_CLASSIFICATION_V3":
+      return Object.assign({}, state, {
+        currentRawClassification: action.index,
+      });
+      
+    case "SET_SUBJECT_IMAGE_SIZE_V3":
+      return Object.assign({}, state, {
+        subjectImageSize: action.subjectImageSize,
       });
     
     case "SET_VIEW_V3":
@@ -84,6 +101,26 @@ export function transcriptionViewerV3(state = initialState, action) {
           if (action.index === index) agg.show = action.show;
           return agg;
         }),
+      });
+    
+    case "SHOW_ALL_AGGREGATIONS_V3":
+      return Object.assign({}, state, {
+        aggregationsData: state.aggregationsData.map((agg) => {
+          agg.show = action.show;
+          return agg;
+        }),
+      });
+    
+    case "CENTRE_VIEW_ON_AGGREGATION_V3":
+      if (state.aggregationsData === null || action.index === null || !state.aggregationsData[action.index]) return state;
+      
+      const agg = state.aggregationsData[action.index];
+      const newX = state.subjectImageSize.width / 2 - (agg.startX + agg.endX) / 2;
+      const newY = state.subjectImageSize.height / 2 - (agg.startY + agg.endY) / 2;
+      
+      return Object.assign({}, state, {
+        viewTranslateX: newX,
+        viewTranslateY: newY,
       });
       
     default:
