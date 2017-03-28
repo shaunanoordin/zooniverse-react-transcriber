@@ -69,9 +69,7 @@ class SVGViewer extends Component {
             <g>
               {this.props.children}
             </g>
-            <g>
-              {/*this.state.circles*/}
-            </g>
+            {/*<g>this.state.circles</g>*/}
           </g>
         </svg>
       </div>
