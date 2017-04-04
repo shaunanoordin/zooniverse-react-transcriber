@@ -7,6 +7,7 @@ import App from './components/App.jsx';
 import TranscriptionViewerV1 from './components/TranscriptionViewer-v1/Index.jsx';
 import TranscriptionViewerV2 from './components/TranscriptionViewer-v2/Index.jsx';
 import TranscriptionViewerV3 from './components/TranscriptionViewer-v3/Index.jsx';
+import TranscriptionViewerV4 from './components/TranscriptionViewer-v4/Index.jsx';
 import Transform from './components/Transform/Index.jsx';
 import Paint from './components/Paint/Index.jsx';
 import Experimental from './components/Experimental/Index.jsx';
@@ -31,7 +32,8 @@ oauth.init(config.panoptesAppId)
       <Provider store={store}>
         <Router>
           <Route path="/" component={App}>
-            <Route path="/transcription-viewer" component={TranscriptionViewerV3}/>
+            <Route path="/transcription-viewer" component={TranscriptionViewerV4}/>
+            <Route path="/transcription-viewer-v4" component={TranscriptionViewerV4}/>
             <Route path="/transcription-viewer-v3" component={TranscriptionViewerV3}/>
             <Route path="/transcription-viewer-v2" component={TranscriptionViewerV2}/>
             <Route path="/transcription-viewer-v1" component={TranscriptionViewerV1}/>

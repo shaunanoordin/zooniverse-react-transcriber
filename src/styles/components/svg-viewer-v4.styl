@@ -1,0 +1,56 @@
+@keyframes loading-pulse {
+  from {
+    fill: $primary;
+  }
+  to {
+    fill: $secondary;
+  }
+}
+
+.svg-viewer-v4
+  margin: 0.2em
+  flex: 1 1 auto
+  display: flex
+  
+  svg
+    background: $neutral-dark
+    display: block
+    margin: 0 auto
+    cursor: all-scroll
+    flex: 1 1 auto
+
+    .aggregated-text
+      .circle.start
+        fill: rgba($primary-light, 0.5)
+      .circle.end
+        fill: rgba($primary-dark, 0.5)
+      .path
+        fill: rgba($secondary, 0.95)
+      .text
+        fill: rgba($tertiary, 1)
+      &.selected
+        .path
+          fill: rgba($primary-light, 0.95)
+        .text
+          fill: rgba($secondary, 1)
+      &.selected-raw
+        .path
+          fill: rgba($secondary, 0.95)
+        .text
+          fill: rgba($primary-light, 1)
+
+    .highlight-path
+      fill: none
+      stroke: rgba($primary-light, 0.8)
+      stroke-width: 10px
+
+.svg-image-v4-loading
+  animation-name: loading-pulse
+  animation-duration: 1s
+  animation-direction: alternate
+  animation-iteration-count: infinite
+
+.svg-image-v4-error
+  fill: $primary
+  stroke: $secondary
+  stroke-width: 4
