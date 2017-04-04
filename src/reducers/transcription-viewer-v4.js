@@ -1,5 +1,6 @@
 import * as types from '../constants/actionTypes';
 import * as status from '../constants/status';
+import { DataOrganiser } from '../tools/DataOrganiser-v4.js';
 
 const initialState = {
   subjectID: null,
@@ -53,7 +54,7 @@ export function transcriptionViewerV4(state = initialState, action) {
       });
     case "FETCHING_AGGREGATIONS_SUCCESS_V4":
       return Object.assign({}, state, {
-        aggregationsData: action.aggregations,
+        aggregationsData: DataOrganiser.sortAggregations(action.aggregations),
         aggregationsStatus: status.STATUS_READY,
         currentAggregation: null,
         currentRawClassification: null,

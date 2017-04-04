@@ -55,7 +55,7 @@ class ControlPanel extends React.Component {
               case status.STATUS_READY:
                 return <p>Subject ready.</p>;
               case status.STATUS_ERROR:
-                return <p>WHOOPS - Something went wrong!</p>;
+                return <p className="error message">WHOOPS - Something went wrong!</p>;
             }
             return null;
           })()}
