@@ -15,6 +15,7 @@ class ControlPanel extends React.Component {
     this.inputTranslateY = null;
     this.inputRotate = null;
     this.updateTransform = this.updateTransform.bind(this);
+    this.initiateEditorMode = this.initiateEditorMode.bind(this);
   }
   
   execFetchSubject() {
@@ -37,13 +38,12 @@ class ControlPanel extends React.Component {
           <button className="button fa fa-search" onClick={this.execFetchSubject} />
         </div>
         <div className="status-subpanel">
-          {(this.props.subjectID)
-            ? (<p>
-                <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
-                <span>Subject ID {this.props.subjectID}</span>
-                <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
-              </p>)
-            : null
+          {(!this.props.subjectID) ? null :
+            <p>
+              <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
+              <span>Subject ID {this.props.subjectID}</span>
+              <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
+            </p>
           }
 
           {(() => {
@@ -61,9 +61,9 @@ class ControlPanel extends React.Component {
           })()}
 
           {(() => {
-            if (this.props.subjectStatus !== status.STATUS_READY) return null;
+            if (this.props.aggregationsStatus !== status.STATUS_READY) return null;
 
-            switch (this.props.subjectStatus) {
+            switch (this.props.aggregationsStatus) {
               case status.STATUS_LOADING:
                 return <p>Looking for Aggregations...</p>;
               case status.STATUS_READY:
@@ -128,19 +128,24 @@ class ControlPanel extends React.Component {
           </div>
         </div>
 
-        {(this.props.subjectData && this.props.subjectData.metadata)
-          ? (() => {
-              let metadata = [];
-              for (let m in this.props.subjectData.metadata) {
-                metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
-              }
-              return (
-                <div className="metadata-subpanel">
-                  {metadata}
-                </div>
-              );
-            })()
-          : null
+        {(!this.props.subjectData || !this.props.subjectData.metadata) ? null :
+          (() => {
+            let metadata = [];
+            for (let m in this.props.subjectData.metadata) {
+              metadata.push(<div className="row" key={m}><label>{m}</label><span className="data">{this.props.subjectData.metadata[m]}</span></div>);
+            }
+            return (
+              <div className="metadata-subpanel">
+                {metadata}
+              </div>
+            );
+          })()
+        }
+        
+        {(!this.props.aggregationsData) ? null :
+          <div>
+            <button className="button" onClick={this.initiateEditorMode}>Export? Edit Mode? I don't know?</button>
+          </div>
         }
       </div>        
     );
@@ -153,6 +158,23 @@ class ControlPanel extends React.Component {
       parseFloat(this.inputTranslateX.value),
       parseFloat(this.inputTranslateY.value),
     ));
+  }
+                        
+  initiateEditorMode(e) {
+    if (!this.props.aggregationsData) return;
+    
+    //TEST EXPORT
+    //----------------------------------------------------------------
+    const whatYouSeeIsWhatYouText = this.props.aggregationsData.reduce((total, agg) => {
+      if (!agg.show) return total;
+      
+      return total + agg.text + '\n';
+    }, '');
+    
+    console.log(whatYouSeeIsWhatYouText);
+    alert(whatYouSeeIsWhatYouText);
+    //----------------------------------------------------------------
+      
   }
   
   goToNextPage() {
