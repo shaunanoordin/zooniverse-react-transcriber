@@ -2,12 +2,14 @@ import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import nib from 'nib';
+import 'babel-polyfill';
 
 module.exports = {
 
   devtool: 'eval-source-map',
 
   entry: [
+    'babel-polyfill',
     'eventsource-polyfill', // necessary for hot reloading with IE
     'webpack-hot-middleware/client?reload=true',
     path.join(__dirname, 'src/index.js'),

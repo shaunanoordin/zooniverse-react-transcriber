@@ -5,10 +5,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const StatsPlugin = require('stats-webpack-plugin');
 const nib = require('nib');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+require('babel-polyfill');
 
 module.exports = {
 
   entry: [
+    'babel-polyfill',
     path.join(__dirname, 'src/index.js'),
   ],
 
