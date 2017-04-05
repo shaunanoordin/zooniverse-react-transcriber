@@ -76,6 +76,16 @@ class Index extends React.Component {
               })()}
             </SVGViewer>
           }
+          
+          {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0 ||
+            !(this.props.viewOptions.layout === 'editor')) ? null :
+            <div className="editor-panel">
+              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
+              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
+              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
+              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
+            </div>
+          }
 
           {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0) ? null :
             <SVGViewer ref={(c)=>{this.primarySVGViewer=c}}>

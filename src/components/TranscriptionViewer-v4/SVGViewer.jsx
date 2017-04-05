@@ -64,7 +64,7 @@ class SVGViewer extends Component {
             }
             return Utility.stopEvent(e);
           }}
-          >
+        >
           <g transform={transform}>
             <g>
               {this.props.children}
