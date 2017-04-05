@@ -29,9 +29,6 @@ class Index extends React.Component {
     const viewerWidth = (this.primarySVGViewer && this.primarySVGViewer.containerWidth > 0) ? this.primarySVGViewer.containerWidth : DEFAULT_SVGVIEWER_WIDTH;
     const viewerHeight = (this.primarySVGViewer && this.primarySVGViewer.containerHeight > 0) ? this.primarySVGViewer.containerHeight : DEFAULT_SVGVIEWER_HEIGHT;
     
-    console.log('+'.repeat(128), '\n');
-    console.log(this.primarySVGViewer.renderedElement);
-    
     const hScale = (img.width !== 0) ? viewerWidth / img.width : 1;
     const vScale = (img.height !== 0) ? viewerHeight / img.height : 1;
     
