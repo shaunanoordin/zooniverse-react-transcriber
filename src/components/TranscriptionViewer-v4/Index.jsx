@@ -4,6 +4,7 @@ import { fetchSubject, setView, setSubjectImageSize } from '../../actions/transc
 import * as status from '../../constants/status.js';
 
 import ControlPanel from './ControlPanel.jsx';
+import EditorPanel from './EditorPanel.jsx';
 import AggregationsPanel from './AggregationsPanel.jsx';
 import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
@@ -49,7 +50,7 @@ class Index extends React.Component {
         
         <div className={'data-panel' + ((this.props.viewOptions && this.props.viewOptions.layout === 'vertical') ? ' vertical' : '') }>
           {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0 ||
-            !(this.props.viewOptions.layout === 'vertical' || this.props.viewOptions.layout === 'horizontal')) ? null :
+            this.props.viewOptions.mode === 'editor' || this.props.viewOptions.layout === 'single') ? null :
             <SVGViewer>
               {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} />;
@@ -78,16 +79,12 @@ class Index extends React.Component {
           }
           
           {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0 ||
-            !(this.props.viewOptions.layout === 'editor')) ? null :
-            <div className="editor-panel">
-              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
-              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
-              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
-              BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP BEEP BOOP 
-            </div>
+            !(this.props.viewOptions.mode === 'editor')) ? null :
+            <EditorPanel />
           }
 
-          {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0) ? null :
+          {(!this.props.subjectData || !this.props.subjectData.locations || this.props.subjectData.locations.length === 0 ||
+            (this.props.viewOptions.mode === 'editor' && this.props.viewOptions.layout === 'single')) ? null :
             <SVGViewer ref={(c)=>{this.primarySVGViewer=c}}>
               {this.props.subjectData.locations.map((loc, locIndex) => {
                 return <SVGImage key={'image-'+locIndex} src={loc["image/jpeg"]} onLoad={this.imageHasLoaded} />;
@@ -161,7 +158,8 @@ Index.defaultProps = {
   currentAggregation: null,
   currentRawClassification: null,
   viewOptions: {
-    layout: 'horizontal'
+    mode: '',
+    layout: 'horizontal',
   },
 };
 

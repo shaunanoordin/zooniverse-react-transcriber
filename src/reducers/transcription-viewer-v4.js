@@ -16,6 +16,7 @@ const initialState = {
   viewTranslateX: 0,
   viewTranslateY: 0,
   viewOptions: {
+    mode: 'editor',
     layout: 'horizontal',
   }
 };

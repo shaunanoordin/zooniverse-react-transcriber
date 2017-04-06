@@ -124,7 +124,15 @@ class ControlPanel extends React.Component {
               <button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />
               <button className={'button fa fa-caret-square-o-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
               <button className={'button fa fa-caret-square-o-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
-              <button className={'button fa fa-file-text' + ((this.props.viewOptions.layout === 'editor') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'editor'}))}} />
+            </span>
+          </div>
+          <div className="row">
+            <label>Edit Mode</label>
+            <span className="data">
+              {(this.props.viewOptions.mode === 'editor')
+                ? <button className="button fa fa-file-text selected" onClick={()=>{this.props.dispatch(setViewOptions({mode:''}))}} />
+                : <button className="button fa fa-file-text" onClick={()=>{this.props.dispatch(setViewOptions({mode:'editor'}))}} />
+              }
             </span>
           </div>
         </div>
