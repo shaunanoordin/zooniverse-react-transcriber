@@ -18,57 +18,56 @@ class EditorPanel extends React.Component {
       <div className="editor-panel">
         <div>
           <div className="message">
-            Showing Zooniverse Aggregation
+            Click 'Reset'
           </div>
           <span className="button-container">
             <label>Reset (Zooniverse)</label>
-            <button className="button fa fa-history"/>
+            <button className="button fa fa-history" onClick={this.getTextFromAggregations} />
           </span>
           <span className="button-container">
             <label>Load (Expert)</label>
-            <button className="button fa fa-cloud-download"/>
+            <button className="button disabled fa fa-cloud-download"/>
           </span>
           <span className="button-container">
             <label>Save (Amend)</label>
-            <button className="button fa fa-cloud-upload"/>
+            <button className="button disabled fa fa-cloud-upload"/>
           </span>
         </div>
-        <textarea ref={c=>{this.textarea=c}} />
+        <textarea ref={c=>{this.textarea=c}} value={this.state.text}></textarea>
         <div>
           <span className="button-container">
             <label>Accept</label>
-            <button className="button fa fa-check-square"/>
+            <button className="button disabled fa fa-check-square"/>
           </span>
           <span className="button-container">
             <label>Amend</label>
-            <button className="button fa fa-cloud-upload"/>
+            <button className="button disabled fa fa-cloud-upload"/>
           </span>
           <span className="button-container">
             <label>Reject</label>
-            <button className="button fa fa-trash"/>
+            <button className="button disabled fa fa-trash"/>
           </span>
         </div>
       </div>
     );
   }
   
+  componentDidMount() {
+    this.getTextFromAggregations();
+  }
+  
   getTextFromAggregations(e) {
     if (!this.props.aggregationsData) return;
     
-    //TEST EXPORT
-    //----------------------------------------------------------------
-    /*
     const whatYouSeeIsWhatYouText = this.props.aggregationsData.reduce((total, agg) => {
       if (!agg.show) return total;
       
       return total + agg.text + '\n';
     }, '');
     
-    console.log(whatYouSeeIsWhatYouText);
-    alert(whatYouSeeIsWhatYouText);
-    */
-    //----------------------------------------------------------------
-      
+    this.setState({
+      text: whatYouSeeIsWhatYouText,
+    });
   }
 }
 
