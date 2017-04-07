@@ -15,7 +15,6 @@ class ControlPanel extends React.Component {
     this.inputTranslateY = null;
     this.inputRotate = null;
     this.updateTransform = this.updateTransform.bind(this);
-    this.initiateEditorMode = this.initiateEditorMode.bind(this);
   }
   
   execFetchSubject() {
@@ -122,8 +121,8 @@ class ControlPanel extends React.Component {
             <label>Layout</label>
             <span className="data">
               <button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />
-              <button className={'button fa fa-caret-square-o-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
-              <button className={'button fa fa-caret-square-o-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+              <button className={'button fa fa-arrows-h' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+              <button className={'button fa fa-arrows-v' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
             </span>
           </div>
           <div className="row">
@@ -150,12 +149,6 @@ class ControlPanel extends React.Component {
             );
           })()
         }
-        
-        {(!this.props.aggregationsData) ? null :
-          <div>
-            <button className="button" onClick={this.initiateEditorMode}>Export? Edit Mode? I don't know?</button>
-          </div>
-        }
       </div>        
     );
   }
@@ -167,23 +160,6 @@ class ControlPanel extends React.Component {
       parseFloat(this.inputTranslateX.value),
       parseFloat(this.inputTranslateY.value),
     ));
-  }
-                        
-  initiateEditorMode(e) {
-    if (!this.props.aggregationsData) return;
-    
-    //TEST EXPORT
-    //----------------------------------------------------------------
-    const whatYouSeeIsWhatYouText = this.props.aggregationsData.reduce((total, agg) => {
-      if (!agg.show) return total;
-      
-      return total + agg.text + '\n';
-    }, '');
-    
-    console.log(whatYouSeeIsWhatYouText);
-    alert(whatYouSeeIsWhatYouText);
-    //----------------------------------------------------------------
-      
   }
   
   goToNextPage() {
