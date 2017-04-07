@@ -1,7 +1,7 @@
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Utility } from '../../tools/Utility.js';
-import { setView } from '../../actions/transcription-viewer-v3.js';
+import { setView } from '../../actions/transcription-viewer-v4.js';
 
 const INPUT_IDLE = 0;
 const INPUT_ACTIVE = 1;
@@ -39,7 +39,7 @@ class SVGViewer extends Component {
     
     return (
       <div
-        className={'svg-viewer-v3 ' + ((this.props.className) ? this.props.className : '')}
+        className={'svg-viewer-v4 ' + ((this.props.className) ? this.props.className : '')}
         ref={(c)=>{
           if (!c) return;
           this.container = c;
@@ -64,7 +64,7 @@ class SVGViewer extends Component {
             }
             return Utility.stopEvent(e);
           }}
-          >
+        >
           <g transform={transform}>
             <g>
               {this.props.children}
@@ -225,7 +225,7 @@ SVGViewer.defaultProps = {
   rotate: 0,
 };
 function mapStateToProps(state, ownProps) {  //Listens for changes in the Redux Store
-  const store = state.transcriptionViewerV3;
+  const store = state.transcriptionViewerV4;
   return {
     rotate: store.viewRotate,
     scale: store.viewScale,
