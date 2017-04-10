@@ -18,11 +18,11 @@ class EditorPanel extends React.Component {
       <div className="editor-panel">
         <div>
           <div className="message">
-            Click 'Reset'
+            Editor Mode is currently in Test Phase
           </div>
           <span className="button-container">
-            <label>Reset (Zooniverse)</label>
-            <button className="button fa fa-history" onClick={this.getTextFromAggregations} />
+            <label>Zooniverse Data</label>
+            <button className="button fa fa-history" onClick={(e)=>{this.getTextFromAggregations(this.props)}} />
           </span>
           <span className="button-container">
             <label>Load (Expert)</label>
@@ -53,13 +53,18 @@ class EditorPanel extends React.Component {
   }
   
   componentDidMount() {
-    this.getTextFromAggregations();
+    //this.getTextFromAggregations();
   }
   
-  getTextFromAggregations(e) {
-    if (!this.props.aggregationsData) return;
+  componentWillReceiveProps(next) {
+    //console.log('RECEIVE PROPS\n', '-'.repeat(80), '\n', next);
+    this.getTextFromAggregations(next);
+  }
+  
+  getTextFromAggregations(props = this.props) {
+    if (!props.aggregationsData) return;
     
-    const whatYouSeeIsWhatYouText = this.props.aggregationsData.reduce((total, agg) => {
+    const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, agg) => {
       if (!agg.show) return total;
       
       return total + agg.text + '\n';
