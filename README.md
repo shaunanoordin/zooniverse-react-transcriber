@@ -1,6 +1,10 @@
-# Zooniverse React Transcriber
+# Zooniverse Transcription Viewer
 
-A generic React-based Transcription project powered by the Zooniverse.
+A tool for reviewing data from Zooniverse transcription projects.
+
+## Project Documentation
+
+[https://docs.google.com/a/zooniverse.org/document/d/1xJ6ZKjkvjLavLuyxlxBjkXsWXM-XFVyCSt2rDbSJ6AE/edit?usp=sharing](https://docs.google.com/a/zooniverse.org/document/d/1xJ6ZKjkvjLavLuyxlxBjkXsWXM-XFVyCSt2rDbSJ6AE/edit?usp=sharing) (Zooniverse team members only)
 
 ## Development
 
