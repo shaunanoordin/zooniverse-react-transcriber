@@ -85,9 +85,15 @@ class EditorPanel extends React.Component {
   loadZooniverseData(props = this.props) {
     if (!props.aggregationsData) return;
     
-    const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, agg) => {
-      //if (!agg.show) return total;
-      return total + agg.text + '\n';
+    const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, cur, index, arr) => {
+      if (index > 0) {
+        const prev = arr[index-1];
+        const curAngle = Math.atan2(cur.startY - cur.endY, cur.startX - cur.endX) * Math.PI * 2;
+        const prevAngle = Math.atan2(prev.startY - prev.endY, prev.startX - prev.endX) * Math.PI * 2;
+        //TODO: 2017.04.12 - Group lines together based on their proximity.
+      }
+      
+      return total + cur.text + '\n';
     }, '');
     
     this.setState({
