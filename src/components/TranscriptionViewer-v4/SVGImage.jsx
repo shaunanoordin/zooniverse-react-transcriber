@@ -22,7 +22,14 @@ export default class SVGImage extends Component {
         error: true,
       });
     };
-    this.image.src = this.props.src;
+    
+    if (this.props.src) {
+      this.image.src = this.props.src;
+    } else {
+      this.state.loaded = false;
+      this.state.error = true;
+    }
+    
   }
   
   render() {
@@ -50,7 +57,7 @@ export default class SVGImage extends Component {
 }
 
 SVGImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   onLoad: PropTypes.func,
   onError: PropTypes.func,
 };

@@ -6,9 +6,11 @@ class EditorPanel extends React.Component {
     super(props);
     
     this.textarea = null;
-    this.getTextFromAggregations = this.getTextFromAggregations.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.loadZooniverseData = this.loadZooniverseData.bind(this);
     
     this.state = {
+      status: '',
       text: '',
     };
   }
@@ -17,12 +19,27 @@ class EditorPanel extends React.Component {
     return (
       <div className="editor-panel">
         <div>
-          <div className="message">
-            Click 'Reset'
-          </div>
+          {(()=>{
+            switch (this.state.status) {
+              case 'zooniverse': 
+                return (
+                  <div className="message">
+                    Currently showing aggregated text data from the Zooniverse 
+                  </div>
+                );
+              case 'edited':
+                return (
+                  <div className="message">
+                    Text has been manually edited. Click 'Zooniverse Data' to reset.
+                  </div>
+                );
+              default:
+                return null;
+            }
+          })()}
           <span className="button-container">
-            <label>Reset (Zooniverse)</label>
-            <button className="button fa fa-history" onClick={this.getTextFromAggregations} />
+            <label>Zooniverse Data</label>
+            <button className="button fa fa-history" onClick={(e)=>{this.loadZooniverseData(this.props)}} />
           </span>
           <span className="button-container">
             <label>Load (Expert)</label>
@@ -33,7 +50,7 @@ class EditorPanel extends React.Component {
             <button className="button disabled fa fa-cloud-upload"/>
           </span>
         </div>
-        <textarea ref={c=>{this.textarea=c}} value={this.state.text}></textarea>
+        <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
           <span className="button-container">
             <label>Accept</label>
@@ -52,20 +69,35 @@ class EditorPanel extends React.Component {
     );
   }
   
-  componentDidMount() {
-    this.getTextFromAggregations();
+  componentWillReceiveProps(next) {
+    if (this.state.status === '') {
+      this.loadZooniverseData(next);
+    }
   }
   
-  getTextFromAggregations(e) {
-    if (!this.props.aggregationsData) return;
+  onTextChange(e) {
+    this.setState({
+      status: 'edited',
+      text: this.textarea.value,
+    });
+  }
+  
+  loadZooniverseData(props = this.props) {
+    if (!props.aggregationsData) return;
     
-    const whatYouSeeIsWhatYouText = this.props.aggregationsData.reduce((total, agg) => {
-      if (!agg.show) return total;
+    const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, cur, index, arr) => {
+      if (index > 0) {
+        const prev = arr[index-1];
+        const curAngle = Math.atan2(cur.startY - cur.endY, cur.startX - cur.endX) * Math.PI * 2;
+        const prevAngle = Math.atan2(prev.startY - prev.endY, prev.startX - prev.endX) * Math.PI * 2;
+        //TODO: 2017.04.12 - Group lines together based on their proximity.
+      }
       
-      return total + agg.text + '\n';
+      return total + cur.text + '\n';
     }, '');
     
     this.setState({
+      status: 'zooniverse',
       text: whatYouSeeIsWhatYouText,
     });
   }
