@@ -24,7 +24,7 @@
     "start": "babel-node server.js",
     "test": "",
     "eslint": "eslint .",
-    "build": "webpack --config webpack.production.config.js -p"
+    "build": "NODE_ENV=production webpack --config webpack.production.config.js -p"
   },
   "author": "Zooniverse",
   "license": "Apache-2.0",
