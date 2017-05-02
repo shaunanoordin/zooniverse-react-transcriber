@@ -1,0 +1,182 @@
+.transcription-viewer-v5
+  flex: 1 1 auto
+  display: flex
+  flex-direction: row
+  align-items: stretch
+  position: relative
+  background: $neutral-light
+  height: 100%  //Prevents inner content from stretching the size of this container in FF
+  
+  .control-panel
+    flex: 0 0 auto
+    width: 16em
+    font-size: 0.8em
+    margin: 1px
+    overflow: auto  //Allow users to scroll to see more metadata content if window is too small
+    
+    > div
+      margin-top: 1em
+      background: $primary
+      color: $secondary
+      border-radius: 1em
+      padding: 0.5em
+      
+      .row
+        display: flex
+        margin-bottom: 0.1em
+        
+        label
+          flex: 1 1 30%
+          overflow: hidden
+          padding: 0.2em
+          
+        .data
+          flex: 1 1 70%
+          overflow: auto
+          padding: 0.2em
+          
+          input
+            display: inline-block
+            width: 100%
+    
+    .subjectID-subpanel
+      text-align: center
+      
+      input
+        display: inline-block
+        width: 60%
+      
+      button
+        display: inline-block
+        width: 20%
+    
+    .status-subpanel
+      text-align: center
+      
+      p
+        margin: 0.2em 0
+      
+    .metadata-subpanel
+      .data
+        background: $secondary
+        color: $tertiary
+  
+  .data-panel
+    flex: 1 1 auto
+    display: flex
+    justify-content: center
+    background: $neutral
+    margin: 0 3px
+    flex-direction: row
+    overflow: hidden
+    
+    &.vertical
+      flex-direction: column
+      .svg-viewer-v5
+        height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
+
+  .editor-panel
+    display: flex
+    flex-direction: column
+    background: $neutral-light
+    margin: 0.2em
+    flex: 0 0 50%
+    border-radius: 0.5em
+    padding: 0.5em
+    overflow: auto
+    
+    > div
+      background: $neutral-dark
+      font-size: 0.8em
+      
+      .button-container
+        display: inline-block
+        padding: 0.2em 0.5em
+        background: $neutral-light
+        margin: 0.2em
+        
+        label
+          display: inline-block
+          vertical-align: middle
+        
+        .button
+          vertical-align: middle
+    
+    textarea
+      flex: 1 1 auto
+      display: block
+  
+  .aggregations-panel
+    flex: 0 0 auto
+    display: flex
+    flex-direction: column
+    width: 16em
+    font-size: 0.8em
+    margin: 1px
+    
+    .helper-controls
+      background: $primary
+      border-bottom: 0.5em solid $primary-dark
+      margin-top: 0.2em
+      border-top-left-radius: 0.5em
+      border-top-right-radius: 0.5em
+    
+    .list
+      flex: 1 1 auto
+      overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
+      padding: 0.5em 0 80vh 0
+      
+      .item
+        margin-bottom: 1em
+        background: $secondary
+        color: $tertiary
+        border-radius: 1em
+        padding: 0.5em
+
+        .aggregated
+          display: flex
+          border-bottom: 1px solid $primary
+          justify-content: flex-start
+
+          input
+            flex: 0 0 auto
+            cursor: pointer
+
+          a
+            flex: 1 1 auto
+            color: $primary
+            
+            &:hover
+              color: $primary-light
+              cursor: pointer
+
+        .raw
+          display: none
+          font-size: 0.8em
+
+          a
+            display: block
+            border-left: 0.5em solid $primary
+            border-top-left-radius: 0.5em
+            margin: 0.2em 0 0 0
+            padding: 0 0 0 0.3em
+            cursor: pointer
+            
+            &:hover
+              border-left: 0.5em solid $secondary
+            
+            &.selected
+              border-left: 0.5em solid $secondary
+        
+        &.selected
+          color: $secondary
+          background: $primary-light
+          
+          .aggregated a, .aggregated a:hover
+            color: $secondary
+          
+          .raw
+            display: block
+            
+            a, a:hover
+              color: $secondary
