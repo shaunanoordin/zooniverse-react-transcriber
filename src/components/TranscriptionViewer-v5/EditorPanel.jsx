@@ -1,6 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
+const DIFFERENCE_IN_DISTANCE_THRESHOLD = 100;
+const ENABLE_TEXT_LINE_SPACING = true;
+
 class EditorPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -86,10 +90,27 @@ class EditorPanel extends React.Component {
     if (!props.aggregationsData) return;
     
     const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, cur, index, arr) => {
-      if (index > 0) {
+      if (ENABLE_TEXT_LINE_SPACING && index > 0) {
         const prev = arr[index-1];
-        const curAngle = Math.atan2(cur.startY - cur.endY, cur.startX - cur.endX) * Math.PI * 2;
-        const prevAngle = Math.atan2(prev.startY - prev.endY, prev.startX - prev.endX) * Math.PI * 2;
+        
+        const curAngle = Math.atan2(cur.endY - cur.startY, cur.endX - cur.startX) / Math.PI * 180;
+        const prevAngle = Math.atan2(prev.endY - prev.startY, prev.endX - prev.startX) / Math.PI * 180;
+        
+        const distStartX = cur.startX - prev.startX;
+        const distStartY = cur.startY - prev.startY;
+        const distEndX = cur.endX - prev.endX;
+        const distEndY = cur.endY - prev.endY;
+        
+        const diffAngle = Math.abs(prevAngle - curAngle);
+        const diffStartDistance = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
+        const diffEndDistance = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
+        
+        if (diffAngle > DIFFERENCE_IN_ANGLE_THRESHOLD || 
+            (diffStartDistance > DIFFERENCE_IN_DISTANCE_THRESHOLD &&
+             diffEndDistance > DIFFERENCE_IN_DISTANCE_THRESHOLD)) {
+          return total + '\n' + cur.text + '\n';
+        }
+        
         //TODO: 2017.04.12 - Group lines together based on their proximity.
       }
       
