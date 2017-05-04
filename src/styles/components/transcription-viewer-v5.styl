@@ -88,19 +88,6 @@
     > div
       background: $neutral-dark
       font-size: 0.8em
-      
-      .button-container
-        display: inline-block
-        padding: 0.2em 0.5em
-        background: $neutral-light
-        margin: 0.2em
-        
-        label
-          display: inline-block
-          vertical-align: middle
-        
-        .button
-          vertical-align: middle
     
     textarea
       flex: 1 1 auto
@@ -108,23 +95,70 @@
   
   .aggregations-panel
     flex: 0 0 auto
-    display: flex
-    flex-direction: column
-    width: 16em
     font-size: 0.8em
     margin: 1px
+    
+    &.expanded
+      display: flex
+      flex-direction: column
+      width: 16em
+    
+    &.collapsed
+      width: 2.5em
+      overflow: hidden
+      
+      div.rotate-vertical
+        display: flex
+        flex-direction: row
+        width: 100vh
+        transform: translate(0, 100vh) rotate(-90deg)
+        transform-origin: 0 0
+        justify-content: flex-end
+        height: 2.5em
+        
+        button.vertical-tab
+          margin: 0 0.2em
+          font-size: 1em
+          display: inline-block
+          border: 0.2em solid $primary
+          border-top-left-radius: 1em
+          border-top-right-radius: 1em
+          color: $primary
+          background: $secondary
+          cursor: pointer
+          
+          &:hover
+            color: $highlight
+            border: 0.2em solid $highlight
+            transform: translate(0.1em, 0)
+            box-shadow: -0.1em 0 0.2em #333
+          
+          label
+            display: inline-block
+            vertical-align: middle
+          
+          i
+            display: inline-block
+            vertical-align: middle
+            margin-right: 0.5em
     
     .helper-controls
       background: $primary
       border-bottom: 0.5em solid $primary-dark
       margin-top: 0.2em
       border-top-left-radius: 0.5em
-      border-top-right-radius: 0.5em
+      
+      .button-container
+        display: block
+        border-top-left-radius: 1em
+        border-bottom-left-radius: 1em
+        padding: 0
+        margin: 0.2em 0 0.2em 0.2em
     
     .list
       flex: 1 1 auto
       overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
-      padding: 0.5em 0 80vh 0
+      padding: 0.5em 0 50vh 0
       
       .item
         margin-bottom: 1em

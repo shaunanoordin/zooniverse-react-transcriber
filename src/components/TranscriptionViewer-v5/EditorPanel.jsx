@@ -38,31 +38,31 @@ class EditorPanel extends React.Component {
             }
           })()}
           <span className="button-container">
-            <label>Zooniverse Data</label>
             <button className="button fa fa-history" onClick={(e)=>{this.loadZooniverseData(this.props)}} />
+            <label>Zooniverse Data</label>
           </span>
           <span className="button-container">
-            <label>Load (Expert)</label>
             <button className="button disabled fa fa-cloud-download"/>
+            <label>Load (Expert)</label>
           </span>
           <span className="button-container">
-            <label>Save (Amend)</label>
             <button className="button disabled fa fa-cloud-upload"/>
+            <label>Save (Amend)</label>
           </span>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
           <span className="button-container">
-            <label>Accept</label>
             <button className="button disabled fa fa-check-square"/>
+            <label>Accept</label>
           </span>
           <span className="button-container">
-            <label>Amend</label>
             <button className="button disabled fa fa-cloud-upload"/>
+            <label>Amend</label>
           </span>
           <span className="button-container">
-            <label>Reject</label>
             <button className="button disabled fa fa-trash"/>
+            <label>Reject</label>
           </span>
         </div>
       </div>

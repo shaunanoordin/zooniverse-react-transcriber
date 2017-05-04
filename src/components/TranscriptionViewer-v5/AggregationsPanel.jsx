@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { showAggregation, showAllAggregations, selectAggregation, selectRawClassification, centreViewOnAggregation } from '../../actions/transcription-viewer-v5.js';
 import * as status from '../../constants/status.js';
 
-//const SMOOTHSCROLL_INTENDED_TIME = 2000;  //milliseconds
-//const SMOOTHSCROLL_TRANSITION_FRAMES = 10;
 const SCROLL_PADDING_TOP = 5;
 
 class AggregationsPanel extends React.Component {
@@ -12,20 +10,46 @@ class AggregationsPanel extends React.Component {
     super(props);
     this.list = null;
     this.aggregatedTexts = [];
-    //this.smoothScrollTarget = 0;
-    //this.smoothScrollSpeed = 0;
+    
+    this.state = {
+      expanded: false,
+    };
   }
   
   render() {
-    return (
-      <div className="aggregations-panel">
-        {this.render_statusMessage()}
-        {this.render_helperControls()}
-        <div className="list" ref={(r)=>{this.list=r}}>
-          {this.render_aggregatedText()}
+    
+    if (this.state.expanded) {
+      return (
+        <div className="aggregations-panel expanded">
+          {this.render_statusMessage()}
+          {this.render_helperControls()}
+          <div className="list" ref={(r)=>{this.list=r}}>
+            {this.render_aggregatedText()}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="aggregations-panel collapsed">
+          <div className="rotate-vertical">
+            <button className="vertical-tab" onClick={()=>{ this.setState({expanded: true}) }}>
+              <i className="fa fa-angle-double-up" />
+              <label>View raw data</label>
+            </button>
+            
+            <button className="vertical-tab" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}>
+              <i className="fa fa-check-square-o" />
+              <label>Show all text</label>
+            </button>
+            
+            <button className="vertical-tab" onClick={()=>{ this.props.dispatch(showAllAggregations(null)) }}>
+              <i className="fa fa-square-o" />
+              <label>Hide all text</label>
+            </button>
+          </div>
+        </div>
+      );
+    }
   }
   
   render_statusMessage() {
@@ -48,12 +72,18 @@ class AggregationsPanel extends React.Component {
     
     return (
       <div className="helper-controls">
-        <button className="button fa fa-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(false)) }}></button>
-        <button className="button fa fa-check-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}></button>
-        
-        {(this.props.currentAggregation === null) ? null :
-          <button className="button fa fa-ban" onClick={()=>{ this.props.dispatch(selectAggregation(null)) }}></button>
-        }
+        <div className="button-container">
+          <button className="button fa fa-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(false)) }}></button>
+          <label>Hide all text</label>
+        </div>
+        <div className="button-container">
+          <button className="button fa fa-check-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}></button>
+          <label>Show all text</label>
+        </div>
+        <div className="button-container">
+          <button className={(this.props.currentAggregation === null) ? 'button disabled fa fa-ban' : 'button fa fa-ban' } onClick={()=>{ this.props.dispatch(selectAggregation(null)) }}></button>
+          <label>Deselect</label>
+        </div>
       </div>
     );
   }
@@ -99,22 +129,11 @@ class AggregationsPanel extends React.Component {
   
   scrollToSelectedAggregation(next) {
     if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
+    if (!this.state.expanded) return;
     const current = this.aggregatedTexts[next.currentAggregation];
     const offsetParent = current.offsetParent;
     this.list.scrollTop = -SCROLL_PADDING_TOP - this.list.offsetTop + current.offsetTop;
   }
-  
-  /*smoothScrollToSelectedAggregation() {
-    if (next.currentAggregation === null || this.aggregatedTexts[next.currentAggregation] === null) return;
-    const current = this.aggregatedTexts[next.currentAggregation];
-    const offsetParent = current.offsetParent;
-    
-    setTimeout(smoothScroll, SMOOTHSCROLL_INTENDED_TIME / SMOOTHSCROLL_TRANSITION_FRAMES);
-  }
-  
-  smoothScroll() {
-    
-  }*/
 }
 
 AggregationsPanel.propTypes = {
