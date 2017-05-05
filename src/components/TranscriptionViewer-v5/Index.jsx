@@ -13,6 +13,8 @@ import SVGAggregatedText from './SVGAggregatedText.jsx';
 const DEFAULT_SVGVIEWER_WIDTH = 500;
 const DEFAULT_SVGVIEWER_HEIGHT = 500;
 
+const DEFAULT_SUBJECT_ID = '671189';  //Arbitrary, interesting page from AnnoTate with some... funky fresh text layout.
+
 class Index extends React.Component {
   constructor(props) {
     super(props);
@@ -135,10 +137,10 @@ class Index extends React.Component {
   }
   
   componentDidMount() {
-    //DEFAULT image
-    //this.props.dispatch(fetchSubject('1274999'));  //Shakespeare's World
-    //this.props.dispatch(fetchSubject('671183'));  //AnnoTate
-    this.props.dispatch(fetchSubject('671189'));  //AnnoTate with some... funky fresh text directions
+    const subjectId = (this.props.params && this.props.params.subjectId)
+      ? this.props.params.subjectId
+      : DEFAULT_SUBJECT_ID;
+    this.props.dispatch(fetchSubject(subjectId));
   }
 }
 

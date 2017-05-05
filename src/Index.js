@@ -34,7 +34,9 @@ oauth.init(config.panoptesAppId)
         <Router>
           <Route path="/" component={App}>
             <Route path="/transcription-viewer" component={TranscriptionViewerV5}/>
+            <Route path="/transcription-viewer/:subjectId" component={TranscriptionViewerV5}/>
             <Route path="/transcription-viewer-v5" component={TranscriptionViewerV5}/>
+            <Route path="/transcription-viewer-v5/:subjectId" component={TranscriptionViewerV5}/>
             <Route path="/transcription-viewer-v4" component={TranscriptionViewerV4}/>
             <Route path="/transcription-viewer-v3" component={TranscriptionViewerV3}/>
             <Route path="/transcription-viewer-v2" component={TranscriptionViewerV2}/>
