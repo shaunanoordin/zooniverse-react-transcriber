@@ -6,7 +6,12 @@ import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import config from './webpack.config.js';
 
-const isProduction = process.env.NODE_ENV === 'production';
+//DEBUG: On localhost, we want to force the system to be on production (becauses
+//it requires live production data), but still use the hot reloading. To be
+//fair, is server.js ever used in a non-localhost context? (shaun 20170425)
+const isProduction = false;  //NODE_ENV=production is set in package.json, but isProduction=false is used to force hot reloading 
+//const isProduction = process.env.NODE_ENV === 'production';
+
 const port = isProduction ? process.env.PORT : 4000;
 const app = express();
 const indexHtml = path.join(__dirname, 'dist/index.html');

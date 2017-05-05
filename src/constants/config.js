@@ -1,3 +1,3 @@
 export const config = {
-  panoptesAppId: 'b98d917fae51bcf40cb0e293620efac31d0ea185e995eff707fa2b4f5e119cc8',  //Panoptes-Staging ID for Zooniverse React Transcriber
+  panoptesAppId: 'c25caf9781db436c7d7ec0cfe81926696d24886908d15cbfe0c63391a627832b',  //Panoptes ID for Zooniverse React Transcriber
 };

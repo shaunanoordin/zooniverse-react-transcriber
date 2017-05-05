@@ -1,0 +1,216 @@
+.transcription-viewer-v5
+  flex: 1 1 auto
+  display: flex
+  flex-direction: row
+  align-items: stretch
+  position: relative
+  background: $neutral-light
+  height: 100%  //Prevents inner content from stretching the size of this container in FF
+  
+  .control-panel
+    flex: 0 0 auto
+    width: 16em
+    font-size: 0.8em
+    margin: 1px
+    overflow: auto  //Allow users to scroll to see more metadata content if window is too small
+    
+    > div
+      margin-top: 1em
+      background: $primary
+      color: $secondary
+      border-radius: 1em
+      padding: 0.5em
+      
+      .row
+        display: flex
+        margin-bottom: 0.1em
+        
+        label
+          flex: 1 1 30%
+          overflow: hidden
+          padding: 0.2em
+          
+        .data
+          flex: 1 1 70%
+          overflow: auto
+          padding: 0.2em
+          
+          input
+            display: inline-block
+            width: 100%
+    
+    .subjectID-subpanel
+      text-align: center
+      
+      input
+        display: inline-block
+        width: 60%
+      
+      button
+        display: inline-block
+        width: 20%
+    
+    .status-subpanel
+      text-align: center
+      
+      p
+        margin: 0.2em 0
+      
+    .metadata-subpanel
+      .data
+        background: $secondary
+        color: $tertiary
+  
+  .data-panel
+    flex: 1 1 auto
+    display: flex
+    justify-content: center
+    background: $neutral
+    margin: 0 3px
+    flex-direction: row
+    overflow: hidden
+    
+    &.vertical
+      flex-direction: column
+      .svg-viewer-v5
+        height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
+
+  .editor-panel
+    display: flex
+    flex-direction: column
+    background: $neutral-light
+    margin: 0.2em
+    flex: 0 0 50%
+    border-radius: 0.5em
+    padding: 0.5em
+    overflow: auto
+    
+    > div
+      background: $neutral-dark
+      font-size: 0.8em
+    
+    textarea
+      flex: 1 1 auto
+      display: block
+  
+  .aggregations-panel
+    flex: 0 0 auto
+    font-size: 0.8em
+    margin: 1px
+    
+    &.expanded
+      display: flex
+      flex-direction: column
+      width: 16em
+    
+    &.collapsed
+      width: 2.5em
+      overflow: hidden
+      
+      div.rotate-vertical
+        display: flex
+        flex-direction: row
+        width: 100vh
+        transform: translate(0, 100vh) rotate(-90deg)
+        transform-origin: 0 0
+        justify-content: flex-end
+        height: 2.5em
+        
+        button.vertical-tab
+          margin: 0 0.2em
+          font-size: 1em
+          display: inline-block
+          border: 0.2em solid $primary
+          border-top-left-radius: 1em
+          border-top-right-radius: 1em
+          color: $primary
+          background: $secondary
+          cursor: pointer
+          
+          &:hover
+            color: $highlight
+            border: 0.2em solid $highlight
+            transform: translate(0.1em, 0)
+            box-shadow: -0.1em 0 0.2em #333
+          
+          label
+            display: inline-block
+            vertical-align: middle
+          
+          i
+            display: inline-block
+            vertical-align: middle
+            margin-right: 0.5em
+    
+    .helper-controls
+      background: $primary
+      border-bottom: 0.5em solid $primary-dark
+      margin-top: 0.2em
+      border-top-left-radius: 0.5em
+      
+      .button-container
+        display: block
+        border-top-left-radius: 1em
+        border-bottom-left-radius: 1em
+        padding: 0
+        margin: 0.2em 0 0.2em 0.2em
+    
+    .list
+      flex: 1 1 auto
+      overflow: auto  //Allow users to scroll to see more aggregated content if window is too small - and it will be
+      padding: 0.5em 0 50vh 0
+      
+      .item
+        margin-bottom: 1em
+        background: $secondary
+        color: $tertiary
+        border-radius: 1em
+        padding: 0.5em
+
+        .aggregated
+          display: flex
+          border-bottom: 1px solid $primary
+          justify-content: flex-start
+
+          input
+            flex: 0 0 auto
+            cursor: pointer
+
+          a
+            flex: 1 1 auto
+            color: $primary
+            
+            &:hover
+              color: $primary-light
+              cursor: pointer
+
+        .raw
+          display: none
+          font-size: 0.8em
+
+          a
+            display: block
+            border-left: 0.5em solid $primary
+            border-top-left-radius: 0.5em
+            margin: 0.2em 0 0 0
+            padding: 0 0 0 0.3em
+            cursor: pointer
+            
+            &:hover
+              border-left: 0.5em solid $secondary
+            
+            &.selected
+              border-left: 0.5em solid $secondary
+        
+        &.selected
+          color: $secondary
+          background: $primary-light
+          
+          .aggregated a, .aggregated a:hover
+            color: $secondary
+          
+          .raw
+            display: block
+            
+            a, a:hover
+              color: $secondary

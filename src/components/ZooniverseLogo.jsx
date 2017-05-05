@@ -2,7 +2,6 @@ import { Component, PropTypes } from 'react';
 
 export default class ZooniverseLogo extends Component {
   render() {
-    console.log('!'.repeat(160), '\n', this.props);
     return (
       <svg role="img" className="zooniverse-logo" viewBox="0 0 100 100" width={this.props.width} height={this.props.height} style={this.props.style}>
         <title>{this.props.title}</title>
