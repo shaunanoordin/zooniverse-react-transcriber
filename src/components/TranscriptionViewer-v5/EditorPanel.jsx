@@ -89,7 +89,9 @@ class EditorPanel extends React.Component {
   loadZooniverseData(props = this.props) {
     if (!props.aggregationsData) return;
     
-    const whatYouSeeIsWhatYouText = props.aggregationsData.reduce((total, cur, index, arr) => {
+    const compiledText = props.aggregationsData.reduce((total, cur, index, arr) => {
+      //Optional: give some spacing between those lines to reflect how the text
+      //layout on the physical page.
       if (ENABLE_TEXT_LINE_SPACING && index > 0) {
         const prev = arr[index-1];
         
@@ -105,13 +107,13 @@ class EditorPanel extends React.Component {
         const diffStartDistance = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
         const diffEndDistance = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
         
+        //Two lines of text should be separated if the previous line is
+        //significantly different (i.e. different rotation) or very far from
+        //the current line.
         if (diffAngle > DIFFERENCE_IN_ANGLE_THRESHOLD || 
-            (diffStartDistance > DIFFERENCE_IN_DISTANCE_THRESHOLD &&
-             diffEndDistance > DIFFERENCE_IN_DISTANCE_THRESHOLD)) {
+            diffStartDistance > DIFFERENCE_IN_DISTANCE_THRESHOLD) {
           return total + '\n' + cur.text + '\n';
         }
-        
-        //TODO: 2017.04.12 - Group lines together based on their proximity.
       }
       
       return total + cur.text + '\n';
@@ -119,7 +121,7 @@ class EditorPanel extends React.Component {
     
     this.setState({
       status: 'zooniverse',
-      text: whatYouSeeIsWhatYouText,
+      text: compiledText,
     });
   }
 }
