@@ -53,6 +53,10 @@ class EditorPanel extends React.Component {
             <button className="button disabled fa fa-cloud-upload"/>
             <label>Save (Amend)</label>
           </span>
+          <span className="button-container">
+            <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
+            <label>TEST MESSENGER</label>
+          </span>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
@@ -122,6 +126,32 @@ class EditorPanel extends React.Component {
     this.setState({
       status: 'zooniverse',
       text: compiledText,
+    });
+  }
+  
+  TEST_MESSENGER() {
+    const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
+    const url = MESSENGER_URL + '/transcriptions';
+    
+    console.log('TEST_MESSENGER\n', '-'.repeat(40));
+    
+    fetch(url)
+    .then((response) => {
+      console.log('TEST_MESSENGER...');
+      if (response.status < 200 || response.status > 202) { return null; }
+      console.log('TEST_MESSENGER: OK');
+      return response.json();
+    })
+    .then((json) => {
+      if (json && json.data) {
+        console.log('TEST_MESSENGER: DATA');
+        console.log(json.data);
+      } else {
+        console.error('TEST_MESSENGER: ERROR');
+      }
+    })
+    .catch((err) => {
+      console.error('TEST_MESSENGER: ERROR', err);
     });
   }
 }
