@@ -78,13 +78,11 @@ class EditorPanel extends React.Component {
   }
   
   componentDidMount() {
-    if (this.state.status === '') {
-      this.loadZooniverseData(this.props);
-    }
+    this.loadZooniverseData();
   }
   
   componentWillReceiveProps(next) {
-    if (this.state.status === '') {
+    if (this.state.status === '' || this.state.status === 'zooniverse') {
       this.loadZooniverseData(next);
     }
   }
@@ -97,7 +95,13 @@ class EditorPanel extends React.Component {
   }
   
   loadZooniverseData(props = this.props) {
-    if (!props.aggregationsData) return;
+    if (!props.aggregationsData) {
+      this.setState({
+        status: '',
+        text: '',
+      });
+      return;
+    };
     
     const compiledText = props.aggregationsData.reduce((total, cur, index, arr) => {
       //Optional: give some spacing between those lines to reflect how the text
