@@ -133,11 +133,18 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Layout</label>
             <span className="data">
-              <button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />
-              <button className={'button fa fa-arrows-h' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
-              <button className={'button fa fa-arrows-v' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+              {/*<button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />*/}
+              <div>
+                <button className={'button fa fa-arrow-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+                <label>Horizontal</label>
+              </div>
+              <div>
+                <button className={'button fa fa-arrow-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+                <label>Vertical</label>
+              </div>
             </span>
           </div>
+          {/*
           <div className="row">
             <label>Edit Mode</label>
             <span className="data">
@@ -147,6 +154,7 @@ class ControlPanel extends React.Component {
               }
             </span>
           </div>
+          */}
         </div>
 
         {(!this.props.subjectData || !this.props.subjectData.metadata) ? null :

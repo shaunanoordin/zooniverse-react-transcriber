@@ -24,12 +24,12 @@
         display: flex
         margin-bottom: 0.1em
         
-        label
+        > label
           flex: 1 1 30%
           overflow: hidden
           padding: 0.2em
           
-        .data
+        > .data
           flex: 1 1 70%
           overflow: auto
           padding: 0.2em
@@ -40,6 +40,7 @@
           
           > div
             display: flex
+            align-items: center
             width: 100%
           
             input
@@ -53,9 +54,13 @@
               padding: 0 0.5em
             
             .button
-              flex: 0 0 auto
+              flex: 0 0 2em
               padding: 0.25em
               margin: 0
+            
+            label
+              margin-left: 0.5em
+              flex: 1 1 auto
     
     .subjectID-subpanel
       text-align: center
