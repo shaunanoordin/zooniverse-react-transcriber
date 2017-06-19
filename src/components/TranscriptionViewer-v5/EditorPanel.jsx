@@ -77,6 +77,12 @@ class EditorPanel extends React.Component {
     );
   }
   
+  componentDidMount() {
+    if (this.state.status === '') {
+      this.loadZooniverseData(this.props);
+    }
+  }
+  
   componentWillReceiveProps(next) {
     if (this.state.status === '') {
       this.loadZooniverseData(next);
@@ -158,16 +164,19 @@ class EditorPanel extends React.Component {
 
 EditorPanel.propTypes = {
   aggregationsData: PropTypes.array,
+  viewOptions: PropTypes.object,
 };
 
 EditorPanel.defaultProps = {
   aggregationsData: null,
+  viewOptions: null,
 };
 
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
     aggregationsData: store.aggregationsData,
+    viewOptions: store.viewOptions,
   };
 };
 
