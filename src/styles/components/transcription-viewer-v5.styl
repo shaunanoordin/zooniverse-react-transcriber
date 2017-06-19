@@ -34,9 +34,28 @@
           overflow: auto
           padding: 0.2em
           
-          input
+          > input
             display: inline-block
             width: 100%
+          
+          > div
+            display: flex
+            width: 100%
+          
+            input
+              display: inline-block
+              flex: 1 1 auto
+              width: 10%
+            
+            b
+              flex: 0 0 auto
+              font-weight: normal
+              padding: 0 0.5em
+            
+            .button
+              flex: 0 0 auto
+              padding: 0.25em
+              margin: 0
     
     .subjectID-subpanel
       text-align: center
@@ -70,7 +89,7 @@
     overflow: hidden
     
     &.vertical
-      flex-direction: column
+      flex-direction: column-reverse
       .svg-viewer-v5
         height: 45%  //Fixes FF bug where data-subpanel is way too huge in vertical.
 

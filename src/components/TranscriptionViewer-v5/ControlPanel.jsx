@@ -4,6 +4,9 @@ import { fetchSubject, setView, setViewOptions } from '../../actions/transcripti
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
+const ROTATE_STEP_VALUE = 15;
+const DEGREES_360 = 360
+
 class ControlPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +17,10 @@ class ControlPanel extends React.Component {
     this.inputTranslateX = null;
     this.inputTranslateY = null;
     this.inputRotate = null;
+    
     this.updateTransform = this.updateTransform.bind(this);
+    this.rotateLeft = this.rotateLeft.bind(this);
+    this.rotateRight = this.rotateRight.bind(this);
   }
   
   execFetchSubject() {
@@ -92,29 +98,36 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Translate (x,y)</label>
             <span className="data">
-              <input
-                value={this.props.translateX}
-                ref={(itm) => { this.inputTranslateX = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
-              <input
-                value={this.props.translateY}
-                ref={(itm) => { this.inputTranslateY = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
+              <div>
+                <input
+                  value={this.props.translateX}
+                  ref={(itm) => { this.inputTranslateX = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+                <b>,</b>
+                <input
+                  value={this.props.translateY}
+                  ref={(itm) => { this.inputTranslateY = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+              </div>
             </span>
           </div>
           <div className="row">
             <label>Rotate (deg)</label>
             <span className="data">
-              <input
-                value={this.props.rotate}
-                ref={(itm) => { this.inputRotate = itm; }}
-                onChange={this.updateTransform} 
-                type="number"
-                step="15" />
+              <div>
+                <input
+                  value={this.props.rotate}
+                  ref={(itm) => { this.inputRotate = itm; }}
+                  onChange={this.updateTransform} 
+                  type="number"
+                  step={ROTATE_STEP_VALUE} />
+                <button className="button fa fa-rotate-left" onClick={this.rotateLeft} />
+                <button className="button fa fa-rotate-right" onClick={this.rotateRight} />
+              </div>
             </span>
           </div>
           <div className="row">
@@ -160,6 +173,16 @@ class ControlPanel extends React.Component {
       parseFloat(this.inputTranslateX.value),
       parseFloat(this.inputTranslateY.value),
     ));
+  }
+                        
+  rotateLeft() {
+    this.inputRotate.value = (parseInt(this.inputRotate.value) - ROTATE_STEP_VALUE + DEGREES_360) % DEGREES_360;
+    this.updateTransform();
+  }
+
+  rotateRight() {
+    this.inputRotate.value = (parseInt(this.inputRotate.value) + ROTATE_STEP_VALUE) % DEGREES_360;
+    this.updateTransform();
   }
   
   goToNextPage() {
