@@ -90,7 +90,7 @@ export function fetchSubject(id) {
             startY,
             endY,
             raw,
-            show: true,
+            show: false,
           });
         }
         dispatch({
