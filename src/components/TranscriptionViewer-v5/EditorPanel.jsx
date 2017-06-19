@@ -128,7 +128,7 @@ class EditorPanel extends React.Component {
       text: compiledText,
     });
   }
-  
+
   TEST_MESSENGER() {
     const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
     const url = MESSENGER_URL + '/transcriptions';
