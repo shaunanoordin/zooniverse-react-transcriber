@@ -78,10 +78,12 @@ class EditorPanel extends React.Component {
   }
   
   componentDidMount() {
+    //When page loads, load the default data.
     this.loadZooniverseData();
   }
   
   componentWillReceiveProps(next) {
+    //When page refreshes - and the user hasn't made any edits - load the default data.
     if (this.state.status === '' || this.state.status === 'zooniverse') {
       this.loadZooniverseData(next);
     }
@@ -141,11 +143,16 @@ class EditorPanel extends React.Component {
 
   TEST_MESSENGER() {
     const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
-    const url = MESSENGER_URL + '/transcriptions';
+    const url = MESSENGER_URL + 'projects/1663';
     
     console.log('TEST_MESSENGER\n', '-'.repeat(40));
     
-    fetch(url)
+    const opt = {
+      
+      
+    };
+    
+    fetch(url, opt)
     .then((response) => {
       console.log('TEST_MESSENGER...');
       if (response.status < 200 || response.status > 202) { return null; }
