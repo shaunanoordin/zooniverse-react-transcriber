@@ -147,7 +147,13 @@ class EditorPanel extends React.Component {
   }
   
   amendTranscription() {
-    this.props.dispatch(postTranscription(this.props.subjectId, 'amend', this.state.text));
+    if (this.props.transcriptionStatus === status.STATUS_READY && this.props.transcriptionData) {
+      if (this.props.transcriptionData.length === 0) {
+        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, true));
+      } else {
+        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, false));
+      }
+    }
   }
 }
 
@@ -172,7 +178,7 @@ EditorPanel.defaultProps = {
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
-    subjectIg: store.subjectId,
+    subjectId: store.subjectId,
     aggregationsData: store.aggregationsData,
     viewOptions: store.viewOptions,
     transcriptionStatus: store.transcriptionStatus,

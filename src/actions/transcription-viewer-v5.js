@@ -264,7 +264,7 @@ function fetchTranscription__(id, dispatch) {
     }),
   };
   
-  dispatch({ type: "FETCHING_TRANSCRIPTION_V5", });
+  dispatch({ type: "FETCHING_TRANSCRIPTION_V5" });
   
   fetch(url, opt)
   .then((response) => {
@@ -279,17 +279,71 @@ function fetchTranscription__(id, dispatch) {
       });
     } else {
       console.error("ERROR in fetchTranscription()");
-      dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5", });
+      dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5" });
     }
   })
   .catch((err) => {
     console.error("ERROR in fetchTranscription(): ", err);
-    dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5", });
+    dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5" });
   });
 }
 
-export function postTranscription(id, status, text = '') {
+export function postTranscription(id, status, text = '', usePost = true) {
   return (dispatch) => {
-    console.log("ADD STUFF HERE");
+    const url = (usePost)
+      ? config.transcriptionsDatabaseUrl + 'transcriptions/'
+      : config.transcriptionsDatabaseUrl + 'transcriptions/' + id;
+    
+    console.log('x'.repeat(80), '\n', id, status, text, usePost);
+    
+    const body = (usePost)
+      ? JSON.stringify({
+          'data': {
+            'id': id,
+            'project_id': config.projectId,
+            'text': text,
+            'status': status,
+          }
+        })
+      : JSON.stringify({
+          'data': {
+            'attributes': {
+              'text': text,
+              'status': status,
+            }
+          }
+        });
+    
+    const opt = {
+      method: (usePost) ? 'POST' : 'PUT',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
+    };
+
+    dispatch({ type: "POSTING_TRANSCRIPTION_V5" });
+
+    fetch(url, opt)
+    .then((response) => {
+      if (response.status < 200 || response.status > 202) { return null; }
+      return response.json();
+    })
+    .then((json) => {
+      console.log('!'.repeat(80), json);
+      
+      if (json && json.data) {
+        dispatch({ type: "POSTING_TRANSCRIPTION_SUCCESS_V5" });
+      } else {
+        console.error("ERROR in postTranscription()");
+        dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+      }
+    })
+    .catch((err) => {
+      console.error("ERROR in postTranscription(): ", err);
+      dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+    });
   }
 }
