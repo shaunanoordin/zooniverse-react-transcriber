@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as status from '../../constants/status';
+import { postTranscription } from '../../actions/transcription-viewer-v5.js';
 import apiClient from 'panoptes-client/lib/api-client';
 
 const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
@@ -14,6 +15,8 @@ class EditorPanel extends React.Component {
     this.textarea = null;
     this.onTextChange = this.onTextChange.bind(this);
     this.loadZooniverseData = this.loadZooniverseData.bind(this);
+    
+    this.amendTranscription = this.amendTranscription.bind(this);
     
     this.state = {
       status: '',
@@ -55,13 +58,10 @@ class EditorPanel extends React.Component {
             <button className="button disabled fa fa-cloud-upload"/>
             <label>Save (Amend)</label>
           </span>
-          <span className="button-container">
-            <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
-            <label>TEST MESSENGER</label>
-          </span>
         </div>
         <div style={{border: '1px solid #c63', background: '#eee'}}>
           <div>Transcription Status: {this.props.transcriptionStatus}</div>
+          <div>Transcription Update Status: {this.props.transcriptionUpdateStatus}</div>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
@@ -70,7 +70,7 @@ class EditorPanel extends React.Component {
             <label>Accept</label>
           </span>
           <span className="button-container">
-            <button className="button disabled fa fa-cloud-upload"/>
+            <button className="button fa fa-cloud-upload" onClick={this.amendTranscription} />
             <label>Amend</label>
           </span>
           <span className="button-container">
@@ -145,33 +145,39 @@ class EditorPanel extends React.Component {
       text: compiledText,
     });
   }
-
-  TEST_MESSENGER() {
-    console.log('TEST_MESSENGER\n', '-'.repeat(40));
+  
+  amendTranscription() {
+    this.props.dispatch(postTranscription(this.props.subjectId, 'amend', this.state.text));
   }
 }
 
 EditorPanel.propTypes = {
+  subjectId: PropTypes.number,
   aggregationsData: PropTypes.array,
   viewOptions: PropTypes.object,
   transcriptionStatus: PropTypes.string,
   transcriptionData: PropTypes.object,
+  transcriptionUpdateStatus: PropTypes.string,
 };
 
 EditorPanel.defaultProps = {
+  subjectId: null,
   aggregationsData: null,
   viewOptions: null,
   transcriptionStatus: status.STATUS_IDLE,
   transcriptionData: null,
+  transcriptionUpdateStatus: status.STATUS_IDLE,
 };
 
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
+    subjectIg: store.subjectId,
     aggregationsData: store.aggregationsData,
     viewOptions: store.viewOptions,
     transcriptionStatus: store.transcriptionStatus,
     transcriptionData: store.transcriptionData,
+    transcriptionUpdateStatus: store.transcriptionUpdateStatus,
   };
 };
 

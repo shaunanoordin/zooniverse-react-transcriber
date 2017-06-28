@@ -4,7 +4,7 @@ import { DataOrganiser } from '../tools/DataOrganiser-v5.js';
 import { env, config } from '../constants/config.js';
 
 const initialState = {
-  subjectID: null,
+  subjectId: null,
   subjectData: null,
   subjectStatus: status.STATUS_IDLE,
   subjectImageSize: { width: 0, height: 0 },
@@ -29,7 +29,7 @@ export function transcriptionViewerV5(state = initialState, action) {
   switch (action.type) {
     case "FETCHING_SUBJECT_V5":
       return Object.assign({}, state, {
-        subjectID: action.id,
+        subjectId: action.id,
         subjectData: null,
         subjectStatus: status.STATUS_LOADING,
         aggregationsStatus: status.STATUS_IDLE,

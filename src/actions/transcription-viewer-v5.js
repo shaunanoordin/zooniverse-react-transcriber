@@ -273,7 +273,6 @@ function fetchTranscription__(id, dispatch) {
   })
   .then((json) => {
     if (json && json.data) {
-      console.log('!'.repeat(180), json.data);
       dispatch({
         type: "FETCHING_TRANSCRIPTION_SUCCESS_V5",
         transcription: json.data,
@@ -287,4 +286,10 @@ function fetchTranscription__(id, dispatch) {
     console.error("ERROR in fetchTranscription(): ", err);
     dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5", });
   });
+}
+
+export function postTranscription(id, status, text = '') {
+  return (dispatch) => {
+    console.log("ADD STUFF HERE");
+  }
 }

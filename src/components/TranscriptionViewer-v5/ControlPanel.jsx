@@ -12,7 +12,7 @@ class ControlPanel extends React.Component {
     super(props);
     this.execFetchSubject = this.execFetchSubject.bind(this);
     
-    this.inputSubjectID = null;
+    this.inputSubjectId = null;
     this.inputScale = null;
     this.inputTranslateX = null;
     this.inputTranslateY = null;
@@ -24,7 +24,7 @@ class ControlPanel extends React.Component {
   }
   
   execFetchSubject() {
-    const subjectId = this.inputSubjectID.value;
+    const subjectId = this.inputSubjectId.value;
     this.props.dispatch(fetchSubject(subjectId));
   }
   
@@ -32,7 +32,7 @@ class ControlPanel extends React.Component {
     return (
       <div className="control-panel">
         <div className="subjectID-subpanel">
-          <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
+          <input type="text" ref={(ele) => { this.inputSubjectId = ele; }}
             placeholder="Panoptes Subject ID, e.g. 1274999"
             onKeyPress={(e) => {
               if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
@@ -43,10 +43,10 @@ class ControlPanel extends React.Component {
           <button className="button fa fa-search" onClick={this.execFetchSubject} />
         </div>
         <div className="status-subpanel">
-          {(!this.props.subjectID) ? null :
+          {(!this.props.subjectId) ? null :
             <p>
               <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
-              <span>Subject ID {this.props.subjectID}</span>
+              <span>Subject ID {this.props.subjectId}</span>
               <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
             </p>
           }
@@ -194,24 +194,24 @@ class ControlPanel extends React.Component {
   }
   
   goToNextPage() {
-    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    if (this.props.subjectId === null) return;  //Can't use (!this.props.subjectId) since '0' is a valid subjectId.
     try {
-      const targetSubjectID = parseInt(this.props.subjectID) + 1;
-      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+      const targetSubjectId = parseInt(this.props.subjectId) + 1;
+      this.props.dispatch(fetchSubject(targetSubjectId.toString()));
     } catch (err) {}
   }
   
   goToPrevPage() {
-    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    if (this.props.subjectId === null) return;  //Can't use (!this.props.subjectId) since '0' is a valid subjectId.
     try {
-      const targetSubjectID = parseInt(this.props.subjectID) - 1;
-      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+      const targetSubjectId = parseInt(this.props.subjectId) - 1;
+      this.props.dispatch(fetchSubject(targetSubjectId.toString()));
     } catch (err) {}
   }
 }
 
 ControlPanel.propTypes = {
-  subjectID: PropTypes.string,
+  subjectId: PropTypes.string,
   subjectData: PropTypes.object,
   subjectStatus: PropTypes.string,
   aggregationsData: PropTypes.array,
@@ -224,7 +224,7 @@ ControlPanel.propTypes = {
 };
 
 ControlPanel.defaultProps = {
-  subjectID: null,
+  subjectId: null,
   subjectData: null,
   subjectStatus: null,
   aggregationsData: null,
@@ -241,7 +241,7 @@ ControlPanel.defaultProps = {
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
-    subjectID: store.subjectID,
+    subjectId: store.subjectId,
     subjectData: store.subjectData,
     subjectStatus: store.subjectStatus,
     aggregationsData: store.aggregationsData,
