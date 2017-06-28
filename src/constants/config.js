@@ -8,14 +8,17 @@ if (!env.match(/^(production|staging|development)$/)) {
 }
 
 const baseConfig = {
-  "development": {
+  'development': {
     panoptesAppId: '5180e821286b5296be3f5305f0c8c5f9beaf2050b6473b73f9fb7e8d86676bb8',  //(staging)
+    transcriptionsDatabaseUrl: 'https://messenger-staging.zooniverse.org/',
   },
-  "staging": {
+  'staging': {
     panoptesAppId: '5180e821286b5296be3f5305f0c8c5f9beaf2050b6473b73f9fb7e8d86676bb8',  //(staging)
+    transcriptionsDatabaseUrl: 'https://messenger-staging.zooniverse.org/',
   },
-  "production": {
+  'production': {
     panoptesAppId: 'c25caf9781db436c7d7ec0cfe81926696d24886908d15cbfe0c63391a627832b',  //(production) Panoptes ID for Zooniverse React Transcriber
+    transcriptionsDatabaseUrl: 'https://messenger.zooniverse.org/',
   },
 };
 

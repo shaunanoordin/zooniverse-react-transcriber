@@ -1,6 +1,7 @@
 import * as types from '../constants/actionTypes';
 import * as status from '../constants/status';
 import { DataOrganiser } from '../tools/DataOrganiser-v5.js';
+import { env, config } from '../constants/config.js';
 
 const initialState = {
   subjectID: null,
@@ -18,7 +19,10 @@ const initialState = {
   viewOptions: {
     mode: 'editor',
     layout: 'horizontal',
-  }
+  },
+  transcriptionStatus: status.STATUS_IDLE,
+  transcriptionData: null,
+  transcriptionUpdateStatus: status.STATUS_IDLE,
 };
 
 export function transcriptionViewerV5(state = initialState, action) {
@@ -123,6 +127,41 @@ export function transcriptionViewerV5(state = initialState, action) {
       return Object.assign({}, state, {
         viewTranslateX: newX,
         viewTranslateY: newY,
+      });
+      
+    case "FETCHING_TRANSCRIPTION_V5":
+      return Object.assign({}, state, {
+        transcriptionStatus: status.STATUS_LOADING,
+        transcriptionData: null,
+        transcriptionUpdateStatus: status.STATUS_IDLE,
+      });
+    case "FETCHING_TRANSCRIPTION_SUCCESS_V5":
+      console.log('X'.repeat(80), state);
+      return Object.assign({}, state, {
+        transcriptionStatus: status.STATUS_READY,
+        transcriptionData: action.transcription,
+        transcriptionUpdateStatus: status.STATUS_IDLE,
+      });
+    case "FETCHING_TRANSCRIPTION_ERROR_V5":
+      return Object.assign({}, state, {
+        transcriptionStatus: status.STATUS_ERROR,
+        transcriptionData: null,
+        transcriptionUpdateStatus: status.STATUS_IDLE,
+      });
+    
+    case "POSTING_TRANSCRIPTION_V5":
+      return Object.assign({}, state, {
+        transcriptionUpdateStatus: status.STATUS_PROCESSING,
+      });
+      
+    case "POSTING_TRANSCRIPTION_V5_SUCCESS":
+      return Object.assign({}, state, {
+        transcriptionUpdateStatus: status.STATUS_READY,
+      });
+    
+    case "POSTING_TRANSCRIPTION_V5_ERROR":
+      return Object.assign({}, state, {
+        transcriptionUpdateStatus: status.STATUS_ERROR,
       });
       
     default:

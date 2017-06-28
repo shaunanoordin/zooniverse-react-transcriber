@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import * as status from '../../constants/status';
 import apiClient from 'panoptes-client/lib/api-client';
 
 const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
@@ -58,6 +59,9 @@ class EditorPanel extends React.Component {
             <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
             <label>TEST MESSENGER</label>
           </span>
+        </div>
+        <div style={{border: '1px solid #c63', background: '#eee'}}>
+          <div>Transcription Status: {this.props.transcriptionStatus}</div>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
@@ -144,81 +148,21 @@ class EditorPanel extends React.Component {
 
   TEST_MESSENGER() {
     console.log('TEST_MESSENGER\n', '-'.repeat(40));
-    
-    //Create project
-    //--------------------------------
-    /*const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
-    const body = JSON.stringify({
-      'data': {
-        'attributes': {
-          'slug': 'darkeshard/transformers'
-        }
-      }
-    });
-    
-    const url = MESSENGER_URL + 'projects/?slug=darkeshard/transformers';
-    const opt = {
-      method: 'POST',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-      body: body,
-    };*/
-    //--------------------------------
-    
-    //--------------------------------
-    const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
-    const body = JSON.stringify({
-      'data': {
-        'attributes': {
-          'slug': 'darkeshard/transformers'
-        }
-      }
-    });
-    
-    const url = MESSENGER_URL + 'projects/?slug=darkeshard/transformers';
-    const opt = {
-      method: 'POST',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-      body: body,
-    };
-    //--------------------------------
-    
-    fetch(url, opt)
-    .then((response) => {
-      console.log('TEST_MESSENGER...');
-      if (response.status < 200 || response.status > 202) { return null; }
-      console.log('TEST_MESSENGER: OK');
-      return response.json();
-    })
-    .then((json) => {
-      if (json && json.data) {
-        console.log('TEST_MESSENGER: DATA');
-        console.log(json.data);
-      } else {
-        console.error('TEST_MESSENGER: ERROR');
-      }
-    })
-    .catch((err) => {
-      console.error('TEST_MESSENGER: ERROR', err);
-    });
   }
 }
 
 EditorPanel.propTypes = {
   aggregationsData: PropTypes.array,
   viewOptions: PropTypes.object,
+  transcriptionStatus: PropTypes.string,
+  transcriptionData: PropTypes.object,
 };
 
 EditorPanel.defaultProps = {
   aggregationsData: null,
   viewOptions: null,
+  transcriptionStatus: status.STATUS_IDLE,
+  transcriptionData: null,
 };
 
 const mapStateToProps = (state) => {
@@ -226,6 +170,8 @@ const mapStateToProps = (state) => {
   return {
     aggregationsData: store.aggregationsData,
     viewOptions: store.viewOptions,
+    transcriptionStatus: store.transcriptionStatus,
+    transcriptionData: store.transcriptionData,
   };
 };
 
