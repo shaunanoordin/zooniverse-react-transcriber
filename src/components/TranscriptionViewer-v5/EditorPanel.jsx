@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import apiClient from 'panoptes-client/lib/api-client';
 
 const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
 const DIFFERENCE_IN_DISTANCE_THRESHOLD = 100;
@@ -142,15 +143,52 @@ class EditorPanel extends React.Component {
   }
 
   TEST_MESSENGER() {
-    const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
-    const url = MESSENGER_URL + 'projects/1663';
-    
     console.log('TEST_MESSENGER\n', '-'.repeat(40));
     
+    //Create project
+    //--------------------------------
+    /*const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
+    const body = JSON.stringify({
+      'data': {
+        'attributes': {
+          'slug': 'darkeshard/transformers'
+        }
+      }
+    });
+    
+    const url = MESSENGER_URL + 'projects/?slug=darkeshard/transformers';
     const opt = {
-      
-      
+      method: 'POST',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
+    };*/
+    //--------------------------------
+    
+    //--------------------------------
+    const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
+    const body = JSON.stringify({
+      'data': {
+        'attributes': {
+          'slug': 'darkeshard/transformers'
+        }
+      }
+    });
+    
+    const url = MESSENGER_URL + 'projects/?slug=darkeshard/transformers';
+    const opt = {
+      method: 'POST',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
     };
+    //--------------------------------
     
     fetch(url, opt)
     .then((response) => {
