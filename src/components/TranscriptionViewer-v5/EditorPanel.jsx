@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as status from '../../constants/status';
 import { postTranscription } from '../../actions/transcription-viewer-v5.js';
+
 import apiClient from 'panoptes-client/lib/api-client';
+import { env, config } from '../../constants/config.js';
 
 const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
 const DIFFERENCE_IN_DISTANCE_THRESHOLD = 100;
@@ -55,8 +57,8 @@ class EditorPanel extends React.Component {
             <label>Load (Expert)</label>
           </span>
           <span className="button-container">
-            <button className="button disabled fa fa-cloud-upload"/>
-            <label>Save (Amend)</label>
+            <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
+            <label>TEST DATABASE</label>
           </span>
         </div>
         <div style={{border: '1px solid #c63', background: '#eee'}}>
@@ -154,6 +156,110 @@ class EditorPanel extends React.Component {
         this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, false));
       }
     }
+  }
+  
+  TEST_MESSENGER() {
+    console.log('-'.repeat(100));
+    
+    //----------------
+    /*
+    //SUCCESSFUL POST of NEW Transcription
+    //Only works if Transcription doesn't exist.
+    const url = config.transcriptionsDatabaseUrl +
+              'transcriptions';
+    
+    const body = JSON.stringify({
+      "data": {
+        "attributes": {
+          "id": "48407",
+          "project_id": "" + config.projectId,
+          "text": "OPTIMUS?",
+          "status": "amended",
+        }
+      }
+    });
+
+    const opt = {
+      method: 'POST',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
+    };
+    */
+    
+    /*
+    SUCCESSFUL PUT to UPDATE.
+    const url = config.transcriptionsDatabaseUrl +
+              'transcriptions/48407';
+    
+    const body = JSON.stringify({
+      "data": {
+        "attributes": {
+          "id": "48407",
+          "project_id": "" + config.projectId,
+          "text": "OPTIMUS...",
+          "status": "amended",
+        }
+      }
+    });
+
+    const opt = {
+      method: 'PUT',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
+    };
+    */
+    
+    const url = config.transcriptionsDatabaseUrl +
+              'transcriptions/48407';
+    
+    const body = JSON.stringify({
+      "data": {
+        "attributes": {
+          "id": "48407",
+          "project_id": "" + config.projectId,
+          "text": "OPTIMUS...",
+          "status": "amended",
+        }
+      }
+    });
+
+    const opt = {
+      method: 'PUT',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: body,
+    };
+
+    fetch(url, opt)
+    .then((response) => {
+      console.log('TEST_MESSENGER RESPONSE: ', response);
+      if (response.status < 200 || response.status > 202) { return null; }
+      return response.json();
+    })
+    .then((json) => {
+      if (json && json.data) {
+        console.log('TEST_MESSENGER DATA: ', json.data);
+      } else {
+        console.error('TEST_MESSENGER ERROR');
+      }
+    })
+    .catch((err) => {
+      console.error('TEST_MESSENGER ERROR: ', err);
+    });
+    //----------------
+    
+    console.log('='.repeat(100));
   }
 }
 
