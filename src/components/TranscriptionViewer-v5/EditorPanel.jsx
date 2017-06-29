@@ -84,15 +84,22 @@ class EditorPanel extends React.Component {
     );
   }
   
-  componentDidMount() {
-    //When page loads, load the default data.
-    this.loadZooniverseData();
-  }
+  componentDidMount() {}
   
   componentWillReceiveProps(next) {
     //When page refreshes - and the user hasn't made any edits - load the default data.
+    
     if (this.state.status === '' || this.state.status === 'zooniverse') {
-      this.loadZooniverseData(next);
+      if (next.transcriptionStatus === status.STATUS_READY) {
+        if (next.transcriptionData && next.transcriptionData[0] &&
+            next.transcriptionData[0].attributes) {
+          this.loadTranscriptionDatabaseData(next);
+        } else {
+          this.loadZooniverseData(next);
+        }
+      } else {
+        this.loadZooniverseData(next);
+      }
     }
   }
   
@@ -100,6 +107,13 @@ class EditorPanel extends React.Component {
     this.setState({
       status: 'edited',
       text: this.textarea.value,
+    });
+  }
+  
+  loadTranscriptionDatabaseData(props = this.props) {
+    this.setState({
+      status: props.transcriptionData[0].attributes.status,
+      text: props.transcriptionData[0].attributes.text,
     });
   }
   

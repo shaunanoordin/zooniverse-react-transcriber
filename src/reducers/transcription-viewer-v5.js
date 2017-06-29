@@ -136,7 +136,6 @@ export function transcriptionViewerV5(state = initialState, action) {
         transcriptionUpdateStatus: status.STATUS_IDLE,
       });
     case "FETCHING_TRANSCRIPTION_SUCCESS_V5":
-      console.log('X'.repeat(80), state);
       return Object.assign({}, state, {
         transcriptionStatus: status.STATUS_READY,
         transcriptionData: action.transcription,

@@ -299,15 +299,19 @@ export function postTranscription(id, status, text = '', usePost = true) {
     const body = (usePost)
       ? JSON.stringify({
           'data': {
-            'id': id,
-            'project_id': config.projectId,
-            'text': text,
-            'status': status,
+            'attributes': {
+              'id': '' + id,
+              'project_id': '' + config.projectId,
+              'text': text,
+              'status': status,
+            }
           }
         })
       : JSON.stringify({
           'data': {
             'attributes': {
+              'id': '' + id,
+              'project_id': '' + config.projectId,
               'text': text,
               'status': status,
             }
