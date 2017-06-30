@@ -153,12 +153,12 @@ export function transcriptionViewerV5(state = initialState, action) {
         transcriptionUpdateStatus: status.STATUS_PROCESSING,
       });
       
-    case "POSTING_TRANSCRIPTION_V5_SUCCESS":
+    case "POSTING_TRANSCRIPTION_SUCCESS_V5":
       return Object.assign({}, state, {
         transcriptionUpdateStatus: status.STATUS_READY,
       });
     
-    case "POSTING_TRANSCRIPTION_V5_ERROR":
+    case "POSTING_TRANSCRIPTION_ERROR_V5":
       return Object.assign({}, state, {
         transcriptionUpdateStatus: status.STATUS_ERROR,
       });

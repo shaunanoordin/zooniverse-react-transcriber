@@ -294,24 +294,29 @@ export function postTranscription(id, status, text = '', usePost = true) {
       ? config.transcriptionsDatabaseUrl + 'transcriptions/'
       : config.transcriptionsDatabaseUrl + 'transcriptions/' + id;
     
-    console.log('x'.repeat(80), '\n', id, status, text, usePost);
-    
     const body = (usePost)
       ? JSON.stringify({
           'data': {
             'attributes': {
               'id': '' + id,
-              'project_id': '' + config.projectId,
+              //'project_id': '' + config.projectId,
               'text': text,
               'status': status,
-            }
+            },
+            'relationships': {
+              'project': {
+                'data': {
+                  'type': 'projects',
+                  'id': '' + config.projectId,
+                }
+              }
+            },
           }
         })
       : JSON.stringify({
           'data': {
             'attributes': {
               'id': '' + id,
-              'project_id': '' + config.projectId,
               'text': text,
               'status': status,
             }
@@ -336,8 +341,6 @@ export function postTranscription(id, status, text = '', usePost = true) {
       return response.json();
     })
     .then((json) => {
-      console.log('!'.repeat(80), json);
-      
       if (json && json.data) {
         dispatch({ type: "POSTING_TRANSCRIPTION_SUCCESS_V5" });
       } else {

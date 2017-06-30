@@ -231,28 +231,21 @@ class EditorPanel extends React.Component {
     };
     */
     
-    const url = config.transcriptionsDatabaseUrl +
-              'transcriptions/48407';
+    //const url = config.transcriptionsDatabaseUrl +
+    //          'transcriptions/' + this.props.subjectId;
     
-    const body = JSON.stringify({
-      "data": {
-        "attributes": {
-          "id": "48407",
-          "project_id": "" + config.projectId,
-          "text": "OPTIMUS...",
-          "status": "amended",
-        }
-      }
-    });
+    const url = config.transcriptionsDatabaseUrl +
+                'projects/1651';
+    
+    const body = JSON.stringify({});
 
     const opt = {
-      method: 'PUT',
+      method: 'GET',
       mode: 'cors',
       headers: new Headers({
         'Authorization': apiClient.headers.Authorization,
         'Content-Type': 'application/json',
       }),
-      body: body,
     };
 
     fetch(url, opt)
