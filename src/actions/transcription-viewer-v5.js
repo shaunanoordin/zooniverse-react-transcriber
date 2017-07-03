@@ -290,67 +290,79 @@ function fetchTranscription__(id, dispatch) {
 
 export function postTranscription(id, status, text = '', usePost = true) {
   return (dispatch) => {
-    const url = (usePost)
-      ? config.transcriptionsDatabaseUrl + 'transcriptions/'
-      : config.transcriptionsDatabaseUrl + 'transcriptions/' + id;
-    
-    const body = (usePost)
-      ? JSON.stringify({
-          'data': {
-            'attributes': {
-              'id': '' + id,
-              //'project_id': '' + config.projectId,
-              'text': text,
-              'status': status,
-            },
-            'relationships': {
-              'project': {
-                'data': {
-                  'type': 'projects',
-                  'id': '' + config.projectId,
-                }
-              }
-            },
-          }
-        })
-      : JSON.stringify({
-          'data': {
-            'attributes': {
-              'id': '' + id,
-              'text': text,
-              'status': status,
-            }
-          }
-        });
-    
-    const opt = {
-      method: (usePost) ? 'POST' : 'PUT',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-      body: body,
-    };
-
-    dispatch({ type: "POSTING_TRANSCRIPTION_V5" });
-
-    fetch(url, opt)
-    .then((response) => {
-      if (response.status < 200 || response.status > 202) { return null; }
-      return response.json();
-    })
-    .then((json) => {
-      if (json && json.data) {
-        dispatch({ type: "POSTING_TRANSCRIPTION_SUCCESS_V5" });
-      } else {
-        console.error("ERROR in postTranscription()");
-        dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
-      }
-    })
-    .catch((err) => {
-      console.error("ERROR in postTranscription(): ", err);
-      dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
-    });
+    postTranscription__(id, status, text, usePost, dispatch);
   }
+}
+
+function postTranscription__(id, status, text = '', usePost = true, dispatch) {
+  const url = (usePost)
+    ? config.transcriptionsDatabaseUrl + 'transcriptions/'
+    : config.transcriptionsDatabaseUrl + 'transcriptions/' + id;
+
+  const body = (usePost)
+    ? JSON.stringify({
+        'data': {
+          'attributes': {
+            'id': '' + id,
+            //'project_id': '' + config.projectId,
+            'text': text,
+            'status': status,
+          },
+          'relationships': {
+            'project': {
+              'data': {
+                'type': 'projects',
+                'id': '' + config.projectId,
+              }
+            }
+          },
+        }
+      })
+    : JSON.stringify({
+        'data': {
+          'attributes': {
+            'id': '' + id,
+            'text': text,
+            'status': status,
+          }
+        }
+      });
+
+  const opt = {
+    method: (usePost) ? 'POST' : 'PUT',
+    mode: 'cors',
+    headers: new Headers({
+      'Authorization': apiClient.headers.Authorization,
+      'Content-Type': 'application/json',
+    }),
+    body: body,
+  };
+
+  dispatch({ type: "POSTING_TRANSCRIPTION_V5" });
+
+  fetch(url, opt)
+  .then((response) => {
+    if (response.status === 409 && usePost) {  //POST failed because the item already exists.
+      return { notes: 'already_exists' };
+    } else if (response.status < 200 || response.status > 202) {  //POST/PUT successful.
+      return null;
+    }
+    return response.json();
+  })
+  .then((json) => {
+    if (json && json.notes === 'already_exists') {
+      console.log("WARNING in postTranscription(): POST action failed as item already exists; attempting PUT action to update instead.");
+      postTranscription__(id, status, text, false, dispatch);
+    }
+    else if (json && json.data) {
+      dispatch({ type: "POSTING_TRANSCRIPTION_SUCCESS_V5" });
+    } else {
+      console.error("ERROR in postTranscription()");
+      dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+    }
+  })
+  .catch((err) => {
+    console.error("ERROR in postTranscription(): ", err);
+    dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+  });
 }

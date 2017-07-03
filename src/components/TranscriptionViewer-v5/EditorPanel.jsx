@@ -175,72 +175,13 @@ class EditorPanel extends React.Component {
   TEST_MESSENGER() {
     console.log('-'.repeat(100));
     
-    //----------------
-    /*
-    //SUCCESSFUL POST of NEW Transcription
-    //Only works if Transcription doesn't exist.
     const url = config.transcriptionsDatabaseUrl +
-              'transcriptions';
-    
-    const body = JSON.stringify({
-      "data": {
-        "attributes": {
-          "id": "48407",
-          "project_id": "" + config.projectId,
-          "text": "OPTIMUS?",
-          "status": "amended",
-        }
-      }
-    });
-
-    const opt = {
-      method: 'POST',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-      body: body,
-    };
-    */
-    
-    /*
-    SUCCESSFUL PUT to UPDATE.
-    const url = config.transcriptionsDatabaseUrl +
-              'transcriptions/48407';
-    
-    const body = JSON.stringify({
-      "data": {
-        "attributes": {
-          "id": "48407",
-          "project_id": "" + config.projectId,
-          "text": "OPTIMUS...",
-          "status": "amended",
-        }
-      }
-    });
-
-    const opt = {
-      method: 'PUT',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-      body: body,
-    };
-    */
-    
-    //const url = config.transcriptionsDatabaseUrl +
-    //          'transcriptions/' + this.props.subjectId;
-    
-    const url = config.transcriptionsDatabaseUrl +
-                'projects/1651';
+                'transcriptions/' + this.props.subjectId;
     
     const body = JSON.stringify({});
 
     const opt = {
-      method: 'GET',
+      method: 'DELETE',
       mode: 'cors',
       headers: new Headers({
         'Authorization': apiClient.headers.Authorization,
@@ -251,14 +192,14 @@ class EditorPanel extends React.Component {
     fetch(url, opt)
     .then((response) => {
       console.log('TEST_MESSENGER RESPONSE: ', response);
-      if (response.status < 200 || response.status > 202) { return null; }
-      return response.json();
+      if (response.status === 200 || response.status === 201 || response.status === 202) { return response.json(); }
+      return null;
     })
     .then((json) => {
       if (json && json.data) {
         console.log('TEST_MESSENGER DATA: ', json.data);
       } else {
-        console.error('TEST_MESSENGER ERROR');
+        console.log('TEST_MESSENGER DONE');
       }
     })
     .catch((err) => {
