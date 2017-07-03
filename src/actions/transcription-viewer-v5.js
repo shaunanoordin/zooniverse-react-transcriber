@@ -344,10 +344,10 @@ function postTranscription__(id, status, text = '', usePost = true, dispatch) {
   .then((response) => {
     if (response.status === 409 && usePost) {  //POST failed because the item already exists.
       return { notes: 'already_exists' };
-    } else if (response.status < 200 || response.status > 202) {  //POST/PUT successful.
-      return null;
+    } else if (response.status === 200 || response.status === 201 || response.status === 202) {  //POST/PUT successful.
+      return response.json();
     }
-    return response.json();
+    return null;    
   })
   .then((json) => {
     if (json && json.notes === 'already_exists') {
