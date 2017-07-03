@@ -1,5 +1,6 @@
 import * as types from '../constants/actionTypes';
 import apiClient from 'panoptes-client/lib/api-client.js';
+import { env, config } from '../constants/config.js';
 
 export function fetchSubject(id) {
   return (dispatch) => {
@@ -97,6 +98,8 @@ export function fetchSubject(id) {
           type: "FETCHING_AGGREGATIONS_SUCCESS_V5",
           aggregations,
         });
+        
+        fetchTranscription__(id, dispatch);
       })  //Con't ...
       
       //Error
@@ -194,4 +197,172 @@ export function centreViewOnAggregation(index) {
       index,
     });
   };
+}
+
+/*  Register a Zooniverse Project on the Transcriptions DB.
+    A Project must be registered before we can begin transcribing its Subjects.
+ */
+function registerProjectForTranscriptions(projectSlug = 'example_user/example_project') {
+  const url = config.transcriptionsDatabaseUrl +
+              'projects/?slug=' +
+              encodeURIComponent(projectSlug);
+  
+  const body = JSON.stringify({
+    'data': {
+      'attributes': {
+        'slug': projectSlug
+      }
+    }
+  });
+
+  const opt = {
+    method: 'POST',
+    mode: 'cors',
+    headers: new Headers({
+      'Authorization': apiClient.headers.Authorization,
+      'Content-Type': 'application/json',
+    }),
+    body: body,
+  };
+  
+  console.log('REGISTER PROJECT: start', projectSlug);
+
+  fetch(url, opt)
+  .then((response) => {
+    console.log('REGISTER PROJECT: attempting...');
+    if (response.status < 200 || response.status > 202) { return null; }
+    return response.json();
+  })
+  .then((json) => {
+    if (json && json.data) {
+      console.log('REGISTER PROJECT: completed.');
+    } else {
+      console.error('REGISTER PROJECT: ERROR');
+    }
+  })
+  .catch((err) => {
+    console.error('REGISTER PROJECT: ERROR', err);
+  });
+}
+
+export function fetchTranscription(id) {
+  return (dispatch) => {
+    fetchTranscription__(id, dispatch);
+  }
+}
+
+function fetchTranscription__(id, dispatch) {
+  const url = config.transcriptionsDatabaseUrl +
+              'transcriptions/' + id;
+  
+  const opt = {
+    method: 'GET',
+    mode: 'cors',
+    headers: new Headers({
+      'Authorization': apiClient.headers.Authorization,
+      'Content-Type': 'application/json',
+    }),
+  };
+  
+  dispatch({ type: "FETCHING_TRANSCRIPTION_V5" });
+  
+  fetch(url, opt)
+  .then((response) => {
+    if (response.status < 200 || response.status > 202) { return null; }
+    return response.json();
+  })
+  .then((json) => {
+    if (json && json.data) {
+      dispatch({
+        type: "FETCHING_TRANSCRIPTION_SUCCESS_V5",
+        transcription: json.data,
+      });
+    } else {
+      console.error("ERROR in fetchTranscription()");
+      dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5" });
+    }
+  })
+  .catch((err) => {
+    console.error("ERROR in fetchTranscription(): ", err);
+    dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5" });
+  });
+}
+
+export function postTranscription(id, status, text = '', usePost = true) {
+  return (dispatch) => {
+    postTranscription__(id, status, text, usePost, dispatch);
+  }
+}
+
+function postTranscription__(id, status, text = '', usePost = true, dispatch) {
+  const url = (usePost)
+    ? config.transcriptionsDatabaseUrl + 'transcriptions/'
+    : config.transcriptionsDatabaseUrl + 'transcriptions/' + id;
+
+  const body = (usePost)
+    ? JSON.stringify({
+        'data': {
+          'attributes': {
+            'id': '' + id,
+            //'project_id': '' + config.projectId,
+            'text': text,
+            'status': status,
+          },
+          'relationships': {
+            'project': {
+              'data': {
+                'type': 'projects',
+                'id': '' + config.projectId,
+              }
+            }
+          },
+        }
+      })
+    : JSON.stringify({
+        'data': {
+          'attributes': {
+            'id': '' + id,
+            'text': text,
+            'status': status,
+          }
+        }
+      });
+
+  const opt = {
+    method: (usePost) ? 'POST' : 'PUT',
+    mode: 'cors',
+    headers: new Headers({
+      'Authorization': apiClient.headers.Authorization,
+      'Content-Type': 'application/json',
+    }),
+    body: body,
+  };
+
+  dispatch({ type: "POSTING_TRANSCRIPTION_V5" });
+
+  fetch(url, opt)
+  .then((response) => {
+    if (response.status === 409 && usePost) {  //POST failed because the item already exists.
+      return { notes: 'already_exists' };
+    } else if (response.status === 200 || response.status === 201 || response.status === 202) {  //POST/PUT successful.
+      return response.json();
+    }
+    return null;    
+  })
+  .then((json) => {
+    if (json && json.notes === 'already_exists') {
+      console.log("WARNING in postTranscription(): POST action failed as item already exists; attempting PUT action to update instead.");
+      postTranscription__(id, status, text, false, dispatch);
+    }
+    else if (json && json.data) {
+      dispatch({ type: "POSTING_TRANSCRIPTION_SUCCESS_V5" });
+    } else {
+      console.error("ERROR in postTranscription()");
+      dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+    }
+  })
+  .catch((err) => {
+    console.error("ERROR in postTranscription(): ", err);
+    dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
+  });
 }

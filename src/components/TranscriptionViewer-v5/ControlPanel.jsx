@@ -4,21 +4,27 @@ import { fetchSubject, setView, setViewOptions } from '../../actions/transcripti
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
 import * as status from '../../constants/status.js';
 
+const ROTATE_STEP_VALUE = 15;
+const DEGREES_360 = 360
+
 class ControlPanel extends React.Component {
   constructor(props) {
     super(props);
     this.execFetchSubject = this.execFetchSubject.bind(this);
     
-    this.inputSubjectID = null;
+    this.inputSubjectId = null;
     this.inputScale = null;
     this.inputTranslateX = null;
     this.inputTranslateY = null;
     this.inputRotate = null;
+    
     this.updateTransform = this.updateTransform.bind(this);
+    this.rotateLeft = this.rotateLeft.bind(this);
+    this.rotateRight = this.rotateRight.bind(this);
   }
   
   execFetchSubject() {
-    const subjectId = this.inputSubjectID.value;
+    const subjectId = this.inputSubjectId.value;
     this.props.dispatch(fetchSubject(subjectId));
   }
   
@@ -26,7 +32,7 @@ class ControlPanel extends React.Component {
     return (
       <div className="control-panel">
         <div className="subjectID-subpanel">
-          <input type="text" ref={(ele) => { this.inputSubjectID = ele; }}
+          <input type="text" ref={(ele) => { this.inputSubjectId = ele; }}
             placeholder="Panoptes Subject ID, e.g. 1274999"
             onKeyPress={(e) => {
               if (Utility.getKeyCode(e) === KEY_CODES.ENTER) {
@@ -37,10 +43,10 @@ class ControlPanel extends React.Component {
           <button className="button fa fa-search" onClick={this.execFetchSubject} />
         </div>
         <div className="status-subpanel">
-          {(!this.props.subjectID) ? null :
+          {(!this.props.subjectId) ? null :
             <p>
               <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
-              <span>Subject ID {this.props.subjectID}</span>
+              <span>Subject ID {this.props.subjectId}</span>
               <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
             </p>
           }
@@ -92,39 +98,53 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Translate (x,y)</label>
             <span className="data">
-              <input
-                value={this.props.translateX}
-                ref={(itm) => { this.inputTranslateX = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
-              <input
-                value={this.props.translateY}
-                ref={(itm) => { this.inputTranslateY = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="10" />
+              <div>
+                <input
+                  value={this.props.translateX}
+                  ref={(itm) => { this.inputTranslateX = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+                <b>,</b>
+                <input
+                  value={this.props.translateY}
+                  ref={(itm) => { this.inputTranslateY = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="10" />
+              </div>
             </span>
           </div>
           <div className="row">
             <label>Rotate (deg)</label>
             <span className="data">
-              <input
-                value={this.props.rotate}
-                ref={(itm) => { this.inputRotate = itm; }}
-                onChange={this.updateTransform} 
-                type="number"
-                step="15" />
+              <div>
+                <input
+                  value={this.props.rotate}
+                  ref={(itm) => { this.inputRotate = itm; }}
+                  onChange={this.updateTransform} 
+                  type="number"
+                  step={ROTATE_STEP_VALUE} />
+                <button className="button fa fa-rotate-left" onClick={this.rotateLeft} />
+                <button className="button fa fa-rotate-right" onClick={this.rotateRight} />
+              </div>
             </span>
           </div>
           <div className="row">
             <label>Layout</label>
             <span className="data">
-              <button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />
-              <button className={'button fa fa-arrows-h' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
-              <button className={'button fa fa-arrows-v' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+              {/*<button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />*/}
+              <div>
+                <button className={'button fa fa-arrow-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+                <label>Horizontal</label>
+              </div>
+              <div>
+                <button className={'button fa fa-arrow-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+                <label>Vertical</label>
+              </div>
             </span>
           </div>
+          {/*
           <div className="row">
             <label>Edit Mode</label>
             <span className="data">
@@ -134,6 +154,7 @@ class ControlPanel extends React.Component {
               }
             </span>
           </div>
+          */}
         </div>
 
         {(!this.props.subjectData || !this.props.subjectData.metadata) ? null :
@@ -161,26 +182,36 @@ class ControlPanel extends React.Component {
       parseFloat(this.inputTranslateY.value),
     ));
   }
+                        
+  rotateLeft() {
+    this.inputRotate.value = (parseInt(this.inputRotate.value) - ROTATE_STEP_VALUE + DEGREES_360) % DEGREES_360;
+    this.updateTransform();
+  }
+
+  rotateRight() {
+    this.inputRotate.value = (parseInt(this.inputRotate.value) + ROTATE_STEP_VALUE) % DEGREES_360;
+    this.updateTransform();
+  }
   
   goToNextPage() {
-    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    if (this.props.subjectId === null) return;  //Can't use (!this.props.subjectId) since '0' is a valid subjectId.
     try {
-      const targetSubjectID = parseInt(this.props.subjectID) + 1;
-      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+      const targetSubjectId = parseInt(this.props.subjectId) + 1;
+      this.props.dispatch(fetchSubject(targetSubjectId.toString()));
     } catch (err) {}
   }
   
   goToPrevPage() {
-    if (this.props.subjectID === null) return;  //Can't use (!this.props.subjectID) since '0' is a valid subjectID.
+    if (this.props.subjectId === null) return;  //Can't use (!this.props.subjectId) since '0' is a valid subjectId.
     try {
-      const targetSubjectID = parseInt(this.props.subjectID) - 1;
-      this.props.dispatch(fetchSubject(targetSubjectID.toString()));
+      const targetSubjectId = parseInt(this.props.subjectId) - 1;
+      this.props.dispatch(fetchSubject(targetSubjectId.toString()));
     } catch (err) {}
   }
 }
 
 ControlPanel.propTypes = {
-  subjectID: PropTypes.string,
+  subjectId: PropTypes.string,
   subjectData: PropTypes.object,
   subjectStatus: PropTypes.string,
   aggregationsData: PropTypes.array,
@@ -193,7 +224,7 @@ ControlPanel.propTypes = {
 };
 
 ControlPanel.defaultProps = {
-  subjectID: null,
+  subjectId: null,
   subjectData: null,
   subjectStatus: null,
   aggregationsData: null,
@@ -210,7 +241,7 @@ ControlPanel.defaultProps = {
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
-    subjectID: store.subjectID,
+    subjectId: store.subjectId,
     subjectData: store.subjectData,
     subjectStatus: store.subjectStatus,
     aggregationsData: store.aggregationsData,

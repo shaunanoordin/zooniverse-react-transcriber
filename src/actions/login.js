@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router';
 import apiClient from 'panoptes-client';
 import oauth from 'panoptes-client/lib/oauth';
 import * as types from '../constants/actionTypes';
-import config from '../constants/config';
+import { config } from '../constants/config';
 
 export function checkLoginUser() {  //First thing on app load - check if the user is logged in.
   return (dispatch) => {

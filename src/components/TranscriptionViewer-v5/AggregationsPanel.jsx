@@ -137,7 +137,7 @@ class AggregationsPanel extends React.Component {
 }
 
 AggregationsPanel.propTypes = {
-  subjectID: PropTypes.string,
+  subjectId: PropTypes.string,
   aggregationsData: PropTypes.array,
   aggregationsStatus: PropTypes.string,
   currentAggregation: PropTypes.number,
@@ -145,7 +145,7 @@ AggregationsPanel.propTypes = {
 };
 
 AggregationsPanel.defaultProps = {
-  subjectID: null,
+  subjectId: null,
   aggregationsData: null,
   aggregationsStatus: null,
   currentAggregation: null,
@@ -155,7 +155,7 @@ AggregationsPanel.defaultProps = {
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
-    subjectID: store.subjectID,
+    subjectId: store.subjectId,
     aggregationsData: store.aggregationsData,
     aggregationsStatus: store.aggregationsStatus,
     currentAggregation: store.currentAggregation,

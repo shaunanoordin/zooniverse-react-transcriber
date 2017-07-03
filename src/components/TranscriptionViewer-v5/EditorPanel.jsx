@@ -1,5 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import * as status from '../../constants/status';
+import { postTranscription } from '../../actions/transcription-viewer-v5.js';
+
+import apiClient from 'panoptes-client/lib/api-client';
+import { env, config } from '../../constants/config.js';
 
 const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
 const DIFFERENCE_IN_DISTANCE_THRESHOLD = 100;
@@ -12,6 +17,8 @@ class EditorPanel extends React.Component {
     this.textarea = null;
     this.onTextChange = this.onTextChange.bind(this);
     this.loadZooniverseData = this.loadZooniverseData.bind(this);
+    
+    this.amendTranscription = this.amendTranscription.bind(this);
     
     this.state = {
       status: '',
@@ -50,13 +57,13 @@ class EditorPanel extends React.Component {
             <label>Load (Expert)</label>
           </span>
           <span className="button-container">
-            <button className="button disabled fa fa-cloud-upload"/>
-            <label>Save (Amend)</label>
-          </span>
-          <span className="button-container">
             <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
-            <label>TEST MESSENGER</label>
+            <label>TEST DATABASE</label>
           </span>
+        </div>
+        <div style={{border: '1px solid #c63', background: '#eee'}}>
+          <div>Transcription Status: {this.props.transcriptionStatus}</div>
+          <div>Transcription Update Status: {this.props.transcriptionUpdateStatus}</div>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
@@ -65,7 +72,7 @@ class EditorPanel extends React.Component {
             <label>Accept</label>
           </span>
           <span className="button-container">
-            <button className="button disabled fa fa-cloud-upload"/>
+            <button className="button fa fa-cloud-upload" onClick={this.amendTranscription} />
             <label>Amend</label>
           </span>
           <span className="button-container">
@@ -77,9 +84,22 @@ class EditorPanel extends React.Component {
     );
   }
   
+  componentDidMount() {}
+  
   componentWillReceiveProps(next) {
-    if (this.state.status === '') {
-      this.loadZooniverseData(next);
+    //When page refreshes - and the user hasn't made any edits - load the default data.
+    
+    if (this.state.status === '' || this.state.status === 'zooniverse') {
+      if (next.transcriptionStatus === status.STATUS_READY) {
+        if (next.transcriptionData && next.transcriptionData[0] &&
+            next.transcriptionData[0].attributes) {
+          this.loadTranscriptionDatabaseData(next);
+        } else {
+          this.loadZooniverseData(next);
+        }
+      } else {
+        this.loadZooniverseData(next);
+      }
     }
   }
   
@@ -90,8 +110,21 @@ class EditorPanel extends React.Component {
     });
   }
   
+  loadTranscriptionDatabaseData(props = this.props) {
+    this.setState({
+      status: props.transcriptionData[0].attributes.status,
+      text: props.transcriptionData[0].attributes.text,
+    });
+  }
+  
   loadZooniverseData(props = this.props) {
-    if (!props.aggregationsData) return;
+    if (!props.aggregationsData) {
+      this.setState({
+        status: '',
+        text: '',
+      });
+      return;
+    };
     
     const compiledText = props.aggregationsData.reduce((total, cur, index, arr) => {
       //Optional: give some spacing between those lines to reflect how the text
@@ -128,46 +161,83 @@ class EditorPanel extends React.Component {
       text: compiledText,
     });
   }
-
+  
+  amendTranscription() {
+    if (this.props.transcriptionStatus === status.STATUS_READY && this.props.transcriptionData) {
+      if (this.props.transcriptionData.length === 0) {
+        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, true));
+      } else {
+        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, false));
+      }
+    }
+  }
+  
   TEST_MESSENGER() {
-    const MESSENGER_URL = 'https://messenger-staging.zooniverse.org/';
-    const url = MESSENGER_URL + '/transcriptions';
+    console.log('-'.repeat(100));
     
-    console.log('TEST_MESSENGER\n', '-'.repeat(40));
+    const url = config.transcriptionsDatabaseUrl +
+                'transcriptions/' + this.props.subjectId;
     
-    fetch(url)
+    const body = JSON.stringify({});
+
+    const opt = {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    fetch(url, opt)
     .then((response) => {
-      console.log('TEST_MESSENGER...');
-      if (response.status < 200 || response.status > 202) { return null; }
-      console.log('TEST_MESSENGER: OK');
-      return response.json();
+      console.log('TEST_MESSENGER RESPONSE: ', response);
+      if (response.status === 200 || response.status === 201 || response.status === 202) { return response.json(); }
+      return null;
     })
     .then((json) => {
       if (json && json.data) {
-        console.log('TEST_MESSENGER: DATA');
-        console.log(json.data);
+        console.log('TEST_MESSENGER DATA: ', json.data);
       } else {
-        console.error('TEST_MESSENGER: ERROR');
+        console.log('TEST_MESSENGER DONE');
       }
     })
     .catch((err) => {
-      console.error('TEST_MESSENGER: ERROR', err);
+      console.error('TEST_MESSENGER ERROR: ', err);
     });
+    //----------------
+    
+    console.log('='.repeat(100));
   }
 }
 
 EditorPanel.propTypes = {
+  subjectId: PropTypes.number,
   aggregationsData: PropTypes.array,
+  viewOptions: PropTypes.object,
+  transcriptionStatus: PropTypes.string,
+  transcriptionData: PropTypes.object,
+  transcriptionUpdateStatus: PropTypes.string,
 };
 
 EditorPanel.defaultProps = {
+  subjectId: null,
   aggregationsData: null,
+  viewOptions: null,
+  transcriptionStatus: status.STATUS_IDLE,
+  transcriptionData: null,
+  transcriptionUpdateStatus: status.STATUS_IDLE,
 };
 
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
+    subjectId: store.subjectId,
     aggregationsData: store.aggregationsData,
+    viewOptions: store.viewOptions,
+    transcriptionStatus: store.transcriptionStatus,
+    transcriptionData: store.transcriptionData,
+    transcriptionUpdateStatus: store.transcriptionUpdateStatus,
   };
 };
 

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchSubject, setView, setSubjectImageSize } from '../../actions/transcription-viewer-v5.js';
-import * as status from '../../constants/status.js';
+import { env, config } from '../../constants/config.js';
 
 import ControlPanel from './ControlPanel.jsx';
 import EditorPanel from './EditorPanel.jsx';
@@ -13,7 +13,9 @@ import SVGAggregatedText from './SVGAggregatedText.jsx';
 const DEFAULT_SVGVIEWER_WIDTH = 500;
 const DEFAULT_SVGVIEWER_HEIGHT = 500;
 
-const DEFAULT_SUBJECT_ID = '671189';  //Arbitrary, interesting page from AnnoTate with some... funky fresh text layout.
+const DEFAULT_SUBJECT_ID = (env === 'staging')
+  ? '48407'  //Optimus Prime
+  : '671189'  //Arbitrary, interesting page from AnnoTate with some... funky fresh text layout.
 
 class Index extends React.Component {
   constructor(props) {
