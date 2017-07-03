@@ -32,8 +32,12 @@ export function transcriptionViewerV5(state = initialState, action) {
         subjectId: action.id,
         subjectData: null,
         subjectStatus: status.STATUS_LOADING,
-        aggregationsStatus: status.STATUS_IDLE,
+        aggregationsStatus: status.STATUS_IDLE,  //Reset aggregations data
+        aggregationsData: null,
         subjectImageSize: { width: 0, height: 0 },
+        transcriptionStatus: status.STATUS_IDLE,  //Reset external transcriptions data
+        transcriptionData: null,
+        transcriptionUpdateStatus: status.STATUS_IDLE,
       });
     case "FETCHING_SUBJECT_SUCCESS_V5":
       return Object.assign({}, state, {

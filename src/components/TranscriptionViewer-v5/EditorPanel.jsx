@@ -10,6 +10,13 @@ const DIFFERENCE_IN_ANGLE_THRESHOLD = 15;
 const DIFFERENCE_IN_DISTANCE_THRESHOLD = 100;
 const ENABLE_TEXT_LINE_SPACING = true;
 
+const EDITOR_STATUS = {
+  UNINITIALISED: 'uninitialised',
+  ZOONIVERSE: 'using zooniverse data',
+  TRANSCRIPTION: 'using transcription database data',
+  EDITED: 'manually edited',
+};
+
 class EditorPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -17,11 +24,12 @@ class EditorPanel extends React.Component {
     this.textarea = null;
     this.onTextChange = this.onTextChange.bind(this);
     this.loadZooniverseData = this.loadZooniverseData.bind(this);
+    this.loadTranscriptionDatabaseData = this.loadTranscriptionDatabaseData.bind(this);
     
     this.amendTranscription = this.amendTranscription.bind(this);
     
     this.state = {
-      status: '',
+      status: EDITOR_STATUS.UNINITIALISED,
       text: '',
     };
   }
@@ -32,13 +40,19 @@ class EditorPanel extends React.Component {
         <div>
           {(()=>{
             switch (this.state.status) {
-              case 'zooniverse': 
+              case EDITOR_STATUS.ZOONIVERSE: 
                 return (
                   <div className="message">
                     Currently showing aggregated text data from the Zooniverse 
                   </div>
                 );
-              case 'edited':
+              case EDITOR_STATUS.TRANSCRIPTION:
+                return (
+                  <div className="message">
+                    Data taken from the Transcription Database
+                  </div>
+                );
+              case EDITOR_STATUS.EDITED:
                 return (
                   <div className="message">
                     Text has been manually edited. Click 'Zooniverse Data' to reset.
@@ -89,7 +103,7 @@ class EditorPanel extends React.Component {
   componentWillReceiveProps(next) {
     //When page refreshes - and the user hasn't made any edits - load the default data.
     
-    if (this.state.status === '' || this.state.status === 'zooniverse') {
+    if (this.state.status === EDITOR_STATUS.UNINITIALISED || this.state.status === EDITOR_STATUS.ZOONIVERSE) {
       if (next.transcriptionStatus === status.STATUS_READY) {
         if (next.transcriptionData && next.transcriptionData[0] &&
             next.transcriptionData[0].attributes) {
@@ -105,14 +119,14 @@ class EditorPanel extends React.Component {
   
   onTextChange(e) {
     this.setState({
-      status: 'edited',
+      status: EDITOR_STATUS.EDITED,
       text: this.textarea.value,
     });
   }
   
   loadTranscriptionDatabaseData(props = this.props) {
     this.setState({
-      status: props.transcriptionData[0].attributes.status,
+      status: EDITOR_STATUS.TRANSCRIPTION,  //props.transcriptionData[0].attributes.status,
       text: props.transcriptionData[0].attributes.text,
     });
   }
@@ -120,7 +134,7 @@ class EditorPanel extends React.Component {
   loadZooniverseData(props = this.props) {
     if (!props.aggregationsData) {
       this.setState({
-        status: '',
+        status: EDITOR_STATUS.UNINITIALISED,
         text: '',
       });
       return;
@@ -157,7 +171,7 @@ class EditorPanel extends React.Component {
     }, '');
     
     this.setState({
-      status: 'zooniverse',
+      status: EDITOR_STATUS.ZOONIVERSE,
       text: compiledText,
     });
   }
