@@ -13,7 +13,7 @@ const ENABLE_TEXT_LINE_SPACING = true;
 const EDITOR_STATUS = {
   UNINITIALISED: 'uninitialised',
   ZOONIVERSE: 'using zooniverse data',
-  TRANSCRIPTION: 'using transcription database data',
+  MESSENGER: 'using transcription database data',
   EDITED: 'manually edited',
 };
 
@@ -50,7 +50,7 @@ class EditorPanel extends React.Component {
                     Currently showing aggregated text data from the Zooniverse 
                   </div>
                 );
-              case EDITOR_STATUS.TRANSCRIPTION:
+              case EDITOR_STATUS.MESSENGER:
                 return (
                   <div className="message">
                     Data taken from the Transcription Database
@@ -120,7 +120,7 @@ class EditorPanel extends React.Component {
   
   loadTranscriptionDatabaseData(props = this.props) {
     this.setState({
-      status: EDITOR_STATUS.TRANSCRIPTION,  //props.transcriptionData[0].attributes.status,
+      status: EDITOR_STATUS.MESSENGER,  //props.transcriptionData[0].attributes.status,
       text: props.transcriptionData[0].attributes.text,
     });
   }
