@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import * as status from '../../constants/status';
+import { GENERAL_STATUS, MESSENGER_STATUS } from '../../constants/transcription-viewer-v5.js';
 import { postTranscription } from '../../actions/transcription-viewer-v5.js';
 
 import apiClient from 'panoptes-client/lib/api-client';
@@ -98,7 +98,7 @@ class EditorPanel extends React.Component {
     //When page refreshes - and the user hasn't made any edits - load the default data.
     
     if (this.state.status === EDITOR_STATUS.UNINITIALISED || this.state.status === EDITOR_STATUS.ZOONIVERSE) {
-      if (next.transcriptionStatus === status.STATUS_READY) {
+      if (next.transcriptionStatus === GENERAL_STATUS.READY) {
         if (next.transcriptionData && next.transcriptionData[0] &&
             next.transcriptionData[0].attributes) {
           this.loadTranscriptionDatabaseData(next);
@@ -171,11 +171,11 @@ class EditorPanel extends React.Component {
   }
   
   amendTranscription() {
-    if (this.props.transcriptionStatus === status.STATUS_READY && this.props.transcriptionData) {
+    if (this.props.transcriptionStatus === GENERAL_STATUS.READY && this.props.transcriptionData) {
       if (this.props.transcriptionData.length === 0) {
-        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, true));
+        this.props.dispatch(postTranscription(this.props.subjectId, MESSENGER_STATUS.AMENDED, this.state.text, true));
       } else {
-        this.props.dispatch(postTranscription(this.props.subjectId, 'amended', this.state.text, false));
+        this.props.dispatch(postTranscription(this.props.subjectId, MESSENGER_STATUS.AMENDED, this.state.text, false));
       }
     }
   }
@@ -232,9 +232,9 @@ EditorPanel.defaultProps = {
   subjectId: null,
   aggregationsData: null,
   viewOptions: null,
-  transcriptionStatus: status.STATUS_IDLE,
+  transcriptionStatus: GENERAL_STATUS.IDLE,
   transcriptionData: null,
-  transcriptionUpdateStatus: status.STATUS_IDLE,
+  transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
 };
 
 const mapStateToProps = (state) => {

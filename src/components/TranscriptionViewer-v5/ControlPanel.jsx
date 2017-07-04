@@ -2,8 +2,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchSubject, setView, setViewOptions } from '../../actions/transcription-viewer-v5.js';
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
-import * as status from '../../constants/status.js';
+import { GENERAL_STATUS } from '../../constants/transcription-viewer-v5.js';
 
+const MOVE_STEP_VALUE = 10;
+const ZOOM_STEP_VALUE = 0.1;
+const ZOOM_MINIMUM = 0.1;
 const ROTATE_STEP_VALUE = 15;
 const DEGREES_360 = 360
 
@@ -63,13 +66,13 @@ class ControlPanel extends React.Component {
 
           {(() => {
             switch (this.props.subjectStatus) {
-              case status.STATUS_IDLE:
+              case GENERAL_STATUS.IDLE:
                 return <p>Type in a Panoptes Subject ID to search!</p>;
-              case status.STATUS_LOADING:
+              case GENERAL_STATUS.LOADING:
                 return <p>Looking for Subject...</p>;
-              case status.STATUS_READY:
+              case GENERAL_STATUS.READY:
                 return <p>Subject ready.</p>;
-              case status.STATUS_ERROR:
+              case GENERAL_STATUS.ERROR:
                 return <p className="error message">WHOOPS - Something went wrong!</p>;
             }
             return null;
@@ -86,8 +89,8 @@ class ControlPanel extends React.Component {
                   ref={(itm) => { this.inputScale = itm; }}
                   onChange={this.updateTransform}
                   type="number"
-                  step="0.1"
-                  min="0.1" />
+                  step={ZOOM_STEP_VALUE}
+                  min={ZOOM_MINIMUM} />
                 <button className="button fa fa-search-plus" onClick={this.zoomIn} />
                 <button className="button fa fa-search-minus" onClick={this.zoomOut} />
               </div>
@@ -102,7 +105,7 @@ class ControlPanel extends React.Component {
                   ref={(itm) => { this.inputTranslateX = itm; }}
                   onChange={this.updateTransform}
                   type="number"
-                  step="10" />
+                  step={MOVE_STEP_VALUE} />
                 <button className="button fa fa-arrow-left" onClick={this.moveLeft} />
                 <button className="button fa fa-arrow-right" onClick={this.moveRight} />
               </div>
@@ -112,7 +115,7 @@ class ControlPanel extends React.Component {
                   ref={(itm) => { this.inputTranslateY = itm; }}
                   onChange={this.updateTransform}
                   type="number"
-                  step="10" />
+                  step={MOVE_STEP_VALUE} />
                 <button className="button fa fa-arrow-up" onClick={this.moveUp} />
                 <button className="button fa fa-arrow-down" onClick={this.moveDown} />
               </div>
@@ -201,12 +204,12 @@ class ControlPanel extends React.Component {
   }
     
   zoomIn() {
-    this.inputScale.value = Math.min(parseFloat(this.inputScale.value) + 0.1, 10);
+    this.inputScale.value =parseFloat(this.inputScale.value) + ZOOM_STEP_VALUE;
     this.updateTransform();
   }
     
   zoomOut() {
-    this.inputScale.value = Math.max(parseFloat(this.inputScale.value) - 0.1, 0.1);
+    this.inputScale.value = Math.max(parseFloat(this.inputScale.value) - ZOOM_STEP_VALUE, ZOOM_MINIMUM);
     this.updateTransform();
   }
   

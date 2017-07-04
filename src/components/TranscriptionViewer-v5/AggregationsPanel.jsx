@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { showAggregation, showAllAggregations, selectAggregation, selectRawClassification, centreViewOnAggregation } from '../../actions/transcription-viewer-v5.js';
-import * as status from '../../constants/status.js';
+import { GENERAL_STATUS } from '../../constants/transcription-viewer-v5.js';
 
 const SCROLL_PADDING_TOP = 5;
 
@@ -53,14 +53,14 @@ class AggregationsPanel extends React.Component {
   }
   
   render_statusMessage() {
-    if (this.props.aggregationsStatus === status.STATUS_READY && this.props.aggregationsData) return null;
+    if (this.props.aggregationsStatus === GENERAL_STATUS.READY && this.props.aggregationsData) return null;
     
     switch(this.props.aggregationsStatus) {
-      case status.STATUS_IDLE:
+      case GENERAL_STATUS.IDLE:
         return <div className="message">Aggregations</div>;
-      case status.STATUS_LOADING:
+      case GENERAL_STATUS.LOADING:
         return <div className="message">Loading aggregated transcription data...</div>;
-      case status.STATUS_ERROR:
+      case GENERAL_STATUS.ERROR:
         return <div className="error message">ERROR: Could not load aggregated transcription data.</div>;
       default:
         return <div className="error message">ERROR: Something unexpected happened. Perhaps this Subject has no transcription data?</div>;
@@ -68,7 +68,7 @@ class AggregationsPanel extends React.Component {
   }
   
   render_helperControls() {
-    if (this.props.aggregationsStatus !== status.STATUS_READY || !this.props.aggregationsData) return null;
+    if (this.props.aggregationsStatus !== GENERAL_STATUS.READY || !this.props.aggregationsData) return null;
     
     return (
       <div className="helper-controls">
