@@ -1,3 +1,7 @@
+$amended-color = #36f
+$rejected-color = #c63
+$approved-color = #396
+
 .transcription-viewer-v5
   flex: 1 1 auto
   display: flex
@@ -115,6 +119,7 @@
       .data-row
         display: flex
         padding: 0.25em 0.5em
+        margin: 1px 0
         background: $neutral-light
         color: $neutral-dark
         
@@ -135,6 +140,24 @@
           
         label
           line-height: 1.5em
+        
+        span.status
+          margin: 0 0.5em
+          padding: 0.25em 0.5em
+          background: $neutral
+          color: $neutral-light
+          border-radius: 1em
+          
+          &.approved
+            background: $approved-color
+            
+          &.rejected
+            background: $rejected-color
+            
+          &.amended
+            background: $amended-color
+            
+          //&.unreviewed
         
     textarea
       flex: 1 1 auto

@@ -108,10 +108,26 @@ class EditorPanel extends React.Component {
                   </div>
                 );
               } else if (this.state.status === EDITOR_STATUS.MESSENGER) {
+                const messenger_status = (this.props.transcriptionData[0].attributes && this.props.transcriptionData[0].attributes.status)
+                  ? this.props.transcriptionData[0].attributes.status
+                  : null;
+                
                 return (
                   <div className="data-row ready">
                     <button className="selected button fa fa-dot-circle-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
                     <label>Transcription Database data</label>
+                    {(()=>{
+                      switch (messenger_status) {
+                        case MESSENGER_STATUS.ACCEPTED:
+                          return <span className="status approved">Approved</span>;
+                        case MESSENGER_STATUS.REJECTED:
+                          return <span className="status rejected">Rejected</span>;
+                        case MESSENGER_STATUS.AMENDED:
+                          return <span className="status amended">Amended</span>;
+                        default:
+                          return <span className="status unreviewed">Unreviewed</span>;
+                      }
+                    })()}
                   </div>
                 );
               } else {
@@ -126,6 +142,18 @@ class EditorPanel extends React.Component {
             return null;
             //----------------------------------------------------------------
           })()}
+          
+          {(() => {
+            //----------------------------------------------------------------
+            
+            return (
+              <div className="data-row">
+                ...
+              </div>
+            );
+            //----------------------------------------------------------------
+          })()}
+          
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
       </div>
