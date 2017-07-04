@@ -18,6 +18,8 @@ class ControlPanel extends React.Component {
     this.inputTranslateY = null;
     this.inputRotate = null;
     
+    this.goToPrevPage = this.goToPrevPage.bind(this);
+    this.goToNextPage = this.goToNextPage.bind(this);
     this.updateTransform = this.updateTransform.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
@@ -51,9 +53,11 @@ class ControlPanel extends React.Component {
         <div className="status-subpanel">
           {(!this.props.subjectId) ? null :
             <p>
-              <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
+              <button className="button fa fa-backward" style={{fontSize: '0.6em'}} onClick={this.goToPrevPage} />
+              {' '}
               <span>Subject ID {this.props.subjectId}</span>
-              <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
+              {' '}
+              <button className="button fa fa-forward" style={{fontSize: '0.6em'}} onClick={this.goToNextPage} />
             </p>
           }
 
@@ -67,22 +71,6 @@ class ControlPanel extends React.Component {
                 return <p>Subject ready.</p>;
               case status.STATUS_ERROR:
                 return <p className="error message">WHOOPS - Something went wrong!</p>;
-            }
-            return null;
-          })()}
-
-          {(() => {
-            if (this.props.aggregationsStatus !== status.STATUS_READY) return null;
-
-            switch (this.props.aggregationsStatus) {
-              case status.STATUS_LOADING:
-                return <p>Looking for Aggregations...</p>;
-              case status.STATUS_READY:
-                return (
-                  <p>Aggregations ready.</p>
-                );
-              case status.STATUS_ERROR:
-                return <p>No Aggregations, sorry.</p>;
             }
             return null;
           })()}
@@ -276,8 +264,6 @@ ControlPanel.defaultProps = {
   subjectId: null,
   subjectData: null,
   subjectStatus: null,
-  aggregationsData: null,
-  aggregationsStatus: null,
   rotate: 0,
   scale: 1,
   translateX: 0,
@@ -293,8 +279,6 @@ const mapStateToProps = (state) => {
     subjectId: store.subjectId,
     subjectData: store.subjectData,
     subjectStatus: store.subjectStatus,
-    aggregationsData: store.aggregationsData,
-    aggregationsStatus: store.aggregationsStatus,
     rotate: store.viewRotate,
     scale: store.viewScale,
     translateX: store.viewTranslateX,

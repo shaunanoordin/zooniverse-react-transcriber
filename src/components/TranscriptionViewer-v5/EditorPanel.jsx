@@ -37,6 +37,10 @@ class EditorPanel extends React.Component {
   render() {
     return (
       <div className="editor-panel">
+        <div style={{border: '1px solid #c63', background: '#eee'}}>
+          <div>Transcription Status: {this.props.transcriptionStatus}</div>
+          <div>Transcription Update Status: {this.props.transcriptionUpdateStatus}</div>
+        </div>
         <div>
           {(()=>{
             switch (this.state.status) {
@@ -67,17 +71,9 @@ class EditorPanel extends React.Component {
             <label>Zooniverse Data</label>
           </span>
           <span className="button-container">
-            <button className="button disabled fa fa-cloud-download"/>
+            <button className="button fa fa-cloud-download" onClick={(e)=>{this.loadTranscriptionDatabaseData(this.props)}} />
             <label>Load (Expert)</label>
           </span>
-          <span className="button-container">
-            <button className="button fa fa-question" onClick={this.TEST_MESSENGER.bind(this)}/>
-            <label>TEST DATABASE</label>
-          </span>
-        </div>
-        <div style={{border: '1px solid #c63', background: '#eee'}}>
-          <div>Transcription Status: {this.props.transcriptionStatus}</div>
-          <div>Transcription Update Status: {this.props.transcriptionUpdateStatus}</div>
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
         <div>
@@ -97,8 +93,6 @@ class EditorPanel extends React.Component {
       </div>
     );
   }
-  
-  componentDidMount() {}
   
   componentWillReceiveProps(next) {
     //When page refreshes - and the user hasn't made any edits - load the default data.
