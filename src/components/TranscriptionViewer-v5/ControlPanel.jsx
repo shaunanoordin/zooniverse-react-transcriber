@@ -19,8 +19,14 @@ class ControlPanel extends React.Component {
     this.inputRotate = null;
     
     this.updateTransform = this.updateTransform.bind(this);
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
     this.rotateLeft = this.rotateLeft.bind(this);
     this.rotateRight = this.rotateRight.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
   }
   
   execFetchSubject() {
@@ -86,13 +92,17 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Scale</label>
             <span className="data">
-              <input
-                value={this.props.scale}
-                ref={(itm) => { this.inputScale = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="0.1"
-                min="0.1" />
+              <div>
+                <input
+                  value={this.props.scale}
+                  ref={(itm) => { this.inputScale = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step="0.1"
+                  min="0.1" />
+                <button className="button fa fa-search-plus" onClick={this.zoomIn} />
+                <button className="button fa fa-search-minus" onClick={this.zoomOut} />
+              </div>
             </span>
           </div>
           <div className="row">
@@ -105,13 +115,18 @@ class ControlPanel extends React.Component {
                   onChange={this.updateTransform}
                   type="number"
                   step="10" />
-                <b>,</b>
+                <button className="button fa fa-arrow-left" onClick={this.moveLeft} />
+                <button className="button fa fa-arrow-right" onClick={this.moveRight} />
+              </div>
+              <div>
                 <input
                   value={this.props.translateY}
                   ref={(itm) => { this.inputTranslateY = itm; }}
                   onChange={this.updateTransform}
                   type="number"
                   step="10" />
+                <button className="button fa fa-arrow-up" onClick={this.moveUp} />
+                <button className="button fa fa-arrow-down" onClick={this.moveDown} />
               </div>
             </span>
           </div>
@@ -135,11 +150,11 @@ class ControlPanel extends React.Component {
             <span className="data">
               {/*<button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />*/}
               <div>
-                <button className={'button fa fa-arrow-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+                <button className={'button fa fa-chevron-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
                 <label>Horizontal</label>
               </div>
               <div>
-                <button className={'button fa fa-arrow-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+                <button className={'button fa fa-chevron-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
                 <label>Vertical</label>
               </div>
             </span>
@@ -183,6 +198,10 @@ class ControlPanel extends React.Component {
     ));
   }
                         
+  componentWillReceiveProps(props) {
+    this.inputSubjectId.value = '';
+  }
+                        
   rotateLeft() {
     this.inputRotate.value = (parseInt(this.inputRotate.value) - ROTATE_STEP_VALUE + DEGREES_360) % DEGREES_360;
     this.updateTransform();
@@ -190,6 +209,36 @@ class ControlPanel extends React.Component {
 
   rotateRight() {
     this.inputRotate.value = (parseInt(this.inputRotate.value) + ROTATE_STEP_VALUE) % DEGREES_360;
+    this.updateTransform();
+  }
+    
+  zoomIn() {
+    this.inputScale.value = Math.min(parseFloat(this.inputScale.value) + 0.1, 10);
+    this.updateTransform();
+  }
+    
+  zoomOut() {
+    this.inputScale.value = Math.max(parseFloat(this.inputScale.value) - 0.1, 0.1);
+    this.updateTransform();
+  }
+  
+  moveLeft() {
+    this.inputTranslateX.value = parseInt(this.inputTranslateX.value) - 10;
+    this.updateTransform();
+  }
+    
+  moveRight() {
+    this.inputTranslateX.value = parseInt(this.inputTranslateX.value) + 10;
+    this.updateTransform();
+  }
+    
+  moveUp() {
+    this.inputTranslateY.value = parseInt(this.inputTranslateY.value) - 10;
+    this.updateTransform();
+  }
+    
+  moveDown() {
+    this.inputTranslateY.value = parseInt(this.inputTranslateY.value) + 10;
     this.updateTransform();
   }
   
