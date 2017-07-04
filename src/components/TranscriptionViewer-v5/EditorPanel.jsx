@@ -37,59 +37,97 @@ class EditorPanel extends React.Component {
   render() {
     return (
       <div className="editor-panel">
-        <div style={{border: '1px solid #c63', background: '#eee'}}>
-          <div>Transcription Status: {this.props.transcriptionStatus}</div>
-          <div>Transcription Update Status: {this.props.transcriptionUpdateStatus}</div>
-        </div>
-        <div>
-          {(()=>{
-            switch (this.state.status) {
-              case EDITOR_STATUS.ZOONIVERSE: 
+        <div className="status-subpanel">
+          
+          {(() => {
+            //----------------------------------------------------------------
+            if (this.props.aggregationsStatus === GENERAL_STATUS.LOADING) {
+              return (
+                <div className="data-row loading">
+                  <i className="fa fa-commenting" />
+                  Loading Zooniverse Aggregation data...
+                </div>
+              );
+            } else if (this.props.aggregationsStatus === GENERAL_STATUS.ERROR) {
+              return (
+                <div className="data-row error">
+                  <i className="fa fa-warning" />
+                  <span>ERROR: could not load Zooniverse Aggregation data.</span>
+                </div>
+              );
+            } else if (this.props.aggregationsStatus === GENERAL_STATUS.READY) {
+              if (!this.props.aggregationsData || this.props.aggregationsData.length === 0) {
                 return (
-                  <div className="message">
-                    Currently showing aggregated text data from the Zooniverse 
+                  <div className="data-row">
+                    <i className="fa fa-meh-o" />
+                    <span>No Zooniverse Aggregation data found.</span>
                   </div>
                 );
-              case EDITOR_STATUS.MESSENGER:
+              } else if (this.state.status === EDITOR_STATUS.ZOONIVERSE) {
                 return (
-                  <div className="message">
-                    Data taken from the Transcription Database
+                  <div className="data-row ready">
+                    <button className="selected button fa fa-dot-circle-o" onClick={()=>{this.loadZooniverseData()}} />
+                    <label>Zooniverse Aggregation data</label>
                   </div>
                 );
-              case EDITOR_STATUS.EDITED:
+              } else {
                 return (
-                  <div className="message">
-                    Text has been manually edited. Click 'Zooniverse Data' to reset.
+                  <div className="data-row ready">
+                    <button className="button fa fa-circle-o" onClick={()=>{this.loadZooniverseData()}} />
+                    <label>Zooniverse Aggregation data</label>
                   </div>
                 );
-              default:
-                return null;
+              }
             }
+            return null;
+            //----------------------------------------------------------------
           })()}
-          <span className="button-container">
-            <button className="button fa fa-history" onClick={(e)=>{this.loadZooniverseData(this.props)}} />
-            <label>Zooniverse Data</label>
-          </span>
-          <span className="button-container">
-            <button className="button fa fa-cloud-download" onClick={(e)=>{this.loadTranscriptionDatabaseData(this.props)}} />
-            <label>Load (Expert)</label>
-          </span>
+          
+          {(() => {
+            //----------------------------------------------------------------
+            if (this.props.transcriptionStatus === GENERAL_STATUS.LOADING) {
+              return (
+                <div className="data-row loading">
+                  <i className="fa fa-commenting" />
+                  Loading Transcription Database (expert revisions)...
+                </div>
+              );
+            } else if (this.props.transcriptionStatus === GENERAL_STATUS.ERROR) {
+              return (
+                <div className="data-row error">
+                  <i className="fa fa-warning" />
+                  <span>ERROR: could not load Transcription Database.</span>
+                </div>
+              );
+            } else if (this.props.transcriptionStatus === GENERAL_STATUS.READY) {
+              if (!this.props.transcriptionData || this.props.transcriptionData.length === 0) {
+                return (
+                  <div className="data-row">
+                    <i className="fa fa-meh-o" />
+                    <span>No Transcription Database data found.</span>
+                  </div>
+                );
+              } else if (this.state.status === EDITOR_STATUS.MESSENGER) {
+                return (
+                  <div className="data-row ready">
+                    <button className="selected button fa fa-dot-circle-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
+                    <label>Transcription Database data</label>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="data-row ready">
+                    <button className="button fa fa-circle-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
+                    <label>Transcription Database data</label>
+                  </div>
+                );
+              }
+            }
+            return null;
+            //----------------------------------------------------------------
+          })()}
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
-        <div>
-          <span className="button-container">
-            <button className="button disabled fa fa-check-square"/>
-            <label>Accept</label>
-          </span>
-          <span className="button-container">
-            <button className="button fa fa-cloud-upload" onClick={this.amendTranscription} />
-            <label>Amend</label>
-          </span>
-          <span className="button-container">
-            <button className="button disabled fa fa-trash"/>
-            <label>Reject</label>
-          </span>
-        </div>
       </div>
     );
   }
@@ -119,9 +157,15 @@ class EditorPanel extends React.Component {
   }
   
   loadTranscriptionDatabaseData(props = this.props) {
+    const text = (props.transcriptionData && props.transcriptionData[0] && props.transcriptionData[0].attributes.text)
+      ? props.transcriptionData[0].attributes.text
+      : null;
+    
+    if (text === null) { return; }
+    
     this.setState({
       status: EDITOR_STATUS.MESSENGER,  //props.transcriptionData[0].attributes.status,
-      text: props.transcriptionData[0].attributes.text,
+      text,
     });
   }
   
@@ -221,6 +265,7 @@ class EditorPanel extends React.Component {
 
 EditorPanel.propTypes = {
   subjectId: PropTypes.number,
+  aggregationsStatus: PropTypes.string,
   aggregationsData: PropTypes.array,
   viewOptions: PropTypes.object,
   transcriptionStatus: PropTypes.string,
@@ -230,6 +275,7 @@ EditorPanel.propTypes = {
 
 EditorPanel.defaultProps = {
   subjectId: null,
+  aggregationsStatus: null,
   aggregationsData: null,
   viewOptions: null,
   transcriptionStatus: GENERAL_STATUS.IDLE,
@@ -241,6 +287,7 @@ const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
     subjectId: store.subjectId,
+    aggregationsStatus: store.aggregationsStatus,
     aggregationsData: store.aggregationsData,
     viewOptions: store.viewOptions,
     transcriptionStatus: store.transcriptionStatus,

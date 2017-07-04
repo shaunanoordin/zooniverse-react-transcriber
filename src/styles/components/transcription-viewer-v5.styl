@@ -108,9 +108,34 @@
     padding: 0.5em
     overflow: auto
     
-    > div
-      background: $neutral-dark
-    
+    .status-subpanel
+      background: $neutral
+      padding: 0.25em
+      
+      .data-row
+        display: flex
+        padding: 0.25em 0.5em
+        background: $neutral-light
+        color: $neutral-dark
+        
+        &.error
+          color: $anti
+        
+        &.ready
+          color: $primary
+        
+        i.fa
+          font-size: 1.2em
+          margin: 0 0.5em
+        
+        .button
+          margin: 0 0.5em
+          padding: 0.25em
+          border: none
+          
+        label
+          line-height: 1.5em
+        
     textarea
       flex: 1 1 auto
       display: block
@@ -161,19 +186,6 @@
             display: inline-block
             vertical-align: middle
             margin-right: 0.5em
-    
-    .helper-controls
-      background: $primary
-      border-bottom: 0.5em solid $primary-dark
-      margin-top: 0.2em
-      border-top-left-radius: 0.5em
-      
-      .button-container
-        display: block
-        border-top-left-radius: 1em
-        border-bottom-left-radius: 1em
-        padding: 0
-        margin: 0.2em 0 0.2em 0.2em
     
     .list
       flex: 1 1 auto
