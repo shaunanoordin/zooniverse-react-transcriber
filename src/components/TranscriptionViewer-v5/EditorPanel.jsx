@@ -44,7 +44,7 @@ class EditorPanel extends React.Component {
             if (this.props.aggregationsStatus === GENERAL_STATUS.LOADING) {
               return (
                 <div className="data-row loading">
-                  <i className="fa fa-commenting" />
+                  <i className="fa fa-spin fa-spinner" />
                   Loading Zooniverse Aggregation data...
                 </div>
               );
@@ -88,7 +88,7 @@ class EditorPanel extends React.Component {
             if (this.props.transcriptionStatus === GENERAL_STATUS.LOADING) {
               return (
                 <div className="data-row loading">
-                  <i className="fa fa-commenting" />
+                  <i className="fa fa-spin fa-spinner" />
                   Loading Transcription Database (expert revisions)...
                 </div>
               );
@@ -147,7 +147,7 @@ class EditorPanel extends React.Component {
           {(() => {
             //----------------------------------------------------------------
             if (this.props.transcriptionUpdateStatus === GENERAL_STATUS.PROCESSING) {
-              return <span><i className="fa fa-cloud-upload" /> Connecting to the Transcription Database...</span>;
+              return <span><i className="fa fa-spin fa-spinner" /> Connecting to the Transcription Database...</span>;
             } else if (this.state.status === EDITOR_STATUS.MESSENGER) {
               return 'Showing expert revision';
             } else if (this.state.status === EDITOR_STATUS.ZOONIVERSE) {
@@ -182,11 +182,11 @@ class EditorPanel extends React.Component {
             //----------------------------------------------------------------
           })()}
           
+          {/*
           <div className="transcription-subcontrols data-row">
             <button className="button" onClick={this.TEST_MESSENGER.bind(this)}><b className="fa fa-warning" /> Test</button>
           </div>
-          
-          
+          */}
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
       </div>
