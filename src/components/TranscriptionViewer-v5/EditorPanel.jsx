@@ -185,7 +185,7 @@ class EditorPanel extends React.Component {
           
           {(() => {
             //----------------------------------------------------------------
-            if (/(\?|&)admin(=|)/ig.test(window.location.search)) {
+            if (/(\?|&)admin(=|&|$)/ig.test(window.location.search)) {
               return (
                 <div className="transcription-subcontrols data-row">
                   <button className="button" onClick={this.MESSENGER_ADMIN_DELETE_TRANSCRIPTION.bind(this)}><b className="fa fa-warning" /> Delete Transcription</button>
