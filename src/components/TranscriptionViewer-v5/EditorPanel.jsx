@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { GENERAL_STATUS, MESSENGER_STATUS } from '../../constants/transcription-viewer-v5.js';
-import { postTranscription } from '../../actions/transcription-viewer-v5.js';
+import { postTranscription, registerProjectForTranscriptions, deleteTranscription } from '../../actions/transcription-viewer-v5.js';
 
 import apiClient from 'panoptes-client/lib/api-client';
 import { env, config } from '../../constants/config.js';
@@ -182,6 +182,26 @@ class EditorPanel extends React.Component {
             //----------------------------------------------------------------
           })()}
           
+          
+          {(() => {
+            //----------------------------------------------------------------
+            if (/(\?|&)admin(=|)/ig.test(window.location.search)) {
+              return (
+                <div className="transcription-subcontrols data-row">
+                  <button className="button" onClick={this.MESSENGER_ADMIN_DELETE_TRANSCRIPTION.bind(this)}><b className="fa fa-warning" /> Delete Transcription</button>
+                  <span>||||</span>
+                  <input type="text" ref={(ele) => { this.MESSENGER_ADMIN_PROJECT_SLUG = ele; }}
+                    placeholder="Panoptes Project slug"
+                  />
+                  <button className="button" onClick={this.MESSENGER_ADMIN_REGISTER_PROJECT.bind(this)}><b className="fa fa-warning" /> Register Project</button>
+                </div>
+              );
+            }
+            
+            return null
+            //----------------------------------------------------------------
+          })()}
+          
           {/*
           <div className="transcription-subcontrols data-row">
             <button className="button" onClick={this.TEST_MESSENGER.bind(this)}><b className="fa fa-warning" /> Test</button>
@@ -295,42 +315,17 @@ class EditorPanel extends React.Component {
     }
   }
   
-  TEST_MESSENGER() {
-    console.log('-'.repeat(100));
+  MESSENGER_ADMIN_REGISTER_PROJECT() {
+    if (!this.MESSENGER_ADMIN_PROJECT_SLUG) return;
     
-    const url = config.transcriptionsDatabaseUrl +
-                'transcriptions/' + this.props.subjectId;
-    
-    const body = JSON.stringify({});
-
-    const opt = {
-      method: 'DELETE',
-      mode: 'cors',
-      headers: new Headers({
-        'Authorization': apiClient.headers.Authorization,
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    fetch(url, opt)
-    .then((response) => {
-      console.log('TEST_MESSENGER RESPONSE: ', response);
-      if (response.status === 200 || response.status === 201 || response.status === 202) { return response.json(); }
-      return null;
-    })
-    .then((json) => {
-      if (json && json.data) {
-        console.log('TEST_MESSENGER DATA: ', json.data);
-      } else {
-        console.log('TEST_MESSENGER DONE');
-      }
-    })
-    .catch((err) => {
-      console.error('TEST_MESSENGER ERROR: ', err);
-    });
-    //----------------
-    
-    console.log('='.repeat(100));
+    //--------------------------------
+    const project_slug = this.MESSENGER_ADMIN_PROJECT_SLUG.value;
+    registerProjectForTranscriptions(project_slug);
+    //--------------------------------
+  }
+  
+  MESSENGER_ADMIN_DELETE_TRANSCRIPTION() {
+    deleteTranscription(this.props.subjectId);
   }
 }
 

@@ -199,14 +199,14 @@ export function centreViewOnAggregation(index) {
   };
 }
 
-/*  Register a Zooniverse Project on the Transcriptions DB.
+/*  ADMIN-ONLY: Register a Zooniverse Project on the Transcriptions DB.
     A Project must be registered before we can begin transcribing its Subjects.
  */
-function registerProjectForTranscriptions(projectSlug = 'example_user/example_project') {
+export function registerProjectForTranscriptions(projectSlug = 'example_user/example_project') {
+  //----------------------------------------------------------------
   const url = config.transcriptionsDatabaseUrl +
               'projects/?slug=' +
               encodeURIComponent(projectSlug);
-  
   const body = JSON.stringify({
     'data': {
       'attributes': {
@@ -214,7 +214,6 @@ function registerProjectForTranscriptions(projectSlug = 'example_user/example_pr
       }
     }
   });
-
   const opt = {
     method: 'POST',
     mode: 'cors',
@@ -224,25 +223,18 @@ function registerProjectForTranscriptions(projectSlug = 'example_user/example_pr
     }),
     body: body,
   };
-  
-  console.log('REGISTER PROJECT: start', projectSlug);
-
+  console.log('REGISTER PROJECT: START', projectSlug);
   fetch(url, opt)
   .then((response) => {
-    console.log('REGISTER PROJECT: attempting...');
-    if (response.status < 200 || response.status > 202) { return null; }
-    return response.json();
-  })
-  .then((json) => {
-    if (json && json.data) {
-      console.log('REGISTER PROJECT: completed.');
-    } else {
-      console.error('REGISTER PROJECT: ERROR');
+    if (response.status === 200 || response.status === 201 ||
+        response.status === 202 || response.status === 204) {
+      console.log('REGISTER PROJECT: DONE');
     }
   })
   .catch((err) => {
     console.error('REGISTER PROJECT: ERROR', err);
   });
+  //----------------------------------------------------------------
 }
 
 export function fetchTranscription(id) {
@@ -286,6 +278,34 @@ function fetchTranscription__(id, dispatch) {
     console.error("ERROR in fetchTranscription(): ", err);
     dispatch({ type: "FETCHING_TRANSCRIPTION_ERROR_V5" });
   });
+}
+
+/*  ADMIN-ONLY: Deletes a single Transcription based on the Subject ID
+ */
+export function deleteTranscription(subjectId) {
+  //----------------------------------------------------------------
+  const url = config.transcriptionsDatabaseUrl +
+              'transcriptions/' + subjectId;
+  const opt = {
+    method: 'DELETE',
+    mode: 'cors',
+    headers: new Headers({
+      'Authorization': apiClient.headers.Authorization,
+      'Content-Type': 'application/json',
+    }),
+  };
+  console.log('DELETE TRANSCRIPTION: START', subjectId);
+  fetch(url, opt)
+  .then((response) => {
+    if (response.status === 200 || response.status === 201 ||
+        response.status === 202 || response.status === 204) {
+      console.log('DELETE TRANSCRIPTION: DONE');
+    }
+  })
+  .catch((err) => {
+    console.error('DELETE TRANSCRIPTION: ERROR ', err);
+  });
+  //----------------------------------------------------------------
 }
 
 export function postTranscription(id, status, text = '', usePost = true) {
