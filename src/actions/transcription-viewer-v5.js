@@ -360,6 +360,9 @@ function postTranscription__(id, status, text = '', usePost = true, dispatch) {
       console.error("ERROR in postTranscription()");
       dispatch({ type: "POSTING_TRANSCRIPTION_ERROR_V5" });
     }
+    
+    //Sync with the database
+    fetchTranscription__(id, dispatch);
   })
   .catch((err) => {
     console.error("ERROR in postTranscription(): ", err);
