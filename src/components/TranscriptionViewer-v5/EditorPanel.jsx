@@ -14,7 +14,7 @@ const EDITOR_STATUS = {
   UNINITIALISED: 'uninitialised',
   ZOONIVERSE: 'using zooniverse data',
   MESSENGER: 'using transcription database data',
-  EDITED: 'manually edited',
+  EDITING: 'manually editing',
 };
 
 class EditorPanel extends React.Component {
@@ -66,14 +66,14 @@ class EditorPanel extends React.Component {
               } else if (this.state.status === EDITOR_STATUS.ZOONIVERSE) {
                 return (
                   <div className="data-row ready">
-                    <button className="selected small button fa fa-dot-circle-o" onClick={()=>{this.loadZooniverseData()}} />
+                    <button className="selected small button fa fa-check-square-o" onClick={()=>{this.loadZooniverseData()}} />
                     <label>Zooniverse Aggregation data</label>
                   </div>
                 );
               } else {
                 return (
                   <div className="data-row ready">
-                    <button className="small button fa fa-circle-o" onClick={()=>{this.loadZooniverseData()}} />
+                    <button className="small button fa fa-square-o" onClick={()=>{this.loadZooniverseData()}} />
                     <label>Zooniverse Aggregation data</label>
                   </div>
                 );
@@ -114,8 +114,8 @@ class EditorPanel extends React.Component {
                 
                 return (
                   <div className="data-row ready">
-                    <button className="selected small button fa fa-dot-circle-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
-                    <label>Transcription Database data</label>
+                    <button className="selected small button fa fa-check-square-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
+                    <label>Transcription Database data (expert revision)</label>
                     {(()=>{
                       switch (messenger_status) {
                         case MESSENGER_STATUS.ACCEPTED:
@@ -133,8 +133,8 @@ class EditorPanel extends React.Component {
               } else {
                 return (
                   <div className="data-row ready">
-                    <button className="small button fa fa-circle-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
-                    <label>Transcription Database data</label>
+                    <button className="small button fa fa-square-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
+                    <label>Transcription Database data (expert revision)</label>
                   </div>
                 );
               }
@@ -143,22 +143,49 @@ class EditorPanel extends React.Component {
             //----------------------------------------------------------------
           })()}
           
+          <div className="overall-status data-row">
           {(() => {
             //----------------------------------------------------------------
-            return (
-              <div className="data-row">
-                {this.props.transcriptionUpdateStatus}
-              </div>
-            );
+            if (this.props.transcriptionUpdateStatus === GENERAL_STATUS.PROCESSING) {
+              return <span><i className="fa fa-cloud-upload" /> Connecting to the Transcription Database...</span>;
+            } else if (this.state.status === EDITOR_STATUS.MESSENGER) {
+              return 'Showing expert revision';
+            } else if (this.state.status === EDITOR_STATUS.ZOONIVERSE) {
+              return 'Showing Zooniverse data';
+            } else if (this.state.status === EDITOR_STATUS.EDITING) {
+              return <span><i className="fa fa-pencil" /> Editing in progress</span>;
+            }
+            return '-';
+            //----------------------------------------------------------------
+          })()}
+          </div>
+          
+          {(() => {
+            //----------------------------------------------------------------
+            if (this.props.transcriptionUpdateStatus === GENERAL_STATUS.PROCESSING) {
+              return (
+                <div className="transcription-subcontrols data-row">
+                  <button className="disabled button"><b className="fa fa-thumbs-up" /> Approve</button>
+                  <button className="disabled button"><b className="fa fa-thumbs-down" /> Reject</button>
+                  <button className="disabled button"><b className="fa fa-pencil-square" /> Amend</button>
+                </div>
+              );
+            } else {
+              return (
+                <div className="transcription-subcontrols data-row">
+                  <button className="approve button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-thumbs-up" /> Approve</button>
+                  <button className="reject button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.REJECTED) }}><b className="fa fa-thumbs-down" /> Reject</button>
+                  <button className="amend button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.AMENDED) }}><b className="fa fa-pencil" /> Amend</button>
+                </div>
+              );  
+            }
             //----------------------------------------------------------------
           })()}
           
-          <div className="data-row">
-            <button className="button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-warning approve" /> Approve</button>
-            <button className="button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.AMENDED) }}><b className="fa fa-warning amend" /> Amend</button>
-            <button className="button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.REJECTED) }}><b className="fa fa-warning reject" /> Reject</button>
+          <div className="transcription-subcontrols data-row">
             <button className="button" onClick={this.TEST_MESSENGER.bind(this)}><b className="fa fa-warning" /> Test</button>
           </div>
+          
           
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
@@ -185,7 +212,7 @@ class EditorPanel extends React.Component {
   
   onTextChange(e) {
     this.setState({
-      status: EDITOR_STATUS.EDITED,
+      status: EDITOR_STATUS.EDITING,
       text: this.textarea.value,
     });
   }

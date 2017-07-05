@@ -1,4 +1,4 @@
-$amended-color = #36f
+$amended-color = #63c
 $rejected-color = #c63
 $approved-color = #396
 
@@ -122,12 +122,27 @@ $approved-color = #396
         margin: 1px 0
         background: $neutral-light
         color: $neutral-dark
+        align-items: center
+        height: 2em
         
         &.error
           color: $anti
         
         &.ready
           color: $primary
+        
+        &.overall-status
+          justify-content: center
+          background: $primary
+          color: $secondary
+          padding: 0.5em 1em
+        
+        &.transcription-subcontrols
+          justify-content: flex-end
+          height: 3em
+        
+        label
+          flex: 1 0 auto
         
         i.fa
           font-size: 1.2em
@@ -137,6 +152,15 @@ $approved-color = #396
           margin: 0 0.5em
           padding: 0.25em
           border: none
+        
+        .approve.button
+          color: $approved-color
+            
+        .reject.button
+          color: $rejected-color
+
+        .amend.button
+          color: $amended-color
           
         label
           line-height: 1.5em
@@ -145,7 +169,7 @@ $approved-color = #396
           margin: 0 0.5em
           padding: 0.25em 0.5em
           background: $neutral
-          color: $neutral-light
+          color: $secondary
           border-radius: 1em
           
           &.approved
@@ -156,7 +180,7 @@ $approved-color = #396
             
           &.amended
             background: $amended-color
-            
+          
           //&.unreviewed
         
     textarea
