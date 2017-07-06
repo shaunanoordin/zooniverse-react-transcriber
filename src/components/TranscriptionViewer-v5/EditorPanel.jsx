@@ -135,6 +135,12 @@ class EditorPanel extends React.Component {
                   <div className="data-row ready">
                     <button className="small button fa fa-square-o" onClick={()=>{this.loadTranscriptionDatabaseData()}} />
                     <label>Transcription Database data (expert revision)</label>
+                    {(()=>{
+                      if (this.state.status === EDITOR_STATUS.EDITING) {
+                        return <span className="status">Editing...</span>;
+                      }
+                      return null;
+                    })()}
                   </div>
                 );
               }
@@ -162,23 +168,26 @@ class EditorPanel extends React.Component {
           
           {(() => {
             //----------------------------------------------------------------
-            if (this.props.transcriptionUpdateStatus === GENERAL_STATUS.PROCESSING) {
-              return (
-                <div className="transcription-subcontrols data-row">
-                  <button className="disabled button"><b className="fa fa-thumbs-up" /> Approve</button>
-                  <button className="disabled button"><b className="fa fa-thumbs-down" /> Reject</button>
-                  <button className="disabled button"><b className="fa fa-pencil-square" /> Amend</button>
-                </div>
-              );
-            } else {
-              return (
-                <div className="transcription-subcontrols data-row">
-                  <button className="approve button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-thumbs-up" /> Approve</button>
-                  <button className="reject button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.REJECTED) }}><b className="fa fa-thumbs-down" /> Reject</button>
-                  <button className="amend button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.AMENDED) }}><b className="fa fa-pencil" /> Amend</button>
-                </div>
-              );  
-            }
+            const transcriptionDatabaseIsReadyForInput =
+              this.props.transcriptionStatus === GENERAL_STATUS.READY &&
+              this.props.transcriptionUpdateStatus !== GENERAL_STATUS.PROCESSING;
+                  
+            return (
+              <div className="transcription-subcontrols data-row">
+                {(transcriptionDatabaseIsReadyForInput)
+                  ? <button className="approve button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-thumbs-up" /> Approve</button>
+                  : <button className="disabled button"><b className="fa fa-thumbs-up" /> Approve</button>
+                }
+                {(transcriptionDatabaseIsReadyForInput)
+                  ? <button className="reject button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.REJECTED) }}><b className="fa fa-thumbs-down" /> Reject</button>
+                  : <button className="disabled button"><b className="fa fa-thumbs-down" /> Reject</button>
+                }
+                {(transcriptionDatabaseIsReadyForInput)
+                  ? <button className="amend button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.AMENDED) }}><b className="fa fa-pencil" /> Amend</button>
+                  : <button className="disabled button"><b className="fa fa-pencil-square" /> Amend</button>
+                }
+              </div>
+            );
             //----------------------------------------------------------------
           })()}
           
@@ -312,6 +321,8 @@ class EditorPanel extends React.Component {
       } else {
         this.props.dispatch(postTranscription(this.props.subjectId, status, text, false));
       }
+    } else {
+      alert('ERROR: the Transcription Database could not be reached.');
     }
   }
   
