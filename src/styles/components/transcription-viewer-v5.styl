@@ -1,3 +1,7 @@
+$amended-color = #63c
+$rejected-color = #c63
+$approved-color = #396
+
 .transcription-viewer-v5
   flex: 1 1 auto
   display: flex
@@ -108,9 +112,77 @@
     padding: 0.5em
     overflow: auto
     
-    > div
-      background: $neutral-dark
-    
+    .status-subpanel
+      background: $neutral
+      padding: 0.25em
+      
+      .data-row
+        display: flex
+        padding: 0.25em 0.5em
+        margin: 1px 0
+        background: $neutral-light
+        color: $neutral-dark
+        align-items: center
+        height: 2em
+        
+        &.error
+          color: $anti
+        
+        &.ready
+          color: $primary
+        
+        &.overall-status
+          justify-content: center
+          background: $primary
+          color: $secondary
+          padding: 0.5em 1em
+        
+        &.transcription-subcontrols
+          justify-content: flex-end
+          height: 3em
+        
+        label
+          flex: 1 0 auto
+        
+        i.fa
+          font-size: 1.2em
+          margin: 0 0.5em
+        
+        .small.button
+          margin: 0 0.5em
+          padding: 0.25em
+          border: none
+        
+        .approve.button
+          color: $approved-color
+            
+        .reject.button
+          color: $rejected-color
+
+        .amend.button
+          color: $amended-color
+          
+        label
+          line-height: 1.5em
+        
+        span.status
+          margin: 0 0.5em
+          padding: 0.25em 0.5em
+          background: $neutral
+          color: $secondary
+          border-radius: 1em
+          
+          &.approved
+            background: $approved-color
+            
+          &.rejected
+            background: $rejected-color
+            
+          &.amended
+            background: $amended-color
+          
+          //&.unreviewed
+        
     textarea
       flex: 1 1 auto
       display: block
@@ -161,19 +233,6 @@
             display: inline-block
             vertical-align: middle
             margin-right: 0.5em
-    
-    .helper-controls
-      background: $primary
-      border-bottom: 0.5em solid $primary-dark
-      margin-top: 0.2em
-      border-top-left-radius: 0.5em
-      
-      .button-container
-        display: block
-        border-top-left-radius: 1em
-        border-bottom-left-radius: 1em
-        padding: 0
-        margin: 0.2em 0 0.2em 0.2em
     
     .list
       flex: 1 1 auto

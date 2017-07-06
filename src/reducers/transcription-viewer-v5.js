@@ -1,15 +1,13 @@
-import * as types from '../constants/actionTypes';
-import * as status from '../constants/status';
+import { GENERAL_STATUS } from '../constants/transcription-viewer-v5.js';
 import { DataOrganiser } from '../tools/DataOrganiser-v5.js';
-import { env, config } from '../constants/config.js';
 
 const initialState = {
   subjectId: null,
   subjectData: null,
-  subjectStatus: status.STATUS_IDLE,
+  subjectStatus: GENERAL_STATUS.IDLE,
   subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
-  aggregationsStatus: status.STATUS_IDLE,
+  aggregationsStatus: GENERAL_STATUS.IDLE,
   currentAggregation: null,
   currentRawClassification: null,
   viewRotate: 0,
@@ -20,9 +18,9 @@ const initialState = {
     mode: 'editor',
     layout: 'horizontal',
   },
-  transcriptionStatus: status.STATUS_IDLE,
+  transcriptionStatus: GENERAL_STATUS.IDLE,
   transcriptionData: null,
-  transcriptionUpdateStatus: status.STATUS_IDLE,
+  transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
 };
 
 export function transcriptionViewerV5(state = initialState, action) {
@@ -31,14 +29,18 @@ export function transcriptionViewerV5(state = initialState, action) {
       return Object.assign({}, state, {
         subjectId: action.id,
         subjectData: null,
-        subjectStatus: status.STATUS_LOADING,
-        aggregationsStatus: status.STATUS_IDLE,
+        subjectStatus: GENERAL_STATUS.LOADING,
+        aggregationsStatus: GENERAL_STATUS.IDLE,  //Reset aggregations data
+        aggregationsData: null,
         subjectImageSize: { width: 0, height: 0 },
+        transcriptionStatus: GENERAL_STATUS.IDLE,  //Reset external transcriptions data
+        transcriptionData: null,
+        transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
       });
     case "FETCHING_SUBJECT_SUCCESS_V5":
       return Object.assign({}, state, {
         subjectData: action.subject,
-        subjectStatus: status.STATUS_READY,
+        subjectStatus: GENERAL_STATUS.READY,
         viewRotate: 0,
         viewScale: 1,
         viewTranslateX: 0,
@@ -47,27 +49,27 @@ export function transcriptionViewerV5(state = initialState, action) {
     case "FETCHING_SUBJECT_ERROR_V5":
       return Object.assign({}, state, {
         subjectData: null,
-        subjectStatus: status.STATUS_ERROR,
+        subjectStatus: GENERAL_STATUS.ERROR,
       });
     
     case "FETCHING_AGGREGATIONS_V5":
       return Object.assign({}, state, {
         aggregationsData: null,
-        aggregationsStatus: status.STATUS_LOADING,
+        aggregationsStatus: GENERAL_STATUS.LOADING,
         currentAggregation: null,
         currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_SUCCESS_V5":
       return Object.assign({}, state, {
         aggregationsData: DataOrganiser.sortAggregations(action.aggregations),
-        aggregationsStatus: status.STATUS_READY,
+        aggregationsStatus: GENERAL_STATUS.READY,
         currentAggregation: null,
         currentRawClassification: null,
       });
     case "FETCHING_AGGREGATIONS_ERROR_V5":
       return Object.assign({}, state, {
         aggregationsData: null,
-        aggregationsStatus: status.STATUS_ERROR,
+        aggregationsStatus: GENERAL_STATUS.ERROR,
         currentAggregation: null,
         currentRawClassification: null,
       });
@@ -131,36 +133,36 @@ export function transcriptionViewerV5(state = initialState, action) {
       
     case "FETCHING_TRANSCRIPTION_V5":
       return Object.assign({}, state, {
-        transcriptionStatus: status.STATUS_LOADING,
+        transcriptionStatus: GENERAL_STATUS.LOADING,
         transcriptionData: null,
-        transcriptionUpdateStatus: status.STATUS_IDLE,
+        transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
       });
     case "FETCHING_TRANSCRIPTION_SUCCESS_V5":
       return Object.assign({}, state, {
-        transcriptionStatus: status.STATUS_READY,
+        transcriptionStatus: GENERAL_STATUS.READY,
         transcriptionData: action.transcription,
-        transcriptionUpdateStatus: status.STATUS_IDLE,
+        transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
       });
     case "FETCHING_TRANSCRIPTION_ERROR_V5":
       return Object.assign({}, state, {
-        transcriptionStatus: status.STATUS_ERROR,
+        transcriptionStatus: GENERAL_STATUS.ERROR,
         transcriptionData: null,
-        transcriptionUpdateStatus: status.STATUS_IDLE,
+        transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
       });
     
     case "POSTING_TRANSCRIPTION_V5":
       return Object.assign({}, state, {
-        transcriptionUpdateStatus: status.STATUS_PROCESSING,
+        transcriptionUpdateStatus: GENERAL_STATUS.PROCESSING,
       });
       
     case "POSTING_TRANSCRIPTION_SUCCESS_V5":
       return Object.assign({}, state, {
-        transcriptionUpdateStatus: status.STATUS_READY,
+        transcriptionUpdateStatus: GENERAL_STATUS.READY,
       });
     
     case "POSTING_TRANSCRIPTION_ERROR_V5":
       return Object.assign({}, state, {
-        transcriptionUpdateStatus: status.STATUS_ERROR,
+        transcriptionUpdateStatus: GENERAL_STATUS.ERROR,
       });
       
     default:

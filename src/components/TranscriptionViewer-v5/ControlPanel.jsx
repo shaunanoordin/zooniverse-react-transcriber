@@ -2,8 +2,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchSubject, setView, setViewOptions } from '../../actions/transcription-viewer-v5.js';
 import { Utility, KEY_CODES } from '../../tools/Utility.js';
-import * as status from '../../constants/status.js';
+import { GENERAL_STATUS } from '../../constants/transcription-viewer-v5.js';
 
+const MOVE_STEP_VALUE = 10;
+const ZOOM_STEP_VALUE = 0.1;
+const ZOOM_MINIMUM = 0.1;
 const ROTATE_STEP_VALUE = 15;
 const DEGREES_360 = 360
 
@@ -18,9 +21,17 @@ class ControlPanel extends React.Component {
     this.inputTranslateY = null;
     this.inputRotate = null;
     
+    this.goToPrevPage = this.goToPrevPage.bind(this);
+    this.goToNextPage = this.goToNextPage.bind(this);
     this.updateTransform = this.updateTransform.bind(this);
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
     this.rotateLeft = this.rotateLeft.bind(this);
     this.rotateRight = this.rotateRight.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
   }
   
   execFetchSubject() {
@@ -45,38 +56,24 @@ class ControlPanel extends React.Component {
         <div className="status-subpanel">
           {(!this.props.subjectId) ? null :
             <p>
-              <button className="button fa fa-backward" style={{fontSize: '0.5em'}} onClick={this.goToPrevPage.bind(this)} />
+              <button className="button fa fa-backward" style={{fontSize: '0.6em'}} onClick={this.goToPrevPage} />
+              {' '}
               <span>Subject ID {this.props.subjectId}</span>
-              <button className="button fa fa-forward" style={{fontSize: '0.5em'}} onClick={this.goToNextPage.bind(this)} />
+              {' '}
+              <button className="button fa fa-forward" style={{fontSize: '0.6em'}} onClick={this.goToNextPage} />
             </p>
           }
 
           {(() => {
             switch (this.props.subjectStatus) {
-              case status.STATUS_IDLE:
+              case GENERAL_STATUS.IDLE:
                 return <p>Type in a Panoptes Subject ID to search!</p>;
-              case status.STATUS_LOADING:
+              case GENERAL_STATUS.LOADING:
                 return <p>Looking for Subject...</p>;
-              case status.STATUS_READY:
+              case GENERAL_STATUS.READY:
                 return <p>Subject ready.</p>;
-              case status.STATUS_ERROR:
+              case GENERAL_STATUS.ERROR:
                 return <p className="error message">WHOOPS - Something went wrong!</p>;
-            }
-            return null;
-          })()}
-
-          {(() => {
-            if (this.props.aggregationsStatus !== status.STATUS_READY) return null;
-
-            switch (this.props.aggregationsStatus) {
-              case status.STATUS_LOADING:
-                return <p>Looking for Aggregations...</p>;
-              case status.STATUS_READY:
-                return (
-                  <p>Aggregations ready.</p>
-                );
-              case status.STATUS_ERROR:
-                return <p>No Aggregations, sorry.</p>;
             }
             return null;
           })()}
@@ -86,13 +83,17 @@ class ControlPanel extends React.Component {
           <div className="row">
             <label>Scale</label>
             <span className="data">
-              <input
-                value={this.props.scale}
-                ref={(itm) => { this.inputScale = itm; }}
-                onChange={this.updateTransform}
-                type="number"
-                step="0.1"
-                min="0.1" />
+              <div>
+                <input
+                  value={this.props.scale}
+                  ref={(itm) => { this.inputScale = itm; }}
+                  onChange={this.updateTransform}
+                  type="number"
+                  step={ZOOM_STEP_VALUE}
+                  min={ZOOM_MINIMUM} />
+                <button className="button fa fa-search-plus" onClick={this.zoomIn} />
+                <button className="button fa fa-search-minus" onClick={this.zoomOut} />
+              </div>
             </span>
           </div>
           <div className="row">
@@ -104,14 +105,19 @@ class ControlPanel extends React.Component {
                   ref={(itm) => { this.inputTranslateX = itm; }}
                   onChange={this.updateTransform}
                   type="number"
-                  step="10" />
-                <b>,</b>
+                  step={MOVE_STEP_VALUE} />
+                <button className="button fa fa-arrow-left" onClick={this.moveLeft} />
+                <button className="button fa fa-arrow-right" onClick={this.moveRight} />
+              </div>
+              <div>
                 <input
                   value={this.props.translateY}
                   ref={(itm) => { this.inputTranslateY = itm; }}
                   onChange={this.updateTransform}
                   type="number"
-                  step="10" />
+                  step={MOVE_STEP_VALUE} />
+                <button className="button fa fa-arrow-up" onClick={this.moveUp} />
+                <button className="button fa fa-arrow-down" onClick={this.moveDown} />
               </div>
             </span>
           </div>
@@ -135,11 +141,11 @@ class ControlPanel extends React.Component {
             <span className="data">
               {/*<button className={'button fa fa-square' + ((this.props.viewOptions.layout === 'single') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'single'}))}} />*/}
               <div>
-                <button className={'button fa fa-arrow-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
+                <button className={'button fa fa-chevron-right' + ((this.props.viewOptions.layout === 'horizontal') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'horizontal'}))}} />
                 <label>Horizontal</label>
               </div>
               <div>
-                <button className={'button fa fa-arrow-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
+                <button className={'button fa fa-chevron-down' + ((this.props.viewOptions.layout === 'vertical') ? ' selected' : '')} onClick={()=>{this.props.dispatch(setViewOptions({layout:'vertical'}))}} />
                 <label>Vertical</label>
               </div>
             </span>
@@ -183,6 +189,10 @@ class ControlPanel extends React.Component {
     ));
   }
                         
+  componentWillReceiveProps(props) {
+    this.inputSubjectId.value = '';
+  }
+                        
   rotateLeft() {
     this.inputRotate.value = (parseInt(this.inputRotate.value) - ROTATE_STEP_VALUE + DEGREES_360) % DEGREES_360;
     this.updateTransform();
@@ -190,6 +200,36 @@ class ControlPanel extends React.Component {
 
   rotateRight() {
     this.inputRotate.value = (parseInt(this.inputRotate.value) + ROTATE_STEP_VALUE) % DEGREES_360;
+    this.updateTransform();
+  }
+    
+  zoomIn() {
+    this.inputScale.value =parseFloat(this.inputScale.value) + ZOOM_STEP_VALUE;
+    this.updateTransform();
+  }
+    
+  zoomOut() {
+    this.inputScale.value = Math.max(parseFloat(this.inputScale.value) - ZOOM_STEP_VALUE, ZOOM_MINIMUM);
+    this.updateTransform();
+  }
+  
+  moveLeft() {
+    this.inputTranslateX.value = parseInt(this.inputTranslateX.value) - 10;
+    this.updateTransform();
+  }
+    
+  moveRight() {
+    this.inputTranslateX.value = parseInt(this.inputTranslateX.value) + 10;
+    this.updateTransform();
+  }
+    
+  moveUp() {
+    this.inputTranslateY.value = parseInt(this.inputTranslateY.value) - 10;
+    this.updateTransform();
+  }
+    
+  moveDown() {
+    this.inputTranslateY.value = parseInt(this.inputTranslateY.value) + 10;
     this.updateTransform();
   }
   
@@ -227,8 +267,6 @@ ControlPanel.defaultProps = {
   subjectId: null,
   subjectData: null,
   subjectStatus: null,
-  aggregationsData: null,
-  aggregationsStatus: null,
   rotate: 0,
   scale: 1,
   translateX: 0,
@@ -244,8 +282,6 @@ const mapStateToProps = (state) => {
     subjectId: store.subjectId,
     subjectData: store.subjectData,
     subjectStatus: store.subjectStatus,
-    aggregationsData: store.aggregationsData,
-    aggregationsStatus: store.aggregationsStatus,
     rotate: store.viewRotate,
     scale: store.viewScale,
     translateX: store.viewTranslateX,
