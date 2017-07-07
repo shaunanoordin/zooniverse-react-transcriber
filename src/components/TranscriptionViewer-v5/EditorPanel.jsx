@@ -174,6 +174,10 @@ class EditorPanel extends React.Component {
                   
             return (
               <div className="transcription-subcontrols data-row">
+                {(this.state.status === EDITOR_STATUS.EDITING)
+                  ? <button className="button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-thumbs-up" /> Approve</button>
+                  : null
+                }
                 {(transcriptionDatabaseIsReadyForInput)
                   ? <button className="approve button" onClick={() => { this.postTranscriptionData(MESSENGER_STATUS.ACCEPTED) }}><b className="fa fa-thumbs-up" /> Approve</button>
                   : <button className="disabled button"><b className="fa fa-thumbs-up" /> Approve</button>
@@ -206,16 +210,22 @@ class EditorPanel extends React.Component {
                 </div>
               );
             }
-            
             return null
             //----------------------------------------------------------------
           })()}
           
-          {/*
-          <div className="transcription-subcontrols data-row">
-            <button className="button" onClick={this.TEST_MESSENGER.bind(this)}><b className="fa fa-warning" /> Test</button>
-          </div>
-          */}
+          {(() => {
+            //----------------------------------------------------------------
+            if (/(\?|&)admin(=|&|$)/ig.test(window.location.search)) {
+              return (
+                <div className="transcription-subcontrols data-row">
+                  <button className="button" onClick={this.MESSENGER_ADMIN_LIST_PROJECTS.bind(this)}><b className="fa fa-warning" /> List Projects</button>
+                  </div>
+              );
+            }
+            return null
+            //----------------------------------------------------------------
+          })()}
         </div>
         <textarea ref={c=>{this.textarea=c}} value={this.state.text} onChange={this.onTextChange}></textarea>
       </div>
@@ -226,16 +236,20 @@ class EditorPanel extends React.Component {
     //When page refreshes - and the user hasn't made any edits - load the default data.
     
     if (this.state.status === EDITOR_STATUS.UNINITIALISED || this.state.status === EDITOR_STATUS.ZOONIVERSE) {
-      if (next.transcriptionStatus === GENERAL_STATUS.READY) {
-        if (next.transcriptionData && next.transcriptionData[0] &&
-            next.transcriptionData[0].attributes) {
-          this.loadTranscriptionDatabaseData(next);
-        } else {
-          this.loadZooniverseData(next);
-        }
+      this.refreshData(next);
+    }
+  }
+  
+  refreshData(props) {
+    if (props.transcriptionStatus === GENERAL_STATUS.READY) {
+      if (props.transcriptionData && props.transcriptionData[0] &&
+          props.transcriptionData[0].attributes) {
+        this.loadTranscriptionDatabaseData(props);
       } else {
-        this.loadZooniverseData(next);
+        this.loadZooniverseData(props);
       }
+    } else {
+      this.loadZooniverseData(props);
     }
   }
   
@@ -337,6 +351,36 @@ class EditorPanel extends React.Component {
   
   MESSENGER_ADMIN_DELETE_TRANSCRIPTION() {
     deleteTranscription(this.props.subjectId);
+  }
+  
+  MESSENGER_ADMIN_LIST_PROJECTS() {
+    //----------------------------------------------------------------
+    const url = config.transcriptionsDatabaseUrl +
+                'projects/';
+    const opt = {
+      method: 'GET',
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization': apiClient.headers.Authorization,
+        'Content-Type': 'application/json',
+      }),
+    };
+    console.log('LIST PROJECTS: START');
+    fetch(url, opt)
+    .then((response) => {
+      if (response.status === 200 || response.status === 201 ||
+          response.status === 202 || response.status === 204) {
+        console.log('LIST PROJECTS: DONE');
+        return response.json();
+      }
+    })
+    .then((json) => {
+      console.log(json);
+    })
+    .catch((err) => {
+      console.error('LIST PROJECTS: ERROR ', err);
+    });
+    //----------------------------------------------------------------
   }
 }
 
