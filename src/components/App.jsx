@@ -13,12 +13,14 @@ export default class App extends React.Component {
     return (
       <div>
         <header className="site-header">
-          <Link to="/" className="link"><h1 className="title">Zooniverse React Transcriber</h1></Link>
-          <Link to="/transcription-viewer" className="link">Viewer (Latest)</Link>
+          <Link to="/" className="link"><h1 className="title">Zooniverse Transcription Viewer</h1></Link>
+          <Link to="/transcription-viewer" className="link">Viewer</Link>
+          {/*
           <Link to="/transcription-viewer-v4" className="link">(v4)</Link>
           <Link to="/transcription-viewer-v3" className="link">(v3)</Link>
           <Link to="/transcription-viewer-v2" className="link">(v2)</Link>
           <Link to="/transcription-viewer-v1" className="link">(v1)</Link>
+          */}
           <HeaderAuth />
         </header>
         <section className="content-section">

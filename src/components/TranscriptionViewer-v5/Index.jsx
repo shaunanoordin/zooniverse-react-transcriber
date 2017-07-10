@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import { fetchSubject, setView, setSubjectImageSize } from '../../actions/transcription-viewer-v5.js';
 import { env, config } from '../../constants/config.js';
 
+import NotLoggedInPage from './NotLoggedInPage.jsx';
+import Popup from '../Popup.jsx';
 import ControlPanel from './ControlPanel.jsx';
 import EditorPanel from './EditorPanel.jsx';
 import AggregationsPanel from './AggregationsPanel.jsx';
 import SVGViewer from './SVGViewer.jsx';
 import SVGImage from './SVGImage.jsx';
 import SVGAggregatedText from './SVGAggregatedText.jsx';
+import { GENERAL_STATUS } from '../../constants/transcription-viewer-v5.js';
 
 const DEFAULT_SVGVIEWER_WIDTH = 500;
 const DEFAULT_SVGVIEWER_HEIGHT = 500;
@@ -22,9 +25,11 @@ class Index extends React.Component {
     super(props);
     this.imageHasLoaded = this.imageHasLoaded.bind(this);
     this.primarySVGViewer = null;
+    this.closePopup = this.closePopup.bind(this);
     
     this.state = {
       loadedImage: { width: 0, height: 0 },
+      popupMessage: null,
     };
   }
   
@@ -47,6 +52,12 @@ class Index extends React.Component {
   }
   
   render() {
+    //Not Logged In
+    if (!this.props.loginUser) {
+      return <NotLoggedInPage />
+    }
+    
+    //Logged In
     return (
       <div className="transcription-viewer-v5">
         
@@ -134,8 +145,32 @@ class Index extends React.Component {
         
         <AggregationsPanel />
         
+        {(!this.state.popupMessage) ? null :
+          <Popup closeAction={this.closePopup}>
+            {this.state.popupMessage}
+          </Popup>
+        }
+        
       </div>
     );
+  }
+  
+  closePopup() {
+    this.setState({
+      popupMessage: null,
+    });
+  }
+  
+  componentWillReceiveProps(next) {
+    //Monitor transcription udpates only.
+    if (next.transcriptionUpdateStatus === GENERAL_STATUS.ERROR) {
+      this.setState({
+        popupMessage: [
+          <p>ERROR: Could not update the Transcription database.</p>,
+          <p>Are you logged in to a Zooniverse account that's an owner or collaborator of the project you're working on?</p>,
+        ],
+      });
+    }
   }
   
   componentDidMount() {
@@ -147,15 +182,18 @@ class Index extends React.Component {
 }
 
 Index.propTypes = {
+  loginUser: PropTypes.object,
   subjectData: PropTypes.object,
   subjectImageSize: PropTypes.object,
   aggregationsData: PropTypes.array,
   currentAggregation: PropTypes.number,
   currentRawClassification: PropTypes.number,
   viewOptions: PropTypes.object,
+  transcriptionUpdateStatus: PropTypes.string,
 };
 
 Index.defaultProps = {
+  loginUser: null,
   subjectData: null,
   subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
@@ -165,17 +203,24 @@ Index.defaultProps = {
     mode: '',
     layout: 'horizontal',
   },
+  transcriptionUpdateStatus: GENERAL_STATUS.IDLE,
 };
 
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
+    loginUser: state.login.user,
     subjectData: store.subjectData,
     subjectImageSize: store.subjectImageSize,
     aggregationsData: store.aggregationsData,
     currentAggregation: store.currentAggregation,
     currentRawClassification: store.currentRawClassification,
     viewOptions: store.viewOptions,
+    
+    //subjectStatus: store.subjectStatus,
+    //aggregationsStatus: store.aggregationsStatus,
+    //transcriptionStatus: store.transcriptionStatus,
+    transcriptionUpdateStatus: store.transcriptionUpdateStatus,  //We are only monitoring the Transcription Update status, since EditorPanel
   };
 };
 

@@ -341,7 +341,7 @@ function postTranscription__(id, status, text = '', usePost = true, dispatch) {
     : JSON.stringify({
         'data': {
           'attributes': {
-            'id': '' + id,
+            //'id': '' + id,
             'text': text,
             'status': status,
           }
