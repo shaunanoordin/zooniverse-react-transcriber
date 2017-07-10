@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { fetchSubject, setView, setSubjectImageSize } from '../../actions/transcription-viewer-v5.js';
 import { env, config } from '../../constants/config.js';
 
+import NotLoggedInPage from './NotLoggedInPage.jsx';
 import ControlPanel from './ControlPanel.jsx';
 import EditorPanel from './EditorPanel.jsx';
 import AggregationsPanel from './AggregationsPanel.jsx';
@@ -47,6 +48,12 @@ class Index extends React.Component {
   }
   
   render() {
+    //Not Logged In
+    if (!this.props.loginUser) {
+      return <NotLoggedInPage />
+    }
+    
+    //Logged In
     return (
       <div className="transcription-viewer-v5">
         
@@ -147,6 +154,7 @@ class Index extends React.Component {
 }
 
 Index.propTypes = {
+  loginUser: PropTypes.object,
   subjectData: PropTypes.object,
   subjectImageSize: PropTypes.object,
   aggregationsData: PropTypes.array,
@@ -156,6 +164,7 @@ Index.propTypes = {
 };
 
 Index.defaultProps = {
+  loginUser: null,
   subjectData: null,
   subjectImageSize: { width: 0, height: 0 },
   aggregationsData: null,
@@ -170,6 +179,7 @@ Index.defaultProps = {
 const mapStateToProps = (state) => {
   const store = state.transcriptionViewerV5;
   return {
+    loginUser: state.login.user,
     subjectData: store.subjectData,
     subjectImageSize: store.subjectImageSize,
     aggregationsData: store.aggregationsData,
