@@ -290,7 +290,7 @@ class EditorPanel extends React.Component {
   
   compileZooniverseText(props = this.props) {
     return (props.aggregationsData)
-      ? props.aggregationsData.reduce((total, cur, index, arr) => {
+      ? this.cleanRandomUnicodeNonsense(props.aggregationsData.reduce((total, cur, index, arr) => {
           //Optional: give some spacing between those lines to reflect how the text
           //layout on the physical page.
           if (ENABLE_TEXT_LINE_SPACING && index > 0) {
@@ -318,7 +318,7 @@ class EditorPanel extends React.Component {
           }
 
           return total + cur.text + '\n';
-        }, '')
+        }, ''))
       : null;
   }
   
@@ -338,6 +338,12 @@ class EditorPanel extends React.Component {
     } else {
       alert('ERROR: the Transcription Database could not be reached.');
     }
+  }
+  
+  //In Firefox 54, we can see random unicode characters showing from the Aggregations.
+  cleanRandomUnicodeNonsense(str) {
+    const nonsenseCharacters = /[^\w\d !@#$%^&*()\-\=\+\[\];'\\,.\/{}:"|<>?~`\r\n]/ig;
+    return str.replace(nonsenseCharacters, '');
   }
   
   MESSENGER_ADMIN_REGISTER_PROJECT() {

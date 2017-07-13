@@ -1,6 +1,7 @@
 import * as types from '../constants/actionTypes';
 import apiClient from 'panoptes-client/lib/api-client.js';
 import { env, config } from '../constants/config.js';
+import fetch from 'isomorphic-fetch';
 
 export function fetchSubject(id) {
   return (dispatch) => {
