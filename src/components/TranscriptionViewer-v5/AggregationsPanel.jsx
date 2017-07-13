@@ -72,18 +72,18 @@ class AggregationsPanel extends React.Component {
     
     return (
       <div className="helper-controls">
-        <div className="button-container">
-          <button className="button fa fa-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(false)) }}></button>
-          <label>Hide all text</label>
-        </div>
-        <div className="button-container">
-          <button className="button fa fa-check-square-o" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}></button>
-          <label>Show all text</label>
-        </div>
-        <div className="button-container">
-          <button className={(this.props.currentAggregation === null) ? 'button disabled fa fa-ban' : 'button fa fa-ban' } onClick={()=>{ this.props.dispatch(selectAggregation(null)) }}></button>
-          <label>Deselect</label>
-        </div>
+        <button className="button" onClick={()=>{ this.setState({expanded: false}) }}>
+          <i className="fa fa-angle-double-right" /> Close panel
+        </button>
+        <button className="button" onClick={()=>{ this.props.dispatch(showAllAggregations(false)) }}>
+          <i className="fa fa-square-o" /> Hide all text
+        </button>
+        <button className="button" onClick={()=>{ this.props.dispatch(showAllAggregations(true)) }}>
+          <i className="fa fa-check-square-o" /> Show all text
+        </button>
+        <button className={(this.props.currentAggregation === null) ? 'button disabled' : 'button' } onClick={()=>{ this.props.dispatch(selectAggregation(null)) }}>
+          <i className="fa fa-ban" /> Deselect
+        </button>
       </div>
     );
   }
