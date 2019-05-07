@@ -70,7 +70,7 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.3.0",
     "nib": "^1.1.0",
-    "panoptes-client": "^2.2.1",
+    "panoptes-client": "^2.12.1",
     "rimraf": "^2.4.3",
     "stats-webpack-plugin": "^0.2.2",
     "style-loader": "^0.13.0",
