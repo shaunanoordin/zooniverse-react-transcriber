@@ -1,6 +1,6 @@
 # Zooniverse Transcription Viewer
 
-A tool for reviewing data from Zooniverse transcription projects.
+A tool for reviewing data from Zooniverse transcription projects. Superseded by https://github.com/zooniverse/alice
 
 ## Project Documentation
 
